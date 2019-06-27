@@ -3,6 +3,8 @@ package com.app.galnoriel.footbook;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,27 +15,25 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.app.galnoriel.footbook.adapters.SectionsAdapter;
+import com.app.galnoriel.footbook.fragments.ProfileFragment;
+import com.app.galnoriel.footbook.fragments.GroupFragment;
+import com.app.galnoriel.footbook.fragments.GameFragment;
+import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-//testing implement
 
-
+    private SectionsAdapter sectionsAdapter;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -43,6 +43,38 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+//region viewpager
+        sectionsAdapter = new SectionsAdapter(getSupportFragmentManager());
+
+        viewPager = findViewById(R.id.view_pager);
+        setupViewPager(viewPager);
+
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
+
+        int[] imageResID = {
+                R.drawable.ic_person_black_24dp,
+                R.drawable.ic_group_black_24dp,
+                R.drawable.ic_directions_run_black_24dp,
+                R.drawable.ic_search_black_24dp
+        };
+
+
+        for (int i = 0; i <imageResID.length ; i++) {
+            tabLayout.getTabAt(i).setIcon(imageResID[i]);
+        }
+//endregion
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+
+        SectionsAdapter adapter = new SectionsAdapter(getSupportFragmentManager());
+        adapter.addFragment(new ProfileFragment());
+        adapter.addFragment(new GroupFragment());
+        adapter.addFragment(new GameFragment());
+        adapter.addFragment(new SearchGameFieldFragment());
+        viewPager.setAdapter(adapter);
     }
 
     @Override
