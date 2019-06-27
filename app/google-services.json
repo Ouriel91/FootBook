@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "104497518062",
+    "firebase_url": "https://footbook-d7983.firebaseio.com",
+    "project_id": "footbook-d7983",
+    "storage_bucket": "footbook-d7983.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104497518062:android:b9314c4f85932bca",
+        "android_client_info": {
+          "package_name": "com.app.galnoriel.footbook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "104497518062-hbdca4u85idr2i61io5im7bvekpob5ov.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.galnoriel.footbook",
+            "certificate_hash": "3beb789ef73ac001be1263b275533dfafc649c8c"
+          }
+        },
+        {
+          "client_id": "104497518062-cjdhjj00e92jd076ihobo3f22108rqfl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy6lFXrfBwZJnqyNVxIlff0zYmCvhHf9g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "104497518062-cjdhjj00e92jd076ihobo3f22108rqfl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
