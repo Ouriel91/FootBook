@@ -17,4 +17,13 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="ProfileFrag_TextView" >
+        <item name="android:lines">1</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:textColor">@color/grayTextColor</item>
+    </style>
+
+
 </resources>

@@ -9,19 +9,27 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:background="@color/appbarbackground"
+        >
 
         <android.support.v7.widget.Toolbar
+
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:background="@drawable/grass_background_upper"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:titleTextColor="@android:color/black"/>
 
         <android.support.design.widget.TabLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/tab_layout"/>
+            android:id="@+id/tab_layout"
+            android:background="@drawable/grass_background_lower"
+            app:tabTextColor="@android:color/white"
+            app:tabSelectedTextColor="@android:color/darker_gray"
+            />
 
     </android.support.design.widget.AppBarLayout>
 
