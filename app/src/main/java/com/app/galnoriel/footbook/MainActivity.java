@@ -1,11 +1,8 @@
 package com.app.galnoriel.footbook;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -54,15 +51,16 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(viewPager);
 
         int[] imageResID = {
-                R.drawable.ic_person_black_24dp,
-                R.drawable.ic_group_black_24dp,
-                R.drawable.ic_directions_run_black_24dp,
-                R.drawable.ic_search_black_24dp
+                R.drawable.thumbnail,
+                R.drawable.team_avatar,
+                R.drawable.match_ic_tab,
+                R.drawable.map_ic_tab
         };
-
+//set tags for tabs?
 
         for (int i = 0; i <imageResID.length ; i++) {
             tabLayout.getTabAt(i).setIcon(imageResID[i]);
+
         }
 //endregion
     }

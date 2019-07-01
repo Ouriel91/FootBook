@@ -19,10 +19,48 @@
 
     <style name="ProfileFrag_TextView" >
         <item name="android:lines">1</item>
-        <item name="android:layout_marginTop">20dp</item>
         <item name="android:layout_marginStart">10dp</item>
         <item name="android:textSize">20dp</item>
         <item name="android:textColor">@color/grayTextColor</item>
+        <item name="android:gravity">center_vertical|start</item>
+    </style>
+
+    <style name="GroupFrag_ImageView">
+        <item name="android:layout_marginTop">15dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+
+
+    </style>
+
+    <style name="ProfileFrag_SmallImageView">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+    </style>
+
+    <style name="GroupFrag_SmallImageView">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+    </style>
+
+    <style name="GroupFrag_MemberTitleImage">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+
+    </style>
+    <style name="Title_TextView">
+        <item name="android:lines">1</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/grayTextColor</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/shape_linear</item>
+        <item name="android:padding">3dp</item>
+
     </style>
 
 
