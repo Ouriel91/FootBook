@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="30dp">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:src="@drawable/grass_background"
+        android:background="@android:color/transparent"
+        android:scaleType="centerCrop"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="20dp"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/lists_background">
+
+        <EditText
+            android:id="@+id/email_logdia"
+            style="@style/Login_Dialog.EditText"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            />
+
+        <EditText
+            android:id="@+id/first_name_logdia"
+            style="@style/Login_Dialog.EditText"
+            android:hint="@string/first_name"
+            android:inputType="textCapWords"
+            />
+
+        <EditText
+            android:id="@+id/surname_logdia"
+            style="@style/Login_Dialog.EditText"
+            android:hint="@string/surname"
+            android:inputType="textCapWords"
+            />
+
+        <EditText
+            android:id="@+id/password_logdia"
+            style="@style/Login_Dialog.EditText"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            />
+
+        <EditText
+            android:id="@+id/conf_password_logdia"
+            style="@style/Login_Dialog.EditText"
+            android:hint="@string/conf_password"
+            android:inputType="textPassword"
+            />
+
+        <EditText
+            android:id="@+id/region_logdia"
+            style="@style/Login_Dialog.EditText"
+            android:hint="Where From?"
+            android:inputType="textAutoComplete"
+            />
+    </LinearLayout>
+        <ImageButton
+            style="@style/Login_Dialog_Button"
+            android:id="@+id/signin_btn_logdia"
+            android:background="@color/colorAccent"
+            />
+        <ImageButton
+            style="@style/Login_Dialog_Button"
+            android:id="@+id/signup_btn_logdia"
+            android:background="@color/colorPrimary"
+            />
+
+</LinearLayout>
