@@ -67,8 +67,8 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <!--<item name="android:background">@android:color/transparent</item>-->
-        <item name="android:paddingStart">40dp</item>
-        <item name="android:paddingEnd">40dp</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
         <item name="android:textSize">24sp</item>
         <item name="android:gravity">center</item>
     </style>
@@ -92,5 +92,27 @@
         <item name="android:textSize">24sp</item>
         <item name="android:gravity">center</item>
     </style>
+
+    <style name="Timer_view">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@android:color/holo_red_light</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="NumberPicker_Game_frag">
+        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_columnWeight">2</item>
+        <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="Score_TeamName_TextView">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_columnWeight">2</item>
+    </style>
+
 
 </resources>

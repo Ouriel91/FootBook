@@ -26,7 +26,6 @@ import com.app.galnoriel.footbook.fragments.GroupFragment;
 import com.app.galnoriel.footbook.fragments.GameFragment;
 import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
 import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity

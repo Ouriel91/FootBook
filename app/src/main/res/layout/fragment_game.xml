@@ -1,13 +1,231 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Fragment 3"/>
 
-</RelativeLayout>
+    <!--next game section-->
+    <FrameLayout
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/next_game_frame_gamf">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/next_game_lay_gamf"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <TextView
+                android:gravity="center"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/next_date_ic_gamf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/next_game_tv_gamf"
+                android:text="General details"
+                style="@style/Title_TextView"
+                android:tag="@string/next_game_tag"
+                />
+
+            <ImageView
+                android:tag="@string/next_game_tag"
+                style="@style/GroupFrag_ImageView"
+                android:id="@+id/pitch_ic_gamf"
+                android:src="@drawable/football_field_ic"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/next_game_tv_gamf" />
+
+            <TextView
+                android:layout_marginTop="0dp"
+                android:tag="@string/next_game_tag"
+                app:layout_constraintTop_toTopOf="@id/pitch_ic_gamf"
+                app:layout_constraintBottom_toBottomOf="@id/pitch_ic_gamf"
+                app:layout_constraintStart_toEndOf="@id/pitch_ic_gamf"
+                android:layout_width="80dp"
+                android:layout_height="0dp"
+                android:id="@+id/pitch_tv_gamf"
+                android:text="Asphalt"
+                style="@style/ProfileFrag_TextView"
+                />
+
+            <ImageView
+                android:tag="@string/next_game_tag"
+                android:id="@+id/next_date_ic_gamf"
+                style="@style/GroupFrag_ImageView"
+                android:src="@drawable/calendar"
+                app:layout_constraintStart_toEndOf="@id/pitch_tv_gamf"
+                app:layout_constraintTop_toBottomOf="@id/next_game_tv_gamf" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:tag="@string/next_game_tag"
+                app:layout_constraintTop_toTopOf="@id/next_date_ic_gamf"
+                app:layout_constraintBottom_toBottomOf="@id/next_date_ic_gamf"
+                app:layout_constraintStart_toEndOf="@id/next_date_ic_gamf"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="19:30, Mon, Jul 1"
+                style="@style/ProfileFrag_TextView"/>
+
+            <ImageView
+                android:tag="@string/next_game_tag"
+                android:id="@+id/price_ic_gamf"
+                app:layout_constraintTop_toBottomOf="@id/pitch_ic_gamf"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/pitch_ic_gamf"
+                style="@style/GroupFrag_ImageView"
+                android:src="@drawable/price"/>
+
+            <TextView
+                android:tag="@string/next_game_tag"
+                android:id="@+id/price_tv_gamf"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="0dp"
+                app:layout_constraintStart_toStartOf="@id/pitch_tv_gamf"
+                app:layout_constraintEnd_toEndOf="@id/pitch_tv_gamf"
+                app:layout_constraintTop_toTopOf="@id/price_ic_gamf"
+                app:layout_constraintBottom_toBottomOf="@id/price_ic_gamf"
+                android:text="25 $"
+                style="@style/ProfileFrag_TextView"
+                />
+
+            <ImageView
+                android:tag="@string/next_game_tag"
+                android:id="@+id/next_loc_ic_gamf"
+                style="@style/GroupFrag_ImageView"
+                android:src="@drawable/map"
+                app:layout_constraintStart_toEndOf="@id/price_tv_gamf"
+                app:layout_constraintTop_toBottomOf="@id/next_date_ic_gamf" />
+
+            <TextView
+                android:tag="@string/next_game_tag"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                style="@style/ProfileFrag_TextView"
+                app:layout_constraintStart_toEndOf="@id/next_loc_ic_gamf"
+                app:layout_constraintTop_toTopOf="@id/next_loc_ic_gamf"
+                app:layout_constraintBottom_toBottomOf="@id/next_loc_ic_gamf"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="@string/location_not_set"
+                />
+        </android.support.constraint.ConstraintLayout>
+        <!--end next game section-->
+    </FrameLayout>
+    <!--current match section-->
+
+    <LinearLayout
+        android:id="@+id/current_game_lay_gamf"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/current_game_tv_gamf"
+            android:text="Current Match"
+            style="@style/Title_TextView"
+            android:tag="@string/next_game_tag"
+            />
+        <LinearLayout
+            android:id="@+id/timer_lay_gamf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+            <ImageButton
+                android:id="@+id/start_timer_gamf"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+            <TextView
+                android:text="00 : 00"
+                style="@style/Timer_view"
+                android:layout_weight="6"/>
+
+            <ImageButton
+                android:id="@+id/reset_timer_gamf"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+
+        </LinearLayout>
+        <TextView
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/score_tv_gamf"
+            android:text="Score"
+            style="@style/Title_TextView"
+            android:tag="@string/next_game_tag" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:columnOrderPreserved="true"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
+            >
+
+            <TextView
+                android:id="@+id/right_team_name_gamf"
+                style="@style/Score_TeamName_TextView"
+                android:textColor="@color/colorAccent"
+                android:text="Away"
+                android:layout_column="2"
+                android:layout_row="0"
+                />
+            <TextView
+                android:id="@+id/left_team_name_gamf"
+                style="@style/Score_TeamName_TextView"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="Home"
+                android:layout_column="0"
+                android:layout_row="0"
+                />
+            <ImageView
+                android:layout_column="1"
+                android:layout_row="1"
+                android:layout_columnWeight="1"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:src="@drawable/minus"/>
+            <Button
+                android:layout_column="0"
+                android:layout_row="1"
+                android:text="1"
+                android:textSize="40dp"
+                android:background="@drawable/shape_settings"
+                android:id="@+id/home_score_btn_gamf"
+                android:layout_gravity="center"/>
+            <Button
+                android:id="@+id/away_score_btn_gamf"
+                android:layout_column="2"
+                android:layout_row="1"
+                android:text="2"
+                android:textSize="40dp"
+                android:background="@drawable/shape_news"
+                android:layout_gravity="center"/>
+
+
+
+
+        </GridLayout>
+
+
+    </LinearLayout>
+    <!--end current match section-->
+
+
+
+</LinearLayout>

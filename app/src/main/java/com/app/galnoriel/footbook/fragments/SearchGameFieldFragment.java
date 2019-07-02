@@ -6,9 +6,11 @@ import android.location.Location;
 
 import com.app.galnoriel.footbook.maps.GetNearByPlaces;
 import com.google.android.gms.dynamic.IFragmentWrapper;
+import com.google.android.gms.dynamic.IObjectWrapper;
 import com.google.android.gms.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -27,6 +29,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -34,6 +37,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -61,11 +65,8 @@ public class SearchGameFieldFragment extends Fragment implements OnMapReadyCallb
         ImageButton searchFieldsIB = view.findViewById(R.id.serach_fields_ib);
 
         if (Build.VERSION.SDK_INT >= 23){
-
             checkLocationPermission();
         }
-
-
         mapView = view.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
@@ -134,23 +135,24 @@ public class SearchGameFieldFragment extends Fragment implements OnMapReadyCallb
     @Override
     public void onLocationChanged(Location location) {
 
-         latitude = location.getLatitude();
-         longtitude = location.getLongitude();
-         lastLocation = location;
+        latitude = location.getLatitude();
+        longtitude = location.getLongitude();
+        lastLocation = location;
 
         if (marker != null){
 
             marker.remove();
         }
 
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current location");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+
         marker = map.addMarker(markerOptions);
         map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        map.animateCamera(CameraUpdateFactory.zoomBy(10));
+        map.animateCamera(CameraUpdateFactory.zoomTo(15));
 
         if (client != null){
 
@@ -180,7 +182,7 @@ public class SearchGameFieldFragment extends Fragment implements OnMapReadyCallb
         map = googleMap;
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            
+
             buildGoogleApiClient();
             map.setMyLocationEnabled(true);
         }
