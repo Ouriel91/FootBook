@@ -1,5 +1,6 @@
 package com.app.galnoriel.footbook;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
@@ -16,6 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.app.galnoriel.footbook.adapters.SectionsAdapter;
 import com.app.galnoriel.footbook.fragments.ProfileFragment;
@@ -152,8 +155,8 @@ public class MainActivity extends AppCompatActivity
         passwordConfirmLayout = dialogSignView.findViewById(R.id.password_confirm_layout);
         regionLayout = dialogSignView.findViewById(R.id.region_layout);
 
-        Button signUpBtn = dialogSignView.findViewById(R.id.sign_up_btn_logdia);
-        Button signInBtn = dialogSignView.findViewById(R.id.sign_in_btn_logdia);
+        Button signUpBtn = dialogSignView.findViewById(R.id.sign_up_btn);
+        Button signInBtn = dialogSignView.findViewById(R.id.sign_in_btn);
 
         if (id == R.id.sign_up) {
 
