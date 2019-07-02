@@ -155,8 +155,8 @@ public class MainActivity extends AppCompatActivity
         passwordConfirmLayout = dialogSignView.findViewById(R.id.password_confirm_layout);
         regionLayout = dialogSignView.findViewById(R.id.region_layout);
 
-        Button signUpBtn = dialogSignView.findViewById(R.id.sign_up_btn);
-        Button signInBtn = dialogSignView.findViewById(R.id.sign_in_btn);
+        Button signUpBtn = dialogSignView.findViewById(R.id.sign_up_btn_logdia);
+        Button signInBtn = dialogSignView.findViewById(R.id.sign_in_btn_logdia);
 
         if (id == R.id.sign_up) {
 
