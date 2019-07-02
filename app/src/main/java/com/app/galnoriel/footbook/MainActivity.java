@@ -2,6 +2,9 @@ package com.app.galnoriel.footbook;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.ViewPager;
@@ -18,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.galnoriel.footbook.adapters.SectionsAdapter;
@@ -25,7 +30,12 @@ import com.app.galnoriel.footbook.fragments.ProfileFragment;
 import com.app.galnoriel.footbook.fragments.GroupFragment;
 import com.app.galnoriel.footbook.fragments.GameFragment;
 import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.regex.Pattern;
 
@@ -35,11 +45,13 @@ public class MainActivity extends AppCompatActivity
     private SectionsAdapter sectionsAdapter;
     private ViewPager viewPager;
 
-    TextInputLayout emailLayout;
-    TextInputLayout userNameLayout;
-    TextInputLayout passwordLayout;
-    TextInputLayout passwordConfirmLayout;
-    TextInputLayout regionLayout;
+    private TextInputLayout emailLayout;
+    private TextInputLayout userNameLayout;
+    private TextInputLayout passwordLayout;
+    private TextInputLayout passwordConfirmLayout;
+    private TextInputLayout regionLayout;
+    private NavigationView navigationView;
+    private CoordinatorLayout coordinatorLayout;
 
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
@@ -60,18 +72,70 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//region toolbar drawer layout navigation view coordinator
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        coordinatorLayout = findViewById(R.id.coordinator_layout);
+//endregion
+
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                View headerView = navigationView.getHeaderView(0);
+
+                TextView loginTV = headerView.findViewById(R.id.login_tv);
+                TextView userLoginTV = headerView.findViewById(R.id.user_login_tv);
+
+                final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+
+                if (currentUser != null){ //sign up or sign in
+
+                    if (userName != null){
+
+                        currentUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName).build())
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                        userName = null; //user registrated
+
+                                        if (task.isSuccessful()){
+                                            Snackbar.make(coordinatorLayout, currentUser.getDisplayName() + " Wellcome",Snackbar.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                    }
+
+                    loginTV.setText("Wellcom!!!");
+                    userLoginTV.setText(currentUser.getDisplayName());
+                    navigationView.getMenu().findItem(R.id.sign_in).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.sign_up).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.sign_out).setVisible(true);
+                }
+                else { //sign out
+
+
+                    loginTV.setText("Please Log in");
+                    userLoginTV.setText("We are waiting for you");
+                    navigationView.getMenu().findItem(R.id.sign_in).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.sign_up).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.sign_out).setVisible(false);
+
+                }
+
+            }
+        };
 
 //region viewpager
         sectionsAdapter = new SectionsAdapter(getSupportFragmentManager());
@@ -94,6 +158,7 @@ public class MainActivity extends AppCompatActivity
             tabLayout.getTabAt(i).setIcon(imageResID[i]);
         }
 //endregion
+
 
 
     }
@@ -155,33 +220,60 @@ public class MainActivity extends AppCompatActivity
         passwordConfirmLayout = dialogSignView.findViewById(R.id.password_confirm_layout);
         regionLayout = dialogSignView.findViewById(R.id.region_layout);
 
-        Button signUpBtn = dialogSignView.findViewById(R.id.sign_up_btn_logdia);
-        Button signInBtn = dialogSignView.findViewById(R.id.sign_in_btn_logdia);
+        ImageButton signUpBtn = dialogSignView.findViewById(R.id.sign_up_btn_logdia);
+        ImageButton signInBtn = dialogSignView.findViewById(R.id.sign_in_btn_logdia);
 
         if (id == R.id.sign_up) {
 
+            builder.setView(dialogSignView);
 
-
-            builder.setView(dialogSignView).show();
+            final AlertDialog alertDialog = builder.create();
 
             signUpBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     if (!validateEmail(emailLayout) | !validateUserName(userNameLayout) |
                             !validatePassword(passwordLayout,passwordConfirmLayout)){
                         return;
                     }
+                    //else?
+
+                    String email = emailLayout.getEditText().getText().toString();
+                    String password = passwordLayout.getEditText().getText().toString();
+                    userName = userNameLayout.getEditText().getText().toString();
+
+                    firebaseAuth.createUserWithEmailAndPassword(email,password)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                                    if (task.isSuccessful()){
+
+                                        Snackbar.make(coordinatorLayout, "Sign up successful", Snackbar.LENGTH_SHORT).show();
+                                    }
+                                    else {
+
+                                        Snackbar.make(coordinatorLayout, "Sign up failed", Snackbar.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                    alertDialog.dismiss();
                 }
             });
 
-            //Button positiveButton = builder.getButton()
-
+            alertDialog.show();
         } else if (id == R.id.sign_in) {
 
+            //change dialog
+
+            //builder.setView(dialogSignView).show(); - again?
         }
 
         else if (id == R.id.sign_out) {
 
+            Snackbar.make(coordinatorLayout, "Sign out", Snackbar.LENGTH_SHORT).show();
             firebaseAuth.signOut();
         }
         else if (id == R.id.nav_share) {
@@ -212,6 +304,20 @@ public class MainActivity extends AppCompatActivity
             emailLayout.setError(null);
             return true;
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        firebaseAuth.addAuthStateListener(authStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        firebaseAuth.removeAuthStateListener(authStateListener);
     }
 
     private boolean validateUserName(TextInputLayout userNameLayout) {
