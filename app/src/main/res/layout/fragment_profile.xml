@@ -17,7 +17,7 @@
         android:layout_height="150dp"
         android:id="@+id/thumbnail_prf"
         android:src="@drawable/thumbnail"
-        android:background="@color/appbarbackground"/>
+        android:background="@color/appbar_background"/>
 
     <ImageView
         android:id="@+id/msg_btn_prf"

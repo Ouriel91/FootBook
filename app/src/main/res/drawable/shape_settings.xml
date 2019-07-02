@@ -23,9 +23,9 @@
                 />
             <gradient
                 android:angle="135"
-                android:endColor="@color/weather_gradient_end"
+                android:endColor="@color/gradient_end"
                 android:startColor="@color/yellowish"
-                android:centerColor="@color/weather_gradient_start"
+                android:centerColor="@color/gradient_start"
                 android:type="linear" />
 
         </shape>

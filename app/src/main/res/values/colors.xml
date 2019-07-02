@@ -5,13 +5,13 @@
     <color name="colorAccent">#FF8A65</color>
     <color name="grayTextColor">#686868</color>
     <color name="primaryTextView">#000000</color>
-    <color name="appbarbackground">#C3E7FC</color>
+    <color name="appbar_background">#C3E7FC</color>
     <color name="team_avatar_background">#A4E8F5E9</color>
     <color name="category_background">#90d0f0fa</color>
     <color name="lists_background">#0A8B8BA3</color>
     <color name="yellowish">#B9FFF176</color>
-    <color name="weather_gradient_start">#C6BBDEFB</color>
-    <color name="weather_gradient_end">#64B5F6</color>
+    <color name="gradient_start">#C6BBDEFB</color>
+    <color name="gradient_end">#64B5F6</color>
     <color name="linear_center">#B4EAEBEC</color>
     <color name="linear_start" >#F1F8E9</color>
     <color name="linear_end" > #FFF </color>

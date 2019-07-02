@@ -21,54 +21,54 @@
 
         <EditText
             android:id="@+id/email_logdia"
-            style="@style/Login_Dialog.EditText"
+            style="@style/Login_Dialog_EditText"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
             />
 
         <EditText
             android:id="@+id/first_name_logdia"
-            style="@style/Login_Dialog.EditText"
-            android:hint="@string/first_name"
+            style="@style/Login_Dialog_EditText"
+            android:hint="@string/full_name"
             android:inputType="textCapWords"
             />
 
         <EditText
             android:id="@+id/surname_logdia"
-            style="@style/Login_Dialog.EditText"
+            style="@style/Login_Dialog_EditText"
             android:hint="@string/surname"
             android:inputType="textCapWords"
             />
 
         <EditText
             android:id="@+id/password_logdia"
-            style="@style/Login_Dialog.EditText"
+            style="@style/Login_Dialog_EditText"
             android:hint="@string/password"
             android:inputType="textPassword"
             />
 
         <EditText
             android:id="@+id/conf_password_logdia"
-            style="@style/Login_Dialog.EditText"
+            style="@style/Login_Dialog_EditText"
             android:hint="@string/conf_password"
             android:inputType="textPassword"
             />
 
         <EditText
             android:id="@+id/region_logdia"
-            style="@style/Login_Dialog.EditText"
+            style="@style/Login_Dialog_EditText"
             android:hint="Where From?"
             android:inputType="textAutoComplete"
             />
     </LinearLayout>
         <ImageButton
             style="@style/Login_Dialog_Button"
-            android:id="@+id/signin_btn_logdia"
+            android:id="@+id/sign_up_btn_logdia"
             android:background="@color/colorAccent"
             />
         <ImageButton
             style="@style/Login_Dialog_Button"
-            android:id="@+id/signup_btn_logdia"
+            android:id="@+id/sign_in_btn_logdia"
             android:background="@color/colorPrimary"
             />
 

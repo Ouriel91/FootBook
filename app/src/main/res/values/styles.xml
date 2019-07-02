@@ -63,12 +63,12 @@
 
     </style>
 
-    <style name="Login_Dialog_EditText">
+    <style name="Login_Dialog_TextLayout">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">15dp</item>
-        <item name="android:layout_marginStart">40dp</item>
-        <item name="android:layout_marginEnd">40dp</item>
+        <!--<item name="android:background">@android:color/transparent</item>-->
+        <item name="android:paddingStart">40dp</item>
+        <item name="android:paddingEnd">40dp</item>
         <item name="android:textSize">24sp</item>
         <item name="android:gravity">center</item>
     </style>
@@ -79,6 +79,16 @@
         <item name="android:layout_marginTop">30dp</item>
         <item name="android:layout_marginHorizontal">100dp</item>
         <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Login_Dialog_EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <!--<item name="android:background">@android:color/transparent</item>-->
+        <item name="android:paddingStart">40dp</item>
+        <item name="android:paddingEnd">40dp</item>
         <item name="android:textSize">24sp</item>
         <item name="android:gravity">center</item>
     </style>

@@ -12,8 +12,10 @@
     <string name="location_not_set">Location not set</string>
     <string name="next_game_tag">next_game</string>
     <string name="email">E-Mail address</string>
-    <string name="first_name">First Name</string>
+    <string name="full_name">Full Name</string>
     <string name="surname">Last Name</string>
+    <string name="first_name">First Name</string>
     <string name="password">Password</string>
     <string name="conf_password">Confirm Password</string>
+    <string name="where_from">Where from?</string>
 </resources>
