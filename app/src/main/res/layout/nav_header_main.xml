@@ -32,6 +32,6 @@
         android:id="@+id/user_login_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="We wait for you" />
+        android:text="We are waiting for you" />
 
 </LinearLayout>
