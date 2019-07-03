@@ -143,17 +143,23 @@
                 android:id="@+id/start_timer_gamf"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:src="@drawable/play"
+                android:scaleType="fitCenter"
+                android:background="@android:color/transparent"/>
             <TextView
                 android:text="00 : 00"
                 style="@style/Timer_view"
-                android:layout_weight="6"/>
+                android:layout_weight="3"/>
 
             <ImageButton
                 android:id="@+id/reset_timer_gamf"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/repeat"
+                android:scaleType="fitCenter"/>
 
 
         </LinearLayout>
