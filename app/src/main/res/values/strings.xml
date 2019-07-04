@@ -18,4 +18,6 @@
     <string name="password">Password</string>
     <string name="conf_password">Confirm Password</string>
     <string name="where_from">Where from?</string>
+    <string name="team_name">Team Name</string>
+    <string name="next_game_date">Next Game Date</string>
 </resources>

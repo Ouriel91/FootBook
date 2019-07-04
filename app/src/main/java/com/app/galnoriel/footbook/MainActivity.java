@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
                     //"(?=.*[a-z])" +         //at least 1 lower case letter
-                    //"(?=.*[A-Z])" +         //at least 1 upper case letter
+                    "(?=.*[A-Z])" +         //at least 1 upper case letter
                     "(?=.*[a-zA-Z0-9])" +      //any letter
-                    "(?=.*[@#$%^&+=])" +    //at least 1 special character
+//                    "(?=.*[@#$%^&+=])" +    //at least 1 special character
                     "(?=\\S+$)" +           //no white spaces
                     ".{6,}" +               //at least 6 characters
                     "$");
@@ -108,13 +108,13 @@ public class MainActivity extends AppCompatActivity
                                         userName = null; //user registrated
 
                                         if (task.isSuccessful()){
-                                            Snackbar.make(coordinatorLayout, currentUser.getDisplayName() + " Wellcome",Snackbar.LENGTH_SHORT).show();
+                                            Snackbar.make(coordinatorLayout, currentUser.getDisplayName() + " Welcome",Snackbar.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
                     }
 
-                    loginTV.setText("Wellcom!!!");
+                    loginTV.setText("Welcome!!!");
                     userLoginTV.setText(currentUser.getDisplayName());
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(false);
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(false);
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(viewPager);
 
         int[] imageResID = {
-                R.drawable.thumbnail,
+                R.drawable.player_avatar,
                 R.drawable.team_avatar,
                 R.drawable.match_ic_tab,
                 R.drawable.map_ic_tab
@@ -400,12 +400,12 @@ public class MainActivity extends AppCompatActivity
             passwordLayout.setError("Field cannot be empty");
             return false;
         }else if(!PASSWORD_PATTERN.matcher(password).matches()){
-            passwordLayout.setError("Give password at least 6 six characters with one special character");
+            passwordLayout.setError("Password must be at least 6 six characters with one capital letter");
             return false;
         }
         else if (PASSWORD_PATTERN.matcher(password).matches() && !password.equals(confirmPassword)){
             passwordLayout.setError(null);
-            passwordConfirmLayout.setError("Miss match between two passwords");
+            passwordConfirmLayout.setError("Mismatch between two passwords");
             return false;
         }
         else {

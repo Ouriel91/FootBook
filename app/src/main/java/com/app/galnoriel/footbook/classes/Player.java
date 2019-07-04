@@ -6,6 +6,7 @@ public class Player {
     private int _id;
     private String name,whereFrom,position,pitch, wherePlay,picture;
     private ArrayList<GroupPlay> groups;
+    private Game next_game;
 
     //region functions
     public void removeGroup(GroupPlay group){
@@ -40,9 +41,31 @@ public class Player {
         this.groups = groups;
         this.picture = picture;
     }
+
+    public Player(int _id, String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<GroupPlay> groups, Game next_game) {
+        this._id = _id;
+        this.name = name;
+        this.whereFrom = whereFrom;
+        this.position = position;
+        this.pitch = pitch;
+        this.wherePlay = wherePlay;
+        this.picture = picture;
+        this.groups = groups;
+        this.next_game = next_game;
+    }
     //endregion
 
     //region getters and setters
+
+
+    public Game getNext_game() {
+        return next_game;
+    }
+
+    public void setNext_game(Game next_game) {
+        this.next_game = next_game;
+    }
+
     public String getPicture() {
         return picture;
     }

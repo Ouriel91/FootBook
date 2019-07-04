@@ -139,18 +139,16 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp">
-            <ImageButton
+
+            <ToggleButton
                 android:id="@+id/start_timer_gamf"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:src="@drawable/play"
-                android:scaleType="fitCenter"
-                android:background="@android:color/transparent"/>
+                android:layout_margin="5dp"
+                style="@style/Timer_Settings_Toggle"/>
             <TextView
                 android:text="00 : 00"
                 style="@style/Timer_view"
-                android:layout_weight="3"/>
+                android:layout_weight="2"/>
 
             <ImageButton
                 android:id="@+id/reset_timer_gamf"
@@ -158,8 +156,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:src="@drawable/repeat"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
+                android:src="@drawable/repeat" />
 
 
         </LinearLayout>
@@ -193,7 +191,7 @@
             <TextView
                 android:id="@+id/left_team_name_gamf"
                 style="@style/Score_TeamName_TextView"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/colorPrimary"
                 android:text="Home"
                 android:layout_column="0"
                 android:layout_row="0"
@@ -209,16 +207,16 @@
             <Button
                 android:layout_column="0"
                 android:layout_row="1"
-                android:text="1"
+                android:text="0"
                 android:textSize="40dp"
                 android:background="@drawable/shape_settings"
-                android:id="@+id/home_score_btn_gamf"
+                android:id="@+id/left_score_btn_gamf"
                 android:layout_gravity="center"/>
             <Button
-                android:id="@+id/away_score_btn_gamf"
+                android:id="@+id/right_score_btn_gamf"
                 android:layout_column="2"
                 android:layout_row="1"
-                android:text="2"
+                android:text="0"
                 android:textSize="40dp"
                 android:background="@drawable/shape_news"
                 android:layout_gravity="center"/>

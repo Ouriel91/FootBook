@@ -16,7 +16,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:id="@+id/thumbnail_prf"
-        android:src="@drawable/thumbnail"
+        android:src="@drawable/player_avatar"
         android:background="@color/appbar_background"/>
 
     <ImageView

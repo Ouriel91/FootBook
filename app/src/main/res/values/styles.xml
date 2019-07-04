@@ -114,5 +114,16 @@
         <item name="android:layout_columnWeight">2</item>
     </style>
 
+    <style name="Timer_Settings_Toggle" parent="android:Widget">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">@drawable/timer_toggle_layers</item>
+        <item name="android:disabledAlpha">?android:attr/disabledAlpha</item>
+        <item name="android:textOn"></item>
+        <item name="android:textOff"></item>
+    </style>
+
 
 </resources>

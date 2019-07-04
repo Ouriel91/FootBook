@@ -16,4 +16,6 @@
     <color name="linear_start" >#F1F8E9</color>
     <color name="linear_end" > #FFF </color>
     <color name="linear_border" >#475347</color>
+    <color name="tranparent_back">#D7FFFFFF</color>
+    <color name="tranparent_back_view">#2CB3B3B3</color>
 </resources>
