@@ -88,6 +88,11 @@ public class MainActivity extends AppCompatActivity
         coordinatorLayout = findViewById(R.id.coordinator_layout);
 //endregion
 
+        //region Layout and views assignment
+
+        //endregio
+
+
 //region firebase login
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -99,13 +104,13 @@ public class MainActivity extends AppCompatActivity
 
                 final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 if (currentUser != null){ //sign up or sign in
-                    sharedPref.putString(sharedPref.USER_ID,currentUser.getUid());
+                    sharedPref.setUserId(currentUser.getUid());
                     if (userName != null){
                         currentUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName).build())
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        userName = null; //user registrated
+                                        userName = null; //user already registered
                                         if (task.isSuccessful()){
                                             Snackbar.make(coordinatorLayout, currentUser.getDisplayName() + " Welcome",Snackbar.LENGTH_SHORT).show();
                                         }
@@ -120,6 +125,8 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.sign_out).setVisible(true);
                 }
                 else { //sign out
+                    sharedPref.removeCurrentUserInfo();
+
                     loginTV.setText("Please Log in");
                     userLoginTV.setText("We are waiting for you");
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(true);
