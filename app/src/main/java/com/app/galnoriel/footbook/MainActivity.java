@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity
 
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseAuth.AuthStateListener authStateListener;
-    String userName;
+    String userName; //will be fetched from layout on signup Dialog
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,20 +97,20 @@ public class MainActivity extends AppCompatActivity
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                View headerView = navigationView.getHeaderView(0);
+                View headerView = navigationView.getHeaderView(0); //title of drawer
                 TextView loginTV = headerView.findViewById(R.id.login_tv);
                 TextView userLoginTV = headerView.findViewById(R.id.user_login_tv);
 
                 final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                if (currentUser != null){ //sign up or sign in
+
+                if (currentUser != null){ //already logged in
                     sharedPref.setUserId(currentUser.getUid());
-                    if (userName != null){
+                    if (userName != null){ //currently signing up
                         currentUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName).build())
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        userName = null; //user already registered
+                                        userName = null; //username = null means user is signing in , not singup
                                         if (task.isSuccessful()){
                                             Snackbar.make(coordinatorLayout, currentUser.getDisplayName() + " Welcome",Snackbar.LENGTH_SHORT).show();
                                         }
@@ -124,9 +124,9 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(false);
                     navigationView.getMenu().findItem(R.id.sign_out).setVisible(true);
                 }
+
                 else { //sign out
                     sharedPref.removeCurrentUserInfo();
-
                     loginTV.setText("Please Log in");
                     userLoginTV.setText("We are waiting for you");
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(true);
@@ -165,7 +165,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setupViewPager(ViewPager viewPager) {
-
         SectionsAdapter adapter = new SectionsAdapter(getSupportFragmentManager());
         adapter.addFragment(new ProfileFragment());
         adapter.addFragment(new GroupFragment());
@@ -225,7 +224,6 @@ public class MainActivity extends AppCompatActivity
         ImageButton signInBtn = dialogSignView.findViewById(R.id.sign_in_btn_logdia);
 
         if (id == R.id.sign_up) {
-
             signInBtn.setVisibility(View.GONE);
             signUpBtn.setVisibility(View.VISIBLE);
             emailLayout.setVisibility(View.VISIBLE);
@@ -265,7 +263,7 @@ public class MainActivity extends AppCompatActivity
             });
 
             alertDialog.show();
-        } else if (id == R.id.sign_in) {
+        } else if (id == R.id.sign_in) { //signing in
             signInBtn.setVisibility(View.VISIBLE);
             signUpBtn.setVisibility(View.GONE);
             userNameLayout.setVisibility(View.GONE);
@@ -282,8 +280,6 @@ public class MainActivity extends AppCompatActivity
                     if (!validateEmail(emailLayout) | !validatePasswordSignIn()){
                         return;
                     }
-
-
                     firebaseAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
@@ -301,9 +297,8 @@ public class MainActivity extends AppCompatActivity
             });
             alertDialog.show();
         }
-        else if (id == R.id.sign_out) {
+        else if (id == R.id.sign_out) { //signing out
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-
             Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
             firebaseAuth.signOut();
         }
