@@ -21,15 +21,15 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
 
     public MembersListAdapter(Context mContext, List<Player> playerList) {
         this.playerList = playerList;
-        this.mContext = mContext;
+        this.mContext = mContext; //context to inflate in MembersViewHolder
     }
-
 
 
     @NonNull
     @Override
     public MembersViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
+        //inflate layout of card view and store it in viewHolder
         View view = LayoutInflater.from(mContext).inflate(R.layout.members_list_card, viewGroup, false);
         MembersViewHolder holder = new MembersViewHolder(view);
         return holder;
@@ -44,7 +44,9 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
 
         membersViewHolder.nameMemberCardTV.setText(memberName);
 
-
+        //need to replace with url to firebase and load the image with glide or picasso
+        membersViewHolder.playerAvatarMemberCardIV.setImageResource(R.drawable.player_avatar);
+        membersViewHolder.positionMemberCardIV.setImageResource(R.drawable.goalkeeper);
 
     }
 
@@ -55,15 +57,16 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
 
     public class MembersViewHolder extends RecyclerView.ViewHolder{
 
+        //fields in recycler view that referenced to viewHolder
         public TextView nameMemberCardTV;
-        public ImageView positionMeberCardIV, playerAvatarMemberCardIV;
+        public ImageView positionMemberCardIV, playerAvatarMemberCardIV;
 
         public MembersViewHolder(@NonNull View itemView) {
             super(itemView);
 
             nameMemberCardTV = itemView.findViewById(R.id.name_member_card);
             playerAvatarMemberCardIV = itemView.findViewById(R.id.avatar_player_member_card);
-            positionMeberCardIV = itemView.findViewById(R.id.position_member_card);
+            positionMemberCardIV = itemView.findViewById(R.id.position_member_card);
         }
     }
 }

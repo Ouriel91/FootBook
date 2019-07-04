@@ -11,6 +11,7 @@ public class Player {
     private ArrayList<GroupPlay> groups;
     private Game next_game;
 
+
     //region functions
     public void removeGroup(GroupPlay group){
         groups.remove(group);
