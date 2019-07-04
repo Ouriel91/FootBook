@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.app.galnoriel.footbook.R;
 import com.app.galnoriel.footbook.classes.Player;
@@ -36,6 +38,14 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
     @Override
     public void onBindViewHolder(@NonNull MembersViewHolder membersViewHolder, int i) {
 
+        Player player = playerList.get(i);
+
+        String memberName = player.getName();
+
+        membersViewHolder.nameMemberCardTV.setText(memberName);
+
+
+
     }
 
     @Override
@@ -45,8 +55,15 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
 
     public class MembersViewHolder extends RecyclerView.ViewHolder{
 
+        public TextView nameMemberCardTV;
+        public ImageView positionMeberCardIV, playerAvatarMemberCardIV;
+
         public MembersViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            nameMemberCardTV = itemView.findViewById(R.id.name_member_card);
+            playerAvatarMemberCardIV = itemView.findViewById(R.id.avatar_player_member_card);
+            positionMeberCardIV = itemView.findViewById(R.id.position_member_card);
         }
     }
 }
