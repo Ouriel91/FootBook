@@ -233,7 +233,7 @@
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/members_title_lin_grf"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        android:id="@+id/group_rv"/>
 
 </android.support.constraint.ConstraintLayout>
 
