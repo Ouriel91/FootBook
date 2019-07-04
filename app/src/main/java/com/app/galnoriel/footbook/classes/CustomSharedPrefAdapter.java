@@ -48,9 +48,11 @@ public class CustomSharedPrefAdapter {
                 .remove(USER_POSITION).remove(USER_PITCH).remove(USER_WHERE_PLAY)
                 .remove(USER_PICTURE).remove(USER_GROUPS).apply();
     }
+
     public void setUserId(String currentUserId){
         putString(USER_ID,currentUserId);
     }
+
     public CustomSharedPrefAdapter(Context context) { //constructor
         this.context = context;
         this.sharedPreferences = context.getSharedPreferences(PREFS_NAME,context.MODE_PRIVATE);

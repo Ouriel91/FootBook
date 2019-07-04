@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.app.galnoriel.footbook.R;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.provider.FirebaseInitProvider;
 
 public class ProfileFragment extends Fragment {
     //all layout ids end with ' prf ' (for PRofile Fragment)
@@ -25,11 +27,11 @@ public class ProfileFragment extends Fragment {
         view.findViewById(R.id.groups_title_lay_prf).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 joinGroup();
             }
         });
         //endregion
+        
 
         return view;
     }

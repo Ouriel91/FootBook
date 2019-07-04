@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,22 +25,29 @@ import android.widget.Toast;
 
 import com.app.galnoriel.footbook.adapters.SectionsAdapter;
 import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
+import com.app.galnoriel.footbook.classes.Player;
 import com.app.galnoriel.footbook.fragments.ProfileFragment;
 import com.app.galnoriel.footbook.fragments.GroupFragment;
 import com.app.galnoriel.footbook.fragments.GameFragment;
 import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+    //region global declarations
     private SectionsAdapter sectionsAdapter;
     private ViewPager viewPager;
     private TextInputLayout emailLayout;
@@ -51,7 +59,6 @@ public class MainActivity extends AppCompatActivity
     private CoordinatorLayout coordinatorLayout;
     private AlertDialog alertDialog;
     private CustomSharedPrefAdapter sharedPref;
-
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
@@ -66,13 +73,29 @@ public class MainActivity extends AppCompatActivity
     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     FirebaseAuth.AuthStateListener authStateListener;
     String userName; //will be fetched from layout on signup Dialog
+//endregion
+    //region decleration for user database
+
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         sharedPref = new CustomSharedPrefAdapter(this);
-//region toolbar drawer layout navigation view coordinator
+        //region fire store testing
+        Player test = new Player(sharedPref.getUserId(),"New Player","Moon");
+        db.collection(GlobConst.DB_USER_TABLE).document(test.get_id()).set(test.toHashMap());
+        //endregion
+
+
+
+
+
+
+
+    //region toolbar drawer layout navigation view coordinator
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -90,7 +113,7 @@ public class MainActivity extends AppCompatActivity
 
         //region Layout and views assignment
 
-        //endregio
+        //endregion
 
 
 //region firebase login
@@ -161,6 +184,10 @@ public class MainActivity extends AppCompatActivity
 //endregion
 
 
+
+    }
+
+    private void updateUserDataBase(){
 
     }
 

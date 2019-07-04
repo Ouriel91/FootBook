@@ -1,10 +1,13 @@
 package com.app.galnoriel.footbook.classes;
 
+import com.app.galnoriel.footbook.GlobConst;
+import com.app.galnoriel.footbook.MainActivity;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Player {
-    private int _id;
-    private String name,whereFrom,position,pitch, wherePlay,picture;
+    private String _id,name,whereFrom,position,pitch, wherePlay,picture;
     private ArrayList<GroupPlay> groups;
     private Game next_game;
 
@@ -17,10 +20,46 @@ public class Player {
     public void addGroup(GroupPlay group){
         groups.add(group);
     }
+
+    public HashMap<String,Object> toHashMap(){
+        HashMap<String, Object> user = new HashMap<>();
+        user.put(GlobConst.DB_USER_NAME, getName());
+        user.put(GlobConst.DB_USER_WHEREFROM, getWhereFrom());
+        user.put(GlobConst.DB_USER_POSITION, getPosition());
+        user.put(GlobConst.DB_USER_PITCH, getPitch());
+        user.put(GlobConst.DB_USER_WHEREPLAY, getWherePlay());
+        user.put(GlobConst.DB_USER_PICTURE, getPicture());
+        user.put(GlobConst.DB_USER_GROUPS, getGroups());
+        return user;
+    }
     //endregion
 
     //region constructors
-    public Player(int _id, String name, String whereFrom) {
+
+
+    public Player(String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<GroupPlay> groups, Game next_game) {
+        this._id = null;
+        this.name = name;
+        this.whereFrom = whereFrom;
+        this.position = position;
+        this.pitch = pitch;
+        this.wherePlay = wherePlay;
+        this.picture = picture;
+        this.groups = groups;
+        this.next_game = next_game;
+    }
+
+    public  Player(HashMap user){
+//        String _id,name,whereFrom,position,pitch, wherePlay,picture;
+        set_id(user.get("id").toString());
+        setName(user.get("name").toString());
+        setWhereFrom(user.get("whereFrom").toString());
+        setPosition(user.get("position").toString());
+        setPitch(user.get("pitch").toString());
+        setWherePlay(user.get("wherePlay").toString());
+        setPicture(user.get("picture").toString());
+    }
+    public Player(String _id, String name, String whereFrom) {
         this._id = _id;
         this.name = name;
         this.whereFrom = whereFrom;
@@ -31,7 +70,7 @@ public class Player {
         this.picture = null;
     }
 
-    public Player(int _id, String name, String whereFrom, String position, String pitch, String wherePlay, ArrayList<GroupPlay> groups, String picture) {
+    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, ArrayList<GroupPlay> groups, String picture) {
         this._id = _id;
         this.name = name;
         this.whereFrom = whereFrom;
@@ -42,7 +81,7 @@ public class Player {
         this.picture = picture;
     }
 
-    public Player(int _id, String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<GroupPlay> groups, Game next_game) {
+    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<GroupPlay> groups, Game next_game) {
         this._id = _id;
         this.name = name;
         this.whereFrom = whereFrom;
@@ -76,11 +115,11 @@ public class Player {
 
 
 
-    public int get_id() {
+    public String get_id() {
         return _id;
     }
 
-    public void set_id(int _id) {
+    public void set_id(String _id) {
         this._id = _id;
     }
 
