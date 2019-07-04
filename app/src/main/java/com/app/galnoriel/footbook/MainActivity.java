@@ -20,8 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.galnoriel.footbook.adapters.SectionsAdapter;
+import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.fragments.ProfileFragment;
 import com.app.galnoriel.footbook.fragments.GroupFragment;
 import com.app.galnoriel.footbook.fragments.GameFragment;
@@ -40,7 +42,6 @@ public class MainActivity extends AppCompatActivity
 
     private SectionsAdapter sectionsAdapter;
     private ViewPager viewPager;
-
     private TextInputLayout emailLayout;
     private TextInputLayout userNameLayout;
     private TextInputLayout passwordLayout;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private CoordinatorLayout coordinatorLayout;
     private AlertDialog alertDialog;
+    private CustomSharedPrefAdapter sharedPref;
 
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPref = new CustomSharedPrefAdapter(this);
 //region toolbar drawer layout navigation view coordinator
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,28 +88,24 @@ public class MainActivity extends AppCompatActivity
         coordinatorLayout = findViewById(R.id.coordinator_layout);
 //endregion
 
+//region firebase login
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
                 View headerView = navigationView.getHeaderView(0);
-
                 TextView loginTV = headerView.findViewById(R.id.login_tv);
                 TextView userLoginTV = headerView.findViewById(R.id.user_login_tv);
 
                 final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-
                 if (currentUser != null){ //sign up or sign in
-
+                    sharedPref.putString(sharedPref.USER_ID,currentUser.getUid());
                     if (userName != null){
-
                         currentUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName).build())
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-
                                         userName = null; //user registrated
-
                                         if (task.isSuccessful()){
                                             Snackbar.make(coordinatorLayout, currentUser.getDisplayName() + " Welcome",Snackbar.LENGTH_SHORT).show();
                                         }
@@ -121,18 +120,16 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.sign_out).setVisible(true);
                 }
                 else { //sign out
-
-
                     loginTV.setText("Please Log in");
                     userLoginTV.setText("We are waiting for you");
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(true);
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(true);
                     navigationView.getMenu().findItem(R.id.sign_out).setVisible(false);
-
                 }
 
             }
         };
+//endregion
 
 //region viewpager
         sectionsAdapter = new SectionsAdapter(getSupportFragmentManager());

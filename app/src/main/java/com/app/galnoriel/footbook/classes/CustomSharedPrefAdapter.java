@@ -3,8 +3,12 @@ package com.app.galnoriel.footbook.classes;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class CostumSharedPrefAdapter {
+
+public class CustomSharedPrefAdapter {
     private SharedPreferences sharedPreferences;
     private Context context;
 
@@ -32,13 +36,40 @@ public class CostumSharedPrefAdapter {
     //endregion
 
 
-    public CostumSharedPrefAdapter(Context context) {
+    public CustomSharedPrefAdapter(Context context) {
         this.context = context;
         this.sharedPreferences = context.getSharedPreferences(PREFS_NAME,context.MODE_PRIVATE);
     }
 
-    public SharedPreferences getPrefs(Context context){
-        return context.getSharedPreferences(PREFS_NAME,context.MODE_PRIVATE);
+    public void putString(String[] keys, String[] values){
+        for (int i=0; i < keys.length;i++)
+            sharedPreferences.edit().putString(keys[i],values[i]).apply();
+    }
+    
+    public void putString(String key , String value){
+        sharedPreferences.edit().putString(key,value).apply();
+    }
+     
+    public int getInt(String key, int defaultValue){
+       return sharedPreferences.getInt(key,defaultValue);
+    }
+    
+    public HashMap<String,String> getMapOfParams(String[] keys){
+        HashMap<String,String> values = null;
+        for (String key: keys) {
+            values.put(key,sharedPreferences.getString(key,"Not Found"));
+        }
+          return values;
+    }
+    
+    public String getString(String key , String defaultValue){
+        return sharedPreferences.getString(key,defaultValue);
+    }
+    
+    
+    
+    public void putInt(String key, int value){
+        sharedPreferences.edit().putInt(key,value).apply();
     }
 
     public void setDefaultGroup(GroupPlay g){
