@@ -81,8 +81,6 @@ public class CustomSharedPrefAdapter {
         return sharedPreferences.getString(key,defaultValue);
     }
 
-
-
     public void putInt(String key, int value){
         sharedPreferences.edit().putInt(key,value).apply();
     }
