@@ -44,16 +44,16 @@ public class ProfileFragment extends Fragment {
 
         //region list
         List<Player> players = new ArrayList<>();
-        players.add(new Player(1,"Ouriel","Modii'n"));
-        players.add(new Player(2,"Gal","Givatiim"));
-        players.add(new Player(1,"Ouriel","Modii'n"));
-        players.add(new Player(2,"Gal","Givatiim"));
-        players.add(new Player(1,"Ouriel","Modii'n"));
-        players.add(new Player(2,"Gal","Givatiim"));
-        players.add(new Player(1,"Ouriel","Modii'n"));
-        players.add(new Player(2,"Gal","Givatiim"));
-        players.add(new Player(1,"Ouriel","Modii'n"));
-        players.add(new Player(2,"Gal","Givatiim"));
+        players.add(new Player(1+"","Ouriel","Modii'n"));
+        players.add(new Player(2+"","Gal","Givatiim"));
+        players.add(new Player(1+"","Ouriel","Modii'n"));
+        players.add(new Player(2+"","Gal","Givatiim"));
+        players.add(new Player(1+"","Ouriel","Modii'n"));
+        players.add(new Player(2+"","Gal","Givatiim"));
+        players.add(new Player(1+"","Ouriel","Modii'n"));
+        players.add(new Player(2+"","Gal","Givatiim"));
+        players.add(new Player(1+"","Ouriel","Modii'n"));
+        players.add(new Player(2+"","Gal","Givatiim"));
 
 //endregion
         MembersListAdapter adapter = new MembersListAdapter(getActivity(),players);
