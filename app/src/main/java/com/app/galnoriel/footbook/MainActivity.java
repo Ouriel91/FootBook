@@ -228,15 +228,12 @@ public class MainActivity extends AppCompatActivity
 
             signInBtn.setVisibility(View.GONE);
             signUpBtn.setVisibility(View.VISIBLE);
-
             emailLayout.setVisibility(View.VISIBLE);
             userNameLayout.setVisibility(View.VISIBLE);
             passwordLayout.setVisibility(View.VISIBLE);
             passwordConfirmLayout.setVisibility(View.VISIBLE);
             regionLayout.setVisibility(View.VISIBLE);
-
             builder.setView(dialogSignView);
-
             alertDialog = builder.create();
 
             signUpBtn.setOnClickListener(new View.OnClickListener() {
@@ -247,8 +244,6 @@ public class MainActivity extends AppCompatActivity
                             !validatePasswordSignUp(passwordLayout,passwordConfirmLayout)){
                         return;
                     }
-
-
                     String email = emailLayout.getEditText().getText().toString();
                     String password = passwordLayout.getEditText().getText().toString();
                     userName = userNameLayout.getEditText().getText().toString();
@@ -257,43 +252,33 @@ public class MainActivity extends AppCompatActivity
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-
                                     if (task.isSuccessful()){
-
                                         Snackbar.make(coordinatorLayout, "Sign up successful", Snackbar.LENGTH_SHORT).show();
                                     }
                                     else {
-
                                         Snackbar.make(coordinatorLayout, "Sign up failed", Snackbar.LENGTH_SHORT).show();
                                     }
                                 }
                             });
-
                     alertDialog.dismiss();
                 }
             });
 
             alertDialog.show();
         } else if (id == R.id.sign_in) {
-
             signInBtn.setVisibility(View.VISIBLE);
             signUpBtn.setVisibility(View.GONE);
-
             userNameLayout.setVisibility(View.GONE);
             passwordConfirmLayout.setVisibility(View.GONE);
             regionLayout.setVisibility(View.GONE);
-
             builder.setView(dialogSignView);
-
             alertDialog = builder.create();
 
             signInBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     String email = emailLayout.getEditText().getText().toString();
                     String password = passwordLayout.getEditText().getText().toString();
-
                     if (!validateEmail(emailLayout) | !validatePasswordSignIn()){
                         return;
                     }
@@ -304,11 +289,9 @@ public class MainActivity extends AppCompatActivity
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()){
-
                                         Snackbar.make(coordinatorLayout, "Sign in succesfull", Snackbar.LENGTH_SHORT).show();
                                     }
                                     else {
-
                                         Snackbar.make(coordinatorLayout, "Sign in failed", Snackbar.LENGTH_SHORT).show();
                                     }
                                 }
@@ -316,12 +299,9 @@ public class MainActivity extends AppCompatActivity
                     alertDialog.dismiss();
                 }
             });
-
             alertDialog.show();
         }
-
         else if (id == R.id.sign_out) {
-
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
             Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
@@ -332,7 +312,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -343,9 +322,7 @@ public class MainActivity extends AppCompatActivity
     private boolean validateEmail(TextInputLayout emailLayout) {
 
         String emailInput = emailLayout.getEditText().getText().toString().trim();
-
         if (emailInput.isEmpty()){
-
             emailLayout.setError("Field cannot be empty");
             return false;
         }
@@ -362,45 +339,37 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-
         firebaseAuth.addAuthStateListener(authStateListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
         firebaseAuth.removeAuthStateListener(authStateListener);
     }
 
     private boolean validateUserName(TextInputLayout userNameLayout) {
 
         String usernameInput = userNameLayout.getEditText().getText().toString().trim();
-
         if (usernameInput.isEmpty()){
-
             userNameLayout.setError("Field cannot be empty");
             return false;
         }
         else if (usernameInput.length() > 20){
-
             userNameLayout.setError("User name is too long");
             return false;
         }
         else {
-
             userNameLayout.setError(null);
             return true;
         }
     }
 
     private boolean validatePasswordSignUp(TextInputLayout passwordLayout, TextInputLayout passwordConfirmLayout) {
-
         String password = passwordLayout.getEditText().getText().toString().trim();
         String confirmPassword = passwordConfirmLayout.getEditText().getText().toString().trim();
 
         if (password.isEmpty()){
-
             passwordLayout.setError("Field cannot be empty");
             return false;
         }else if(!PASSWORD_PATTERN.matcher(password).matches()){
@@ -423,10 +392,7 @@ public class MainActivity extends AppCompatActivity
     private boolean validatePasswordSignIn() {
 
         String password = passwordLayout.getEditText().getText().toString().trim();
-
-
         if (password.isEmpty()){
-
             passwordLayout.setError("Field cannot be empty");
             return false;
         }else if(!PASSWORD_PATTERN.matcher(password).matches()){
