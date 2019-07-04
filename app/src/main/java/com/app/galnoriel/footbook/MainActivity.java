@@ -20,8 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.galnoriel.footbook.adapters.SectionsAdapter;
+import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.fragments.ProfileFragment;
 import com.app.galnoriel.footbook.fragments.GroupFragment;
 import com.app.galnoriel.footbook.fragments.GameFragment;
@@ -40,7 +42,6 @@ public class MainActivity extends AppCompatActivity
 
     private SectionsAdapter sectionsAdapter;
     private ViewPager viewPager;
-
     private TextInputLayout emailLayout;
     private TextInputLayout userNameLayout;
     private TextInputLayout passwordLayout;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private CoordinatorLayout coordinatorLayout;
     private AlertDialog alertDialog;
+    private CustomSharedPrefAdapter sharedPref;
 
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPref = new CustomSharedPrefAdapter(this);
 //region toolbar drawer layout navigation view coordinator
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,28 +88,29 @@ public class MainActivity extends AppCompatActivity
         coordinatorLayout = findViewById(R.id.coordinator_layout);
 //endregion
 
+        //region Layout and views assignment
+
+        //endregio
+
+
+//region firebase login
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
                 View headerView = navigationView.getHeaderView(0);
-
                 TextView loginTV = headerView.findViewById(R.id.login_tv);
                 TextView userLoginTV = headerView.findViewById(R.id.user_login_tv);
 
                 final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-
                 if (currentUser != null){ //sign up or sign in
-
+                    sharedPref.setUserId(currentUser.getUid());
                     if (userName != null){
-
                         currentUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName).build())
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-
-                                        userName = null; //user registrated
-
+                                        userName = null; //user already registered
                                         if (task.isSuccessful()){
                                             Snackbar.make(coordinatorLayout, currentUser.getDisplayName() + " Welcome",Snackbar.LENGTH_SHORT).show();
                                         }
@@ -121,18 +125,18 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.sign_out).setVisible(true);
                 }
                 else { //sign out
-
+                    sharedPref.removeCurrentUserInfo();
 
                     loginTV.setText("Please Log in");
                     userLoginTV.setText("We are waiting for you");
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(true);
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(true);
                     navigationView.getMenu().findItem(R.id.sign_out).setVisible(false);
-
                 }
 
             }
         };
+//endregion
 
 //region viewpager
         sectionsAdapter = new SectionsAdapter(getSupportFragmentManager());
@@ -224,15 +228,12 @@ public class MainActivity extends AppCompatActivity
 
             signInBtn.setVisibility(View.GONE);
             signUpBtn.setVisibility(View.VISIBLE);
-
             emailLayout.setVisibility(View.VISIBLE);
             userNameLayout.setVisibility(View.VISIBLE);
             passwordLayout.setVisibility(View.VISIBLE);
             passwordConfirmLayout.setVisibility(View.VISIBLE);
             regionLayout.setVisibility(View.VISIBLE);
-
             builder.setView(dialogSignView);
-
             alertDialog = builder.create();
 
             signUpBtn.setOnClickListener(new View.OnClickListener() {
@@ -243,8 +244,6 @@ public class MainActivity extends AppCompatActivity
                             !validatePasswordSignUp(passwordLayout,passwordConfirmLayout)){
                         return;
                     }
-
-
                     String email = emailLayout.getEditText().getText().toString();
                     String password = passwordLayout.getEditText().getText().toString();
                     userName = userNameLayout.getEditText().getText().toString();
@@ -253,43 +252,33 @@ public class MainActivity extends AppCompatActivity
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-
                                     if (task.isSuccessful()){
-
                                         Snackbar.make(coordinatorLayout, "Sign up successful", Snackbar.LENGTH_SHORT).show();
                                     }
                                     else {
-
                                         Snackbar.make(coordinatorLayout, "Sign up failed", Snackbar.LENGTH_SHORT).show();
                                     }
                                 }
                             });
-
                     alertDialog.dismiss();
                 }
             });
 
             alertDialog.show();
         } else if (id == R.id.sign_in) {
-
             signInBtn.setVisibility(View.VISIBLE);
             signUpBtn.setVisibility(View.GONE);
-
             userNameLayout.setVisibility(View.GONE);
             passwordConfirmLayout.setVisibility(View.GONE);
             regionLayout.setVisibility(View.GONE);
-
             builder.setView(dialogSignView);
-
             alertDialog = builder.create();
 
             signInBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     String email = emailLayout.getEditText().getText().toString();
                     String password = passwordLayout.getEditText().getText().toString();
-
                     if (!validateEmail(emailLayout) | !validatePasswordSignIn()){
                         return;
                     }
@@ -300,11 +289,9 @@ public class MainActivity extends AppCompatActivity
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()){
-
                                         Snackbar.make(coordinatorLayout, "Sign in succesfull", Snackbar.LENGTH_SHORT).show();
                                     }
                                     else {
-
                                         Snackbar.make(coordinatorLayout, "Sign in failed", Snackbar.LENGTH_SHORT).show();
                                     }
                                 }
@@ -312,12 +299,9 @@ public class MainActivity extends AppCompatActivity
                     alertDialog.dismiss();
                 }
             });
-
             alertDialog.show();
         }
-
         else if (id == R.id.sign_out) {
-
             FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
             Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
@@ -328,7 +312,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -339,9 +322,7 @@ public class MainActivity extends AppCompatActivity
     private boolean validateEmail(TextInputLayout emailLayout) {
 
         String emailInput = emailLayout.getEditText().getText().toString().trim();
-
         if (emailInput.isEmpty()){
-
             emailLayout.setError("Field cannot be empty");
             return false;
         }
@@ -358,45 +339,37 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-
         firebaseAuth.addAuthStateListener(authStateListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
         firebaseAuth.removeAuthStateListener(authStateListener);
     }
 
     private boolean validateUserName(TextInputLayout userNameLayout) {
 
         String usernameInput = userNameLayout.getEditText().getText().toString().trim();
-
         if (usernameInput.isEmpty()){
-
             userNameLayout.setError("Field cannot be empty");
             return false;
         }
         else if (usernameInput.length() > 20){
-
             userNameLayout.setError("User name is too long");
             return false;
         }
         else {
-
             userNameLayout.setError(null);
             return true;
         }
     }
 
     private boolean validatePasswordSignUp(TextInputLayout passwordLayout, TextInputLayout passwordConfirmLayout) {
-
         String password = passwordLayout.getEditText().getText().toString().trim();
         String confirmPassword = passwordConfirmLayout.getEditText().getText().toString().trim();
 
         if (password.isEmpty()){
-
             passwordLayout.setError("Field cannot be empty");
             return false;
         }else if(!PASSWORD_PATTERN.matcher(password).matches()){
@@ -419,10 +392,7 @@ public class MainActivity extends AppCompatActivity
     private boolean validatePasswordSignIn() {
 
         String password = passwordLayout.getEditText().getText().toString().trim();
-
-
         if (password.isEmpty()){
-
             passwordLayout.setError("Field cannot be empty");
             return false;
         }else if(!PASSWORD_PATTERN.matcher(password).matches()){
