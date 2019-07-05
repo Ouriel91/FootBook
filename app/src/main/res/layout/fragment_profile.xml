@@ -1,201 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--all ids in this fragment must end with 'prf' -->
-
-<android.support.constraint.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ImageView
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:id="@+id/thumbnail_prf"
-        android:src="@drawable/player_avatar"
-        android:background="@color/appbar_background"/>
-
-    <ImageView
-        android:id="@+id/msg_btn_prf"
-        style="@style/ProfileFrag_SmallImageView"
-        android:src="@drawable/chat"
-        app:layout_constraintStart_toEndOf="@id/thumbnail_prf"
-        app:layout_constraintTop_toTopOf="@id/name_tv_prf" />
-
-    <TextView
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/msg_btn_prf"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/name_tv_prf"
-        android:layout_toEndOf="@id/thumbnail_prf"
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
         android:layout_height="wrap_content"
-        android:text="Oriel Ohayun"
-        android:textColor="@color/primaryTextView"
-        android:textStyle="bold"
-        style="@style/ProfileFrag_TextView"/>
-
-
-    <ImageView
-        android:id="@+id/region_ic_prf"
-        style="@style/ProfileFrag_SmallImageView"
-        android:src="@drawable/pin"
-        app:layout_constraintBottom_toBottomOf="@id/region_tv_prf"
-        app:layout_constraintEnd_toStartOf="@id/region_tv_prf"
-        app:layout_constraintStart_toEndOf="@id/thumbnail_prf"
-        app:layout_constraintTop_toTopOf="@id/region_tv_prf" />
-
-    <TextView
-        android:id="@+id/region_tv_prf"
-        app:layout_constraintStart_toEndOf="@id/region_ic_prf"
-        app:layout_constraintTop_toBottomOf="@id/name_tv_prf"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Where from?"
-        android:lines="1"
-        style="@style/ProfileFrag_TextView"/>
-
-    <ImageView
-        app:layout_constraintTop_toBottomOf="@id/region_ic_prf"
-        app:layout_constraintStart_toEndOf="@id/thumbnail_prf"
-        app:layout_constraintEnd_toStartOf="@id/position_tv_prf"
-        app:layout_constraintBottom_toBottomOf="@id/thumbnail_prf"
-        android:id="@+id/position_ic_prf"
-        android:src="@drawable/general_player"
-        style="@style/ProfileFrag_SmallImageView"/>
-
-    <TextView
-        android:layout_marginTop="0dp"
-        android:id="@+id/position_tv_prf"
-        app:layout_constraintStart_toEndOf="@id/position_ic_prf"
-        app:layout_constraintTop_toTopOf="@id/position_ic_prf"
-        app:layout_constraintBottom_toBottomOf="@id/position_ic_prf"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center_vertical"
-        android:text="Defender"
-        style="@style/ProfileFrag_TextView"/>
-
-    <ImageView
-        android:id="@+id/pitch_ic_prf"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintStart_toStartOf="@id/thumbnail_prf"
-        app:layout_constraintTop_toBottomOf="@id/thumbnail_prf"
-        android:src="@drawable/football_field_ic"
-        />
-
-    <TextView
-        android:layout_marginTop="0dp"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="@id/pitch_ic_prf"
-        app:layout_constraintBottom_toBottomOf="@id/pitch_ic_prf"
-        app:layout_constraintStart_toEndOf="@id/pitch_ic_prf"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:id="@+id/pitch_tv_prf"
-        android:text="Preferred Pitch :"
-        style="@style/ProfileFrag_TextView"
-        />
-    <Spinner
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/pitch_tv_prf"
-        app:layout_constraintBottom_toBottomOf="@id/pitch_tv_prf"
-        app:layout_constraintStart_toEndOf="@id/pitch_tv_prf"
-        android:id="@+id/pitch_spin_prf"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        />
-
-    <ImageView
-        android:layout_marginTop="10dp"
-        android:id="@+id/pref_region_ic_prf"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/where"
-        app:layout_constraintStart_toStartOf="@id/thumbnail_prf"
-        app:layout_constraintTop_toBottomOf="@id/pitch_ic_prf"
-        tools:layout_editor_absoluteY="250dp" />
-
-    <TextView
-        android:layout_marginTop="0dp"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="@id/pref_region_ic_prf"
-        app:layout_constraintBottom_toBottomOf="@id/pref_region_ic_prf"
-        app:layout_constraintStart_toEndOf="@id/pref_region_ic_prf"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:id="@+id/pref_region_tv_prf"
-        android:text="Preferred Region :"
-        style="@style/ProfileFrag_TextView"
-        />
-    <Spinner
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/pref_region_tv_prf"
-        app:layout_constraintBottom_toBottomOf="@id/pref_region_tv_prf"
-        app:layout_constraintStart_toEndOf="@id/pref_region_tv_prf"
-        android:id="@+id/pref_region_spin_prf"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        />
-
-
-    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/pref_region_ic_prf"
-        android:id="@+id/groups_title_lay_prf"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/shape_linear"
-        >
+        android:padding="10dp">
+
 
         <ImageView
-            style="@style/GroupFrag_MemberTitleImage"
-            android:id="@+id/add_group_ic_prf"
-            android:src="@drawable/add_groups"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:id="@+id/thumbnail_prf"
+            android:src="@drawable/player_avatar"
+            android:background="@color/appbar_background"/>
+
+        <ImageView
+            android:id="@+id/msg_btn_prf"
+            style="@style/ProfileFrag_SmallImageView"
+            android:src="@drawable/chat"
+            app:layout_constraintStart_toEndOf="@id/thumbnail_prf"
+            app:layout_constraintTop_toTopOf="@id/name_tv_prf" />
+
+        <TextView
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/msg_btn_prf"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/name_tv_prf"
+            android:layout_toEndOf="@id/thumbnail_prf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Oriel Ohayun"
+            android:textColor="@color/primaryTextView"
+            android:textStyle="bold"
+            style="@style/ProfileFrag_TextView"/>
+
+
+        <ImageView
+            android:id="@+id/region_ic_prf"
+            style="@style/ProfileFrag_SmallImageView"
+            android:src="@drawable/pin"
+            app:layout_constraintBottom_toBottomOf="@id/region_tv_prf"
+            app:layout_constraintEnd_toStartOf="@id/region_tv_prf"
+            app:layout_constraintStart_toEndOf="@id/thumbnail_prf"
+            app:layout_constraintTop_toTopOf="@id/region_tv_prf" />
+
+        <TextView
+            android:id="@+id/region_tv_prf"
+            app:layout_constraintStart_toEndOf="@id/region_ic_prf"
+            app:layout_constraintTop_toBottomOf="@id/name_tv_prf"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Where from?"
+            android:lines="1"
+            style="@style/ProfileFrag_TextView"/>
+
+        <ImageView
+            app:layout_constraintTop_toBottomOf="@id/region_ic_prf"
+            app:layout_constraintStart_toEndOf="@id/thumbnail_prf"
+            app:layout_constraintEnd_toStartOf="@id/position_tv_prf"
+            app:layout_constraintBottom_toBottomOf="@id/thumbnail_prf"
+            android:id="@+id/position_ic_prf"
+            android:src="@drawable/general_player"
+            style="@style/ProfileFrag_SmallImageView"/>
+
+        <TextView
+            android:layout_marginTop="0dp"
+            android:id="@+id/position_tv_prf"
+            app:layout_constraintStart_toEndOf="@id/position_ic_prf"
+            app:layout_constraintTop_toTopOf="@id/position_ic_prf"
+            app:layout_constraintBottom_toBottomOf="@id/position_ic_prf"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center_vertical"
+            android:text="Defender"
+            style="@style/ProfileFrag_TextView"/>
+
+        <ImageView
+            android:id="@+id/pitch_ic_prf"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="@id/thumbnail_prf"
+            app:layout_constraintTop_toBottomOf="@id/thumbnail_prf"
+            android:src="@drawable/football_field_ic"
             />
 
         <TextView
-            android:id="@+id/member_tv_title_prf"
-            style="@style/ProfileFrag_TextView"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"
             android:gravity="center"
-            android:text="@string/member_in_groups"
-            android:layout_margin="0dp"
+            app:layout_constraintTop_toTopOf="@id/pitch_ic_prf"
+            app:layout_constraintBottom_toBottomOf="@id/pitch_ic_prf"
+            app:layout_constraintStart_toEndOf="@id/pitch_ic_prf"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:id="@+id/pitch_tv_prf"
+            android:text="Preferred Pitch :"
+            style="@style/ProfileFrag_TextView"
             />
-        <Space
-            style="@style/GroupFrag_MemberTitleImage" />
+        <Spinner
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/pitch_tv_prf"
+            app:layout_constraintBottom_toBottomOf="@id/pitch_tv_prf"
+            app:layout_constraintStart_toEndOf="@id/pitch_tv_prf"
+            android:id="@+id/pitch_spin_prf"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            />
+
+        <ImageView
+            android:layout_marginTop="10dp"
+            android:id="@+id/pref_region_ic_prf"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/where"
+            app:layout_constraintStart_toStartOf="@id/thumbnail_prf"
+            app:layout_constraintTop_toBottomOf="@id/pitch_ic_prf"
+            tools:layout_editor_absoluteY="250dp" />
+
+        <TextView
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="@id/pref_region_ic_prf"
+            app:layout_constraintBottom_toBottomOf="@id/pref_region_ic_prf"
+            app:layout_constraintStart_toEndOf="@id/pref_region_ic_prf"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:id="@+id/pref_region_tv_prf"
+            android:text="Preferred Region :"
+            style="@style/ProfileFrag_TextView"
+            />
+        <Spinner
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/pref_region_tv_prf"
+            app:layout_constraintBottom_toBottomOf="@id/pref_region_tv_prf"
+            app:layout_constraintStart_toEndOf="@id/pref_region_tv_prf"
+            android:id="@+id/pref_region_spin_prf"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/pref_region_ic_prf"
+            android:id="@+id/groups_title_lay_prf"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_linear"
+            >
+
+            <ImageView
+                style="@style/GroupFrag_MemberTitleImage"
+                android:id="@+id/add_group_ic_prf"
+                android:src="@drawable/add_groups"
+                />
+
+            <TextView
+                android:id="@+id/member_tv_title_prf"
+                style="@style/ProfileFrag_TextView"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/member_in_groups"
+                android:layout_margin="0dp"
+                />
+            <Space
+                style="@style/GroupFrag_MemberTitleImage" />
 
 
 
-    </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/groups_title_lay_prf"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/profile_rv"/>
-
-
-
-
-
-
-
-
-
-
-</android.support.constraint.ConstraintLayout>
-
+        </LinearLayout>
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/groups_title_lay_prf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/profile_rv"/>
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>
 

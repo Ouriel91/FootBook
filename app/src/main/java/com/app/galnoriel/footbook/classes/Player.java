@@ -1,25 +1,30 @@
 package com.app.galnoriel.footbook.classes;
 
+import android.util.Log;
+
 import com.app.galnoriel.footbook.GlobConst;
-import com.app.galnoriel.footbook.MainActivity;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class Player {
     private String _id,name,whereFrom,position,pitch, wherePlay,picture;
-    private ArrayList<GroupPlay> groups;
+    private ArrayList<String> groups_ids;
     private Game next_game;
+
+
 
 
     //region functions
     public void removeGroup(GroupPlay group){
-        groups.remove(group);
+        groups_ids.remove(group);
 
     }
 
-    public void addGroup(GroupPlay group){
-        groups.add(group);
+    public void addGroup(String group){
+        groups_ids.add(group);
     }
 
     public HashMap<String,Object> toHashMap(){
@@ -30,15 +35,40 @@ public class Player {
         user.put(GlobConst.DB_USER_PITCH, getPitch());
         user.put(GlobConst.DB_USER_WHEREPLAY, getWherePlay());
         user.put(GlobConst.DB_USER_PICTURE, getPicture());
-        user.put(GlobConst.DB_USER_GROUPS, getGroups());
+        user.put(GlobConst.DB_USER_GROUPS, getGroups_ids());
         return user;
     }
+
+
     //endregion
 
     //region constructors
 
+    public Player(DocumentSnapshot playerProfile) { //construct player from server
+        _id = playerProfile.getId(); //document name is the user id
+        name = playerProfile.getString(GlobConst.DB_USER_NAME);
+        whereFrom = playerProfile.getString(GlobConst.DB_USER_WHEREFROM);
+        try {position = playerProfile.getString(GlobConst.DB_USER_POSITION);}
+        catch (Exception e){position = "Free Role";}
+        try{pitch = playerProfile.getString(GlobConst.DB_USER_PITCH);}
+        catch (Exception e){pitch = "Asphalt";}
+        try{wherePlay = playerProfile.getString(GlobConst.DB_USER_WHEREPLAY);}
+        catch (Exception e){wherePlay = "Anywhere";}
+        try{picture = playerProfile.getString(GlobConst.DB_USER_PICTURE);}
+        catch (Exception e){picture = null;}
+        try {
+            groups_ids.addAll((Collection) playerProfile.get(GlobConst.DB_USER_GROUPS));}
+        catch (Exception e){groups_ids = new ArrayList<String>();}
+        Log.d("Player Saved", _id+"\n"+name+"\n"+whereFrom+"\n"+position+"\n"+pitch+"\n"+ wherePlay+"\n"+picture +"\n"+groups_ids.toString());
 
-    public Player(String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<GroupPlay> groups, Game next_game) {
+    }
+
+    public Player(String _id, String name) {
+        this._id = _id;
+        this.name = name;
+    }
+
+    public Player(String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<String> groups_ids, Game next_game) {
         this._id = null;
         this.name = name;
         this.whereFrom = whereFrom;
@@ -46,43 +76,42 @@ public class Player {
         this.pitch = pitch;
         this.wherePlay = wherePlay;
         this.picture = picture;
-        this.groups = groups;
+        this.groups_ids = groups_ids;
         this.next_game = next_game;
     }
 
     public  Player(HashMap user){
-//        String _id,name,whereFrom,position,pitch, wherePlay,picture;
-        set_id(user.get("id").toString());
-        setName(user.get("name").toString());
-        setWhereFrom(user.get("whereFrom").toString());
-        setPosition(user.get("position").toString());
-        setPitch(user.get("pitch").toString());
-        setWherePlay(user.get("wherePlay").toString());
-        setPicture(user.get("picture").toString());
+        _id = user.get("id").toString();
+        name = user.get("name").toString();
+        whereFrom = user.get("whereFrom").toString();
+        position = user.get("position").toString();
+        pitch = user.get("pitch").toString();
+        wherePlay = user.get("wherePlay").toString();
+        picture = user.get("picture").toString();
     }
     public Player(String _id, String name, String whereFrom) {
         this._id = _id;
         this.name = name;
         this.whereFrom = whereFrom;
-        this.groups = new ArrayList<>();
+        this.groups_ids = new ArrayList<String>();
         this.wherePlay = "Not set";
         this.pitch = "Mixed";
         this.position = "Free Role";
         this.picture = null;
     }
 
-    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, ArrayList<GroupPlay> groups, String picture) {
+    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, ArrayList<String> groups_ids, String picture) {
         this._id = _id;
         this.name = name;
         this.whereFrom = whereFrom;
         this.position = position;
         this.pitch = pitch;
         this.wherePlay = wherePlay;
-        this.groups = groups;
+        this.groups_ids = groups_ids;
         this.picture = picture;
     }
 
-    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<GroupPlay> groups, Game next_game) {
+    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<String> groups_ids, Game next_game) {
         this._id = _id;
         this.name = name;
         this.whereFrom = whereFrom;
@@ -90,7 +119,7 @@ public class Player {
         this.pitch = pitch;
         this.wherePlay = wherePlay;
         this.picture = picture;
-        this.groups = groups;
+        this.groups_ids = groups_ids;
         this.next_game = next_game;
     }
     //endregion
@@ -164,12 +193,12 @@ public class Player {
         this.wherePlay = wherePlay;
     }
 
-    public ArrayList<GroupPlay> getGroups() {
-        return groups;
+    public ArrayList<String> getGroups_ids() {
+        return groups_ids;
     }
 
-    public void setGroups(ArrayList<GroupPlay> groups) {
-        this.groups = groups;
+    public void setGroups_ids(ArrayList<String> groups_ids) {
+        this.groups_ids = groups_ids;
     }
 //endregion
 

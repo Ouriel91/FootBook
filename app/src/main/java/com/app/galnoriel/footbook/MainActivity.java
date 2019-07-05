@@ -30,19 +30,17 @@ import com.app.galnoriel.footbook.fragments.ProfileFragment;
 import com.app.galnoriel.footbook.fragments.GroupFragment;
 import com.app.galnoriel.footbook.fragments.GameFragment;
 import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
+
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
@@ -59,6 +57,9 @@ public class MainActivity extends AppCompatActivity
     private CoordinatorLayout coordinatorLayout;
     private AlertDialog alertDialog;
     private CustomSharedPrefAdapter sharedPref;
+    private ImageButton signUpBtn;
+    private ImageButton signInBtn;
+    private FirebaseFirestore db;
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
@@ -82,20 +83,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
         sharedPref = new CustomSharedPrefAdapter(this);
-        //region fire store testing
-        Player test = new Player(sharedPref.getUserId(),"New Player","Moon");
-        db.collection(GlobConst.DB_USER_TABLE).document(test.get_id()).set(test.toHashMap());
-        //endregion
 
 
-
-
-
-
-
-    //region toolbar drawer layout navigation view coordinator
+        //region toolbar drawer layout navigation view coordinator
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -115,40 +107,42 @@ public class MainActivity extends AppCompatActivity
 
         //endregion
 
-
-//region firebase login
+//region firebase login status listener
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 View headerView = navigationView.getHeaderView(0); //title of drawer
                 TextView loginTV = headerView.findViewById(R.id.login_tv);
                 TextView userLoginTV = headerView.findViewById(R.id.user_login_tv);
-
                 final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-                if (currentUser != null){ //already logged in
-                    sharedPref.setUserId(currentUser.getUid());
-                    if (userName != null){ //currently signing up
-                        currentUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName).build())
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        userName = null; //username = null means user is signing in , not singup
-                                        if (task.isSuccessful()){
-                                            Snackbar.make(coordinatorLayout, currentUser.getDisplayName() + " Welcome",Snackbar.LENGTH_SHORT).show();
+                if (currentUser != null){ //user is logged in
+                    sharedPref.setUserId(currentUser.getUid());  //save user id
+                    //region get user from DB
+                    db.collection(GlobConst.DB_USER_TABLE)  //fetch user info from server and store in share pref for further display
+                            .document(currentUser.getUid())
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot playerProfile = task.getResult();
+                                        if(playerProfile.exists()){
+                                            sharedPref.setDisplayUser(new Player(playerProfile));
                                         }
+                                        else
+                                            Toast.makeText(MainActivity.this, "Profile"+currentUser.getUid()+" Not Found", Toast.LENGTH_SHORT).show();;
                                     }
-                                });
-                    }
-
+                                }
+                            });
+                    //endregion
                     loginTV.setText("Welcome!!!");
                     userLoginTV.setText(currentUser.getDisplayName());
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(false);
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(false);
                     navigationView.getMenu().findItem(R.id.sign_out).setVisible(true);
                 }
-
-                else { //sign out
+                else { //signed out
                     sharedPref.removeCurrentUserInfo();
                     loginTV.setText("Please Log in");
                     userLoginTV.setText("We are waiting for you");
@@ -183,9 +177,9 @@ public class MainActivity extends AppCompatActivity
         }
 //endregion
 
-
-
     }
+
+
 
     private void updateUserDataBase(){
 
@@ -247,98 +241,165 @@ public class MainActivity extends AppCompatActivity
         passwordConfirmLayout = dialogSignView.findViewById(R.id.password_confirm_layout);
         regionLayout = dialogSignView.findViewById(R.id.region_layout);
 
-        ImageButton signUpBtn = dialogSignView.findViewById(R.id.sign_up_btn_logdia);
-        ImageButton signInBtn = dialogSignView.findViewById(R.id.sign_in_btn_logdia);
+        signUpBtn = dialogSignView.findViewById(R.id.sign_up_btn_logdia);
+        signInBtn = dialogSignView.findViewById(R.id.sign_in_btn_logdia);
 
-        if (id == R.id.sign_up) {
-            signInBtn.setVisibility(View.GONE);
-            signUpBtn.setVisibility(View.VISIBLE);
-            emailLayout.setVisibility(View.VISIBLE);
-            userNameLayout.setVisibility(View.VISIBLE);
-            passwordLayout.setVisibility(View.VISIBLE);
-            passwordConfirmLayout.setVisibility(View.VISIBLE);
-            regionLayout.setVisibility(View.VISIBLE);
-            builder.setView(dialogSignView);
-            alertDialog = builder.create();
+        switch (id){
+            case R.id.sign_up: //sign up btn pressed
+                signUpUser();
+                builder.setView(dialogSignView);
+                alertDialog = builder.create();
+                alertDialog.show();
+                break;
 
-            signUpBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            case R.id.sign_in: //sign in btn pressed
+                builder.setView(dialogSignView);
+                alertDialog = builder.create();
+                singInUser();
+                alertDialog.show();
+                break;
 
-                    if (!validateEmail(emailLayout) | !validateUserName(userNameLayout) |
-                            !validatePasswordSignUp(passwordLayout,passwordConfirmLayout)){
-                        return;
-                    }
-                    String email = emailLayout.getEditText().getText().toString();
-                    String password = passwordLayout.getEditText().getText().toString();
-                    userName = userNameLayout.getEditText().getText().toString();
+            case  R.id.sign_out:
+                signOutUser(); //sign out btn pressed
+                break;
 
-                    firebaseAuth.createUserWithEmailAndPassword(email,password)
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()){
-                                        Snackbar.make(coordinatorLayout, "Sign up successful", Snackbar.LENGTH_SHORT).show();
-                                    }
-                                    else {
-                                        Snackbar.make(coordinatorLayout, "Sign up failed", Snackbar.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                    alertDialog.dismiss();
-                }
-            });
+            case R.id.nav_share:
 
-            alertDialog.show();
-        } else if (id == R.id.sign_in) { //signing in
-            signInBtn.setVisibility(View.VISIBLE);
-            signUpBtn.setVisibility(View.GONE);
-            userNameLayout.setVisibility(View.GONE);
-            passwordConfirmLayout.setVisibility(View.GONE);
-            regionLayout.setVisibility(View.GONE);
-            builder.setView(dialogSignView);
-            alertDialog = builder.create();
+                break;
 
-            signInBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String email = emailLayout.getEditText().getText().toString();
-                    String password = passwordLayout.getEditText().getText().toString();
-                    if (!validateEmail(emailLayout) | !validatePasswordSignIn()){
-                        return;
-                    }
-                    firebaseAuth.signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()){
-                                        Snackbar.make(coordinatorLayout, "Sign in succesfull", Snackbar.LENGTH_SHORT).show();
-                                    }
-                                    else {
-                                        Snackbar.make(coordinatorLayout, "Sign in failed", Snackbar.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                    alertDialog.dismiss();
-                }
-            });
-            alertDialog.show();
-        }
-        else if (id == R.id.sign_out) { //signing out
-            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-            Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
-            firebaseAuth.signOut();
-        }
-        else if (id == R.id.nav_share) {
+            case  R.id.nav_send:
 
-        } else if (id == R.id.nav_send) {
+                break;
 
         }
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    private void signOutUser() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
+        currentUser = null;
+        firebaseAuth.signOut();
+    }
+
+    private void singInUser() {
+        signInBtn.setVisibility(View.VISIBLE);
+        signUpBtn.setVisibility(View.GONE);
+        userNameLayout.setVisibility(View.GONE);
+        passwordConfirmLayout.setVisibility(View.GONE);
+        regionLayout.setVisibility(View.GONE);
+        signInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = emailLayout.getEditText().getText().toString();
+                String password = passwordLayout.getEditText().getText().toString();
+                if (!validateEmail(emailLayout) | !validatePasswordSignIn()){
+                    return;
+                }
+                firebaseAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()){
+                                    Snackbar.make(coordinatorLayout, "Sign in succesfull", Snackbar.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Snackbar.make(coordinatorLayout, "Sign in failed", Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                alertDialog.dismiss();
+            }
+        });signInBtn.setVisibility(View.VISIBLE);
+        signUpBtn.setVisibility(View.GONE);
+        userNameLayout.setVisibility(View.GONE);
+        passwordConfirmLayout.setVisibility(View.GONE);
+        regionLayout.setVisibility(View.GONE);
+        signInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = emailLayout.getEditText().getText().toString();
+                String password = passwordLayout.getEditText().getText().toString();
+                if (!validateEmail(emailLayout) | !validatePasswordSignIn()){
+                    return;
+                }
+                firebaseAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()){
+                                    Snackbar.make(coordinatorLayout, "Sign in succesfull", Snackbar.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Snackbar.make(coordinatorLayout, "Sign in failed", Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    private void signUpUser() {
+        signInBtn.setVisibility(View.GONE);
+        signUpBtn.setVisibility(View.VISIBLE);
+        emailLayout.setVisibility(View.VISIBLE);
+        userNameLayout.setVisibility(View.VISIBLE);
+        passwordLayout.setVisibility(View.VISIBLE);
+        passwordConfirmLayout.setVisibility(View.VISIBLE);
+        regionLayout.setVisibility(View.VISIBLE);
+        signUpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { //sign up btn
+                if (!validateEmail(emailLayout) | !validateUserName(userNameLayout) |
+                        !validatePasswordSignUp(passwordLayout,passwordConfirmLayout)){
+                    return;
+                }
+                String email = emailLayout.getEditText().getText().toString();
+                String password = passwordLayout.getEditText().getText().toString();
+                userName = userNameLayout.getEditText().getText().toString();
+                firebaseAuth.createUserWithEmailAndPassword(email,password)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()){
+                                    createNewProfileInServer();
+                                    Snackbar.make(coordinatorLayout, "Sign up successful", Snackbar.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Snackbar.make(coordinatorLayout, "Sign up failed", Snackbar.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    private void createNewProfileInServer() {
+        FirebaseUser curUser = firebaseAuth.getCurrentUser();
+
+        curUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(userName).build())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+//                        userName = null; //username = null means user is signing in , not singup
+                        if (task.isSuccessful()){
+                            Snackbar.make(coordinatorLayout, firebaseAuth.getCurrentUser().getDisplayName() + " Welcome",Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+        Player newProfile = new Player(curUser.getUid(),userName);
+        db.collection(GlobConst.DB_USER_TABLE).document(curUser.getUid()).set(newProfile.toHashMap());
+
+    }
+
+    private void getUserInfoServer(){
+
+    }
 
 
     private boolean validateEmail(TextInputLayout emailLayout) {

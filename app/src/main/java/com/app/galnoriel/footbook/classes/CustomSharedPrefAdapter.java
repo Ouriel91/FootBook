@@ -33,6 +33,12 @@ public class CustomSharedPrefAdapter {
     private static String DEFAULT_GROUP_TIME = "DEFAULT_GROUP_TIME";
     private static String DEFAULT_GROUP_PICTURE = "DEFAULT_GROUP_PICTURE";
     private static String DEFAULT_GROUP_MEMBERS = "DEFAULT_GROUP_MEMBERS";
+    private static String DISPLAY_GROUP_ID = "DISPLAY_GROUP_ID";
+    private static String DISPLAY_GROUP_NAME = "DISPLAY_GROUP_NAME";
+    private static String DISPLAY_GROUP_WHERE_PLAY = "DISPLAY_GROUP_WHERE_PLAY";
+    private static String DISPLAY_GROUP_TIME = "DISPLAY_GROUP_TIME";
+    private static String DISPLAY_GROUP_PICTURE = "DISPLAY_GROUP_PICTURE";
+    private static String DISPLAY_GROUP_MEMBERS = "DISPLAY_GROUP_MEMBERS";
     //endregion
 
 //    public void saveProfileChanges(Player user){
@@ -99,6 +105,18 @@ public class CustomSharedPrefAdapter {
         //also set default group id on server
     }
 
+    public void setDisplayGroup(GroupPlay g){
+        sharedPreferences.edit()
+                .putInt(DISPLAY_GROUP_ID,g.getId())
+                .putString(DISPLAY_GROUP_NAME,g.getName())
+                .putString(DISPLAY_GROUP_TIME,g.getTime())
+                .putString(DISPLAY_GROUP_WHERE_PLAY,g.getWherePlay())
+                .putString(DISPLAY_GROUP_PICTURE,g.getPicture())
+                .putString(DISPLAY_GROUP_MEMBERS,g.getMembers().toString())
+                .apply();
+        //also set default group id on server
+    }
+
     public void setNextGame(Game g){
         sharedPreferences.edit()
                 .putString(NEXT_GAME_LOCATION,g.getLocation().toString())
@@ -107,4 +125,20 @@ public class CustomSharedPrefAdapter {
                 .apply();
     }
 
+    public void setDisplayUser(String id) {
+
+    }
+
+    public void setDisplayUser(Player player) {
+        sharedPreferences.edit()
+                .putString(USER_ID,player.get_id())
+                .putString(USER_NAME,player.getName())
+                .putString(USER_WHERE_FROM,player.getWhereFrom())
+                .putString(USER_POSITION,player.getPosition())
+                .putString(USER_PITCH,player.getPitch())
+                .putString(USER_WHERE_PLAY,player.getWherePlay())
+//                .putString(USER_PICTURE,player.getPicture())
+//                .putString(USER_GROUPS,player.getGroups_ids().toString())
+                .apply();
+    }
 }

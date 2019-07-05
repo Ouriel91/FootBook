@@ -9,5 +9,6 @@ public class GlobConst {
     public static String DB_USER_WHEREFROM = "WHEREFROM" ;
     public static String DB_USER_WHEREPLAY = "WHEREPLAY" ;
     public static String DB_USER_GROUPS = "GROUPS" ;
+    public static String DB_USER_ID = "USER_ID" ;
 
 }

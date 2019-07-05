@@ -1,240 +1,243 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--all ids in this fragment must end with 'grf' -->
-
-<android.support.constraint.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp">
-
-    <ImageView
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:id="@+id/thumbnail_grf"
-        android:src="@drawable/team_avatar"
-        android:background="@color/team_avatar_background"/>
-
-    <ImageView
-        style="@style/GroupFrag_SmallImageView"
-        android:id="@+id/group_massenger_ic_grf"
-        android:src="@drawable/announcment"
-        app:layout_constraintStart_toEndOf="@id/thumbnail_grf"
-        app:layout_constraintTop_toTopOf="@id/name_tv_grf"
-        />
-    <TextView
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/group_massenger_ic_grf"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:id="@+id/name_tv_grf"
-        android:layout_toEndOf="@id/thumbnail_grf"
-        android:layout_width="0dp"
+    >
+    <android.support.constraint.ConstraintLayout
         android:layout_height="wrap_content"
-        android:text="Group Name"
-        android:textColor="@color/primaryTextView"
-        android:textStyle="bold"
-        style="@style/ProfileFrag_TextView"/>
-
-    <ImageView
-        app:layout_constraintTop_toTopOf="@id/region_tv_grf"
-        app:layout_constraintStart_toEndOf="@id/thumbnail_grf"
-        app:layout_constraintEnd_toStartOf="@id/region_tv_grf"
-        app:layout_constraintBottom_toBottomOf="@id/region_tv_grf"
-        android:id="@+id/region_ic_grf"
-        android:src="@drawable/location"
-        style="@style/GroupFrag_SmallImageView"/>
-
-    <TextView
-        android:id="@+id/region_tv_grf"
-        app:layout_constraintStart_toEndOf="@id/region_ic_grf"
-        app:layout_constraintTop_toBottomOf="@id/name_tv_grf"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Where play?"
-        android:lines="1"
-        style="@style/ProfileFrag_TextView"/>
-
-    <ImageView
-        android:id="@+id/pref_time_ic_grf"
-        style="@style/GroupFrag_SmallImageView"
-        android:src="@drawable/clock"
-        app:layout_constraintBottom_toBottomOf="@id/thumbnail_grf"
-        app:layout_constraintEnd_toStartOf="@id/pref_time_tv_grf"
-        app:layout_constraintStart_toEndOf="@id/thumbnail_grf"
-        app:layout_constraintTop_toBottomOf="@id/region_ic_grf" />
-
-    <TextView
-        android:layout_marginTop="0dp"
-        android:id="@+id/pref_time_tv_grf"
-        app:layout_constraintStart_toEndOf="@id/pref_time_ic_grf"
-        app:layout_constraintTop_toTopOf="@id/pref_time_ic_grf"
-        app:layout_constraintBottom_toBottomOf="@id/pref_time_ic_grf"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center_vertical"
-        android:text="preffered time"
-        style="@style/ProfileFrag_TextView"/>
-
-    <!--next game section-->
-    <FrameLayout
-        android:layout_marginTop="15dp"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        app:layout_constraintStart_toStartOf="@id/thumbnail_grf"
-        app:layout_constraintTop_toBottomOf="@id/thumbnail_grf"
-        android:id="@+id/next_game_frame_grf">
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/next_game_lay_grf"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
-            <TextView
-                android:gravity="center"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/next_date_ic_grf"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/next_game_tv_grf"
-                android:text="Next game "
-                style="@style/Title_TextView"
-                android:tag="@string/next_game_tag"
-                />
-
-            <ImageView
-                android:tag="@string/next_game_tag"
-                style="@style/GroupFrag_ImageView"
-                android:id="@+id/pitch_ic_grf"
-                android:src="@drawable/football_field_ic"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/next_game_tv_grf" />
-
-            <TextView
-                android:layout_marginTop="0dp"
-                android:tag="@string/next_game_tag"
-                app:layout_constraintTop_toTopOf="@id/pitch_ic_grf"
-                app:layout_constraintBottom_toBottomOf="@id/pitch_ic_grf"
-                app:layout_constraintStart_toEndOf="@id/pitch_ic_grf"
-                android:layout_width="80dp"
-                android:layout_height="0dp"
-                android:id="@+id/pitch_tv_grf"
-                android:text="Asphalt"
-                style="@style/ProfileFrag_TextView"
-                />
-
-            <ImageView
-                android:tag="@string/next_game_tag"
-                android:id="@+id/next_date_ic_grf"
-                style="@style/GroupFrag_ImageView"
-                android:src="@drawable/calendar"
-                app:layout_constraintStart_toEndOf="@id/pitch_tv_grf"
-                app:layout_constraintTop_toBottomOf="@id/next_game_tv_grf" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:tag="@string/next_game_tag"
-                app:layout_constraintTop_toTopOf="@id/next_date_ic_grf"
-                app:layout_constraintBottom_toBottomOf="@id/next_date_ic_grf"
-                app:layout_constraintStart_toEndOf="@id/next_date_ic_grf"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:text="19:30, Mon, Jul 1"
-                style="@style/ProfileFrag_TextView"/>
-
-            <ImageView
-                android:tag="@string/next_game_tag"
-                android:id="@+id/price_ic_grf"
-                app:layout_constraintTop_toBottomOf="@id/pitch_ic_grf"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/pitch_ic_grf"
-                style="@style/GroupFrag_ImageView"
-                android:src="@drawable/price"/>
-
-            <TextView
-                android:tag="@string/next_game_tag"
-                android:id="@+id/price_tv_grf"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_margin="0dp"
-                app:layout_constraintStart_toStartOf="@id/pitch_tv_grf"
-                app:layout_constraintEnd_toEndOf="@id/pitch_tv_grf"
-                app:layout_constraintTop_toTopOf="@id/price_ic_grf"
-                app:layout_constraintBottom_toBottomOf="@id/price_ic_grf"
-                android:text="25 $"
-                style="@style/ProfileFrag_TextView"
-                />
-
-            <ImageView
-                android:tag="@string/next_game_tag"
-                android:id="@+id/next_loc_ic_grf"
-                style="@style/GroupFrag_ImageView"
-                android:src="@drawable/map"
-                app:layout_constraintStart_toEndOf="@id/price_tv_grf"
-                app:layout_constraintTop_toBottomOf="@id/next_date_ic_grf" />
-
-            <TextView
-                android:tag="@string/next_game_tag"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                style="@style/ProfileFrag_TextView"
-                app:layout_constraintStart_toEndOf="@id/next_loc_ic_grf"
-                app:layout_constraintTop_toTopOf="@id/next_loc_ic_grf"
-                app:layout_constraintBottom_toBottomOf="@id/next_loc_ic_grf"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:text="@string/location_not_set"
-                />
-        </android.support.constraint.ConstraintLayout>
-        <!--end next game section-->
-    </FrameLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/next_game_frame_grf"
-        android:id="@+id/members_title_lin_grf"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/shape_linear"
-        >
+        android:padding="10dp">
 
         <ImageView
-            style="@style/GroupFrag_MemberTitleImage"
-            android:id="@+id/add_member_ic_grf"
-            android:src="@drawable/add_member"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:id="@+id/thumbnail_grf"
+            android:src="@drawable/team_avatar"
+            android:background="@color/team_avatar_background"/>
+
+        <ImageView
+            style="@style/GroupFrag_SmallImageView"
+            android:id="@+id/group_massenger_ic_grf"
+            android:src="@drawable/announcment"
+            app:layout_constraintStart_toEndOf="@id/thumbnail_grf"
+            app:layout_constraintTop_toTopOf="@id/name_tv_grf"
             />
+        <TextView
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/group_massenger_ic_grf"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/name_tv_grf"
+            android:layout_toEndOf="@id/thumbnail_grf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Group Name"
+            android:textColor="@color/primaryTextView"
+            android:textStyle="bold"
+            style="@style/ProfileFrag_TextView"/>
+
+        <ImageView
+            app:layout_constraintTop_toTopOf="@id/region_tv_grf"
+            app:layout_constraintStart_toEndOf="@id/thumbnail_grf"
+            app:layout_constraintEnd_toStartOf="@id/region_tv_grf"
+            app:layout_constraintBottom_toBottomOf="@id/region_tv_grf"
+            android:id="@+id/region_ic_grf"
+            android:src="@drawable/location"
+            style="@style/GroupFrag_SmallImageView"/>
 
         <TextView
-            android:id="@+id/groups_title_grf"
-            style="@style/ProfileFrag_TextView"
-            android:layout_weight="1"
+            android:id="@+id/region_tv_grf"
+            app:layout_constraintStart_toEndOf="@id/region_ic_grf"
+            app:layout_constraintTop_toBottomOf="@id/name_tv_grf"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/group_members"
-            android:layout_margin="0dp"
-            />
-        <Space
-            style="@style/GroupFrag_MemberTitleImage" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Where play?"
+            android:lines="1"
+            style="@style/ProfileFrag_TextView"/>
+
+        <ImageView
+            android:id="@+id/pref_time_ic_grf"
+            style="@style/GroupFrag_SmallImageView"
+            android:src="@drawable/clock"
+            app:layout_constraintBottom_toBottomOf="@id/thumbnail_grf"
+            app:layout_constraintEnd_toStartOf="@id/pref_time_tv_grf"
+            app:layout_constraintStart_toEndOf="@id/thumbnail_grf"
+            app:layout_constraintTop_toBottomOf="@id/region_ic_grf" />
+
+        <TextView
+            android:layout_marginTop="0dp"
+            android:id="@+id/pref_time_tv_grf"
+            app:layout_constraintStart_toEndOf="@id/pref_time_ic_grf"
+            app:layout_constraintTop_toTopOf="@id/pref_time_ic_grf"
+            app:layout_constraintBottom_toBottomOf="@id/pref_time_ic_grf"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center_vertical"
+            android:text="preffered time"
+            style="@style/ProfileFrag_TextView"/>
+
+        <!--next game section-->
+        <FrameLayout
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            app:layout_constraintStart_toStartOf="@id/thumbnail_grf"
+            app:layout_constraintTop_toBottomOf="@id/thumbnail_grf"
+            android:id="@+id/next_game_frame_grf">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/next_game_lay_grf"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                <TextView
+                    android:gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/next_date_ic_grf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/next_game_tv_grf"
+                    android:text="Next game "
+                    style="@style/Title_TextView"
+                    android:tag="@string/next_game_tag"
+                    />
+
+                <ImageView
+                    android:tag="@string/next_game_tag"
+                    style="@style/GroupFrag_ImageView"
+                    android:id="@+id/pitch_ic_grf"
+                    android:src="@drawable/football_field_ic"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/next_game_tv_grf" />
+
+                <TextView
+                    android:layout_marginTop="0dp"
+                    android:tag="@string/next_game_tag"
+                    app:layout_constraintTop_toTopOf="@id/pitch_ic_grf"
+                    app:layout_constraintBottom_toBottomOf="@id/pitch_ic_grf"
+                    app:layout_constraintStart_toEndOf="@id/pitch_ic_grf"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:id="@+id/pitch_tv_grf"
+                    android:text="Asphalt"
+                    style="@style/ProfileFrag_TextView"
+                    />
+
+                <ImageView
+                    android:tag="@string/next_game_tag"
+                    android:id="@+id/next_date_ic_grf"
+                    style="@style/GroupFrag_ImageView"
+                    android:src="@drawable/calendar"
+                    app:layout_constraintStart_toEndOf="@id/pitch_tv_grf"
+                    app:layout_constraintTop_toBottomOf="@id/next_game_tv_grf" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:tag="@string/next_game_tag"
+                    app:layout_constraintTop_toTopOf="@id/next_date_ic_grf"
+                    app:layout_constraintBottom_toBottomOf="@id/next_date_ic_grf"
+                    app:layout_constraintStart_toEndOf="@id/next_date_ic_grf"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="19:30, Mon, Jul 1"
+                    style="@style/ProfileFrag_TextView"/>
+
+                <ImageView
+                    android:tag="@string/next_game_tag"
+                    android:id="@+id/price_ic_grf"
+                    app:layout_constraintTop_toBottomOf="@id/pitch_ic_grf"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/pitch_ic_grf"
+                    style="@style/GroupFrag_ImageView"
+                    android:src="@drawable/price"/>
+
+                <TextView
+                    android:tag="@string/next_game_tag"
+                    android:id="@+id/price_tv_grf"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_margin="0dp"
+                    app:layout_constraintStart_toStartOf="@id/pitch_tv_grf"
+                    app:layout_constraintEnd_toEndOf="@id/pitch_tv_grf"
+                    app:layout_constraintTop_toTopOf="@id/price_ic_grf"
+                    app:layout_constraintBottom_toBottomOf="@id/price_ic_grf"
+                    android:text="25 $"
+                    style="@style/ProfileFrag_TextView"
+                    />
+
+                <ImageView
+                    android:tag="@string/next_game_tag"
+                    android:id="@+id/next_loc_ic_grf"
+                    style="@style/GroupFrag_ImageView"
+                    android:src="@drawable/map"
+                    app:layout_constraintStart_toEndOf="@id/price_tv_grf"
+                    app:layout_constraintTop_toBottomOf="@id/next_date_ic_grf" />
+
+                <TextView
+                    android:tag="@string/next_game_tag"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    style="@style/ProfileFrag_TextView"
+                    app:layout_constraintStart_toEndOf="@id/next_loc_ic_grf"
+                    app:layout_constraintTop_toTopOf="@id/next_loc_ic_grf"
+                    app:layout_constraintBottom_toBottomOf="@id/next_loc_ic_grf"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="@string/location_not_set"
+                    />
+            </android.support.constraint.ConstraintLayout>
+            <!--end next game section-->
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/next_game_frame_grf"
+            android:id="@+id/members_title_lin_grf"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_linear"
+            >
+
+            <ImageView
+                style="@style/GroupFrag_MemberTitleImage"
+                android:id="@+id/add_member_ic_grf"
+                android:src="@drawable/add_member"
+                />
+
+            <TextView
+                android:id="@+id/groups_title_grf"
+                style="@style/ProfileFrag_TextView"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/group_members"
+                android:layout_margin="0dp"
+                />
+            <Space
+                style="@style/GroupFrag_MemberTitleImage" />
 
 
 
-    </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/members_title_lin_grf"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/group_rv"/>
+        </LinearLayout>
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/members_title_lin_grf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/group_rv"/>
 
-</android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
 
-
+</ScrollView>

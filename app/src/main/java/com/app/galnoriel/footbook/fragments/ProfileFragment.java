@@ -63,7 +63,6 @@ public class ProfileFragment extends Fragment {
         view.findViewById(R.id.groups_title_lay_prf).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 joinGroup();
             }
         });
