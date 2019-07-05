@@ -7,6 +7,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.app.galnoriel.footbook.R;
-import com.app.galnoriel.footbook.adapters.MembersListAdapter;
+import com.app.galnoriel.footbook.adapters.GroupListAdapter;
+
+import com.app.galnoriel.footbook.classes.GroupPlay;
 import com.app.galnoriel.footbook.classes.Player;
 
 import java.util.ArrayList;
@@ -26,39 +29,34 @@ import com.google.firebase.provider.FirebaseInitProvider;
 
 public class ProfileFragment extends Fragment {
 
-    private RecyclerView profileRV;
+    private RecyclerView groupRV;
 
     //all layout ids end with ' prf ' (for PRofile Fragment)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        //region recycler adapter
-        //setting gridLayout
-        profileRV = view.findViewById(R.id.profile_rv);
-        profileRV.setHasFixedSize(true);
-        profileRV.setLayoutManager(new GridLayoutManager(getActivity(),2)); //getcontext?
+//region recycler adapter
+        groupRV = view.findViewById(R.id.group_rv);
+        groupRV.setHasFixedSize(true);
+        groupRV.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        List<GroupPlay> groupPlayList = new ArrayList<>();
 
-        //list of players - make sure it's scroll
+        //***important** use in basic constructor of groupPlay is not show date of
+        //game , because it's null
+        groupPlayList.add(new GroupPlay(1,"Hapoel petah tikva","Moshava"));
+        groupPlayList.add(new GroupPlay(2,"Maccabi Haifa","Sammy ofer"));
+        groupPlayList.add(new GroupPlay(1,"Hapoel petah tikva","Moshava"));
+        groupPlayList.add(new GroupPlay(2,"Maccabi Haifa","Sammy ofer"));
+        groupPlayList.add(new GroupPlay(1,"Hapoel petah tikva","Moshava"));
+        groupPlayList.add(new GroupPlay(2,"Maccabi Haifa","Sammy ofer"));
+        groupPlayList.add(new GroupPlay(1,"Hapoel petah tikva","Moshava"));
+        groupPlayList.add(new GroupPlay(2,"Maccabi Haifa","Sammy ofer"));
 
-        //region list
-        List<Player> players = new ArrayList<>();
-        players.add(new Player(1+"","Ouriel","Modii'n"));
-        players.add(new Player(2+"","Gal","Givatiim"));
-        players.add(new Player(1+"","Ouriel","Modii'n"));
-        players.add(new Player(2+"","Gal","Givatiim"));
-        players.add(new Player(1+"","Ouriel","Modii'n"));
-        players.add(new Player(2+"","Gal","Givatiim"));
-        players.add(new Player(1+"","Ouriel","Modii'n"));
-        players.add(new Player(2+"","Gal","Givatiim"));
-        players.add(new Player(1+"","Ouriel","Modii'n"));
-        players.add(new Player(2+"","Gal","Givatiim"));
-
-//endregion
-        MembersListAdapter adapter = new MembersListAdapter(getActivity(),players);
-        profileRV.setAdapter(adapter);
-//endregion
+        GroupListAdapter adapter = new GroupListAdapter(getActivity(), groupPlayList);
+        groupRV.setAdapter(adapter);
+        //endregion
         //region add groups
         view.findViewById(R.id.groups_title_lay_prf).setOnClickListener(new View.OnClickListener() {
             @Override

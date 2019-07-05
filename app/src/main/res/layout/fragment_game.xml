@@ -146,12 +146,19 @@
                 android:layout_margin="5dp"
                 style="@style/Timer_Settings_Toggle"/>
 
-            <EditText
-                android:hint="Enter time"
-                style="@style/Timer_view"
-                android:inputType="number"
-                android:id="@+id/timer_view"
-                android:layout_weight="2"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <EditText
+                    android:hint="Enter time"
+                    style="@style/Timer_view"
+                    android:inputType="number"
+                    android:id="@+id/timer_view"
+                    />
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/reset_timer_gamf"
