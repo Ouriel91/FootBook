@@ -145,9 +145,12 @@
                 android:layout_weight="1"
                 android:layout_margin="5dp"
                 style="@style/Timer_Settings_Toggle"/>
-            <TextView
-                android:text="00 : 00"
+
+            <EditText
+                android:hint="Enter time"
                 style="@style/Timer_view"
+                android:inputType="number"
+                android:id="@+id/timer_view"
                 android:layout_weight="2"/>
 
             <ImageButton
