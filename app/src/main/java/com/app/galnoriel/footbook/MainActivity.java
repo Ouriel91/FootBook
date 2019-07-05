@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity
     private TextInputLayout passwordConfirmLayout;
     private TextInputLayout regionLayout;
     private NavigationView navigationView;
-    private CoordinatorLayout coordinatorLayout;
+    public static CoordinatorLayout coordinatorLayout;
     private AlertDialog alertDialog;
     private CustomSharedPrefAdapter sharedPref;
     private ImageButton signUpBtn;
