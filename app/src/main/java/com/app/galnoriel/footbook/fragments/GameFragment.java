@@ -106,6 +106,9 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         reset_timer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (start_timer.isChecked()){
+                    start_timer.setChecked(false);
+                }
                 timer_et.setVisibility(View.VISIBLE);
                 resetTimer();
             }
