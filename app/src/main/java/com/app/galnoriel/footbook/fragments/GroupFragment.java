@@ -47,7 +47,7 @@ public class GroupFragment extends Fragment {
 
         MembersListAdapter adapter = new MembersListAdapter(getActivity(),players);
         groupRV.setAdapter(adapter);
-    //region next game frame
+        //region next game frame
         //if no next game is set, nextgame layout = gone , add animation instead
 //        ConstraintLayout next_game_lay = view.findViewById(R.id.next_game_lay_group_frag);
 //        next_game_lay.setVisibility(View.GONE);

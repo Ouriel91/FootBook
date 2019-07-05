@@ -14,7 +14,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,8 +38,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
@@ -107,7 +105,7 @@ public class MainActivity extends AppCompatActivity
 
         //endregion
 
-//region firebase login status listener
+        //region firebase login status listener
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -128,7 +126,7 @@ public class MainActivity extends AppCompatActivity
                                     if (task.isSuccessful()) {
                                         DocumentSnapshot playerProfile = task.getResult();
                                         if(playerProfile.exists()){
-                                            sharedPref.setDisplayUser(new Player(playerProfile));
+                                            sharedPref.setDisplayProfile(new Player(playerProfile));
                                         }
                                         else
                                             Toast.makeText(MainActivity.this, "Profile"+currentUser.getUid()+" Not Found", Toast.LENGTH_SHORT).show();;
@@ -155,7 +153,7 @@ public class MainActivity extends AppCompatActivity
         };
 //endregion
 
-//region viewpager
+        //region viewpager
         sectionsAdapter = new SectionsAdapter(getSupportFragmentManager());
 
         viewPager = findViewById(R.id.view_pager);
@@ -192,6 +190,7 @@ public class MainActivity extends AppCompatActivity
         adapter.addFragment(new GameFragment());
         adapter.addFragment(new SearchGameFieldFragment());
         viewPager.setAdapter(adapter);
+
     }
 
     @Override

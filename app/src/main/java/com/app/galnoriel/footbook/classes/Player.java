@@ -39,6 +39,9 @@ public class Player {
         return user;
     }
 
+    public  String toLogString(){
+        return get_id()+"\n"+getName()+"\n"+getWhereFrom()+"\n"+getPosition()+"\n"+getPitch()+"\n"+getWherePlay();
+    }
 
     //endregion
 
@@ -47,14 +50,15 @@ public class Player {
     public Player(DocumentSnapshot playerProfile) { //construct player from server
         _id = playerProfile.getId(); //document name is the user id
         name = playerProfile.getString(GlobConst.DB_USER_NAME);
-        whereFrom = playerProfile.getString(GlobConst.DB_USER_WHEREFROM);
-        try {position = playerProfile.getString(GlobConst.DB_USER_POSITION);}
+        try{whereFrom = playerProfile.get(GlobConst.DB_USER_WHEREFROM).toString();}
+        catch (Exception e){whereFrom = "City";}
+        try {position = playerProfile.get(GlobConst.DB_USER_POSITION).toString();}
         catch (Exception e){position = "Free Role";}
-        try{pitch = playerProfile.getString(GlobConst.DB_USER_PITCH);}
+        try{pitch = playerProfile.get(GlobConst.DB_USER_PITCH).toString();}
         catch (Exception e){pitch = "Asphalt";}
-        try{wherePlay = playerProfile.getString(GlobConst.DB_USER_WHEREPLAY);}
+        try{wherePlay = playerProfile.get(GlobConst.DB_USER_WHEREPLAY).toString();}
         catch (Exception e){wherePlay = "Anywhere";}
-        try{picture = playerProfile.getString(GlobConst.DB_USER_PICTURE);}
+        try{picture = playerProfile.getString(GlobConst.DB_USER_PICTURE).toString();}
         catch (Exception e){picture = null;}
         try {
             groups_ids.addAll((Collection) playerProfile.get(GlobConst.DB_USER_GROUPS));}
@@ -80,7 +84,7 @@ public class Player {
         this.next_game = next_game;
     }
 
-    public  Player(HashMap user){
+    public Player(HashMap user){
         _id = user.get("id").toString();
         name = user.get("name").toString();
         whereFrom = user.get("whereFrom").toString();
@@ -89,6 +93,7 @@ public class Player {
         wherePlay = user.get("wherePlay").toString();
         picture = user.get("picture").toString();
     }
+
     public Player(String _id, String name, String whereFrom) {
         this._id = _id;
         this.name = name;

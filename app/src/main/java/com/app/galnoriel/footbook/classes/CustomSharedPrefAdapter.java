@@ -2,10 +2,9 @@ package com.app.galnoriel.footbook.classes;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class CustomSharedPrefAdapter {
@@ -15,7 +14,7 @@ public class CustomSharedPrefAdapter {
     //region constants
     private static String PREFS_NAME = "PREFS_NAME";
     private static String FIRST_INITIALIZE = "FIRST_INITIALIZE";
-    private static String USER_ID = "user_id";
+    private static String MY_USER_ID = "user_id";
     private static String USER_NAME = "user_name";
     private static String USER_WHERE_FROM = "whereFrom";
     private static String USER_POSITION = "position";
@@ -23,6 +22,14 @@ public class CustomSharedPrefAdapter {
     private static String USER_WHERE_PLAY = "wherePlay";
     private static String USER_PICTURE = "picture";
     private static String USER_GROUPS = "groups";
+    private static String DISPLAY_USER_ID = "DISPLAY__USER_ID";
+    private static String DISPLAY_USER_NAME = "DISPLAY_USER_NAME";
+    private static String DISPLAY_USER_WHERE_FROM = "DISPLAY_USER_WHERE_FROM";
+    private static String DISPLAY_USER_POSITION = "DISPLAY_USER_POSITION";
+    private static String DISPLAY_USER_PITCH = "DISPLAY_USER_PITCH";
+    private static String DISPLAY_USER_WHERE_PLAY = "DISPLAY_USER_WHERE_PLAY";
+    private static String DISPLAY_USER_PICTURE = "DISPLAY_USER_PICTURE";
+    private static String DISPLAY_USER_GROUPS = "DISPLAY_USER_GROUPS";
     private static String NEXT_GAME_ID = "next_game_id";
     private static String NEXT_GAME_LOCATION = "NEXT_GAME_LOCATION";
     private static String NEXT_GAME_PRICE = "NEXT_GAME_PRICE";
@@ -45,18 +52,55 @@ public class CustomSharedPrefAdapter {
 //
 //    }
 
+
+
     public String getUserId(){
-        return getString(USER_ID,"Not Found");
+        return getString(MY_USER_ID,"Not Found");
+    }
+
+    public void setDisplayProfile(Player player) {
+        sharedPreferences.edit()
+                .putString(DISPLAY_USER_ID,player.get_id())
+                .putString(DISPLAY_USER_NAME,player.getName())
+                .putString(DISPLAY_USER_WHERE_FROM,player.getWhereFrom())
+                .putString(DISPLAY_USER_POSITION,player.getPosition())
+                .putString(DISPLAY_USER_PITCH,player.getPitch())
+                .putString(DISPLAY_USER_WHERE_PLAY,player.getWherePlay())
+//                .putString(DISPLAY_USER_PICTURE,player.getPicture())
+//                .putString(DISPLAY_USER_GROUPS,player.getGroups_ids().toString())
+                .apply();
+        Log.d("CURRENT display user:\n",player.toLogString());
+    }
+
+    public void clearDisplayProfileInfo(){
+        sharedPreferences.edit()
+                .remove(DISPLAY_USER_ID).remove(DISPLAY_USER_NAME).remove(DISPLAY_USER_WHERE_FROM)
+                .remove(DISPLAY_USER_POSITION).remove(DISPLAY_USER_PITCH).remove(DISPLAY_USER_WHERE_PLAY)
+                .remove(DISPLAY_USER_PICTURE).remove(DISPLAY_USER_GROUPS).apply();
+    }
+
+    public void setCurrentUser(Player player) {
+        sharedPreferences.edit()
+                .putString(MY_USER_ID,player.get_id())
+                .putString(USER_NAME,player.getName())
+                .putString(USER_WHERE_FROM,player.getWhereFrom())
+                .putString(USER_POSITION,player.getPosition())
+                .putString(USER_PITCH,player.getPitch())
+                .putString(USER_WHERE_PLAY,player.getWherePlay())
+//                .putString(USER_PICTURE,player.getPicture())
+//                .putString(USER_GROUPS,player.getGroups_ids().toString())
+                .apply();
+        Log.d("CURRENT display user:\n",player.toLogString());
     }
     public void removeCurrentUserInfo(){
         sharedPreferences.edit()
-                .remove(USER_ID).remove(USER_NAME).remove(USER_WHERE_FROM)
+                .remove(MY_USER_ID).remove(USER_NAME).remove(USER_WHERE_FROM)
                 .remove(USER_POSITION).remove(USER_PITCH).remove(USER_WHERE_PLAY)
                 .remove(USER_PICTURE).remove(USER_GROUPS).apply();
     }
 
     public void setUserId(String currentUserId){
-        putString(USER_ID,currentUserId);
+        putString(MY_USER_ID,currentUserId);
     }
 
     public CustomSharedPrefAdapter(Context context) { //constructor
@@ -125,20 +169,5 @@ public class CustomSharedPrefAdapter {
                 .apply();
     }
 
-    public void setDisplayUser(String id) {
 
-    }
-
-    public void setDisplayUser(Player player) {
-        sharedPreferences.edit()
-                .putString(USER_ID,player.get_id())
-                .putString(USER_NAME,player.getName())
-                .putString(USER_WHERE_FROM,player.getWhereFrom())
-                .putString(USER_POSITION,player.getPosition())
-                .putString(USER_PITCH,player.getPitch())
-                .putString(USER_WHERE_PLAY,player.getWherePlay())
-//                .putString(USER_PICTURE,player.getPicture())
-//                .putString(USER_GROUPS,player.getGroups_ids().toString())
-                .apply();
-    }
 }
