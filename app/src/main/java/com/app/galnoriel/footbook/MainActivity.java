@@ -38,10 +38,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-/*import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;*/
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Pattern;
 
@@ -82,11 +82,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*FirebaseFirestore db = FirebaseFirestore.getInstance();*/
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         sharedPref = new CustomSharedPrefAdapter(this);
         //region fire store testing
         Player test = new Player(sharedPref.getUserId(),"New Player","Moon");
-        /*db.collection(GlobConst.DB_USER_TABLE).document(test.get_id()).set(test.toHashMap());*/
+        db.collection(GlobConst.DB_USER_TABLE).document(test.get_id()).set(test.toHashMap());
         //endregion
 
 
