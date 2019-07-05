@@ -154,10 +154,20 @@
 
                 <EditText
                     android:hint="Enter time"
-                    style="@style/Timer_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:inputType="number"
-                    android:id="@+id/timer_view"
+                    android:id="@+id/timer_et"
                     />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Timer_view"
+                    android:id="@+id/timer_tv"
+                    android:text="00:00"/>
+
             </LinearLayout>
 
             <ImageButton
