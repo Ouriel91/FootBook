@@ -65,13 +65,14 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
+                //need some check
                 if (leftTimeInMillis == 0){
                     String input = timer_et.getText().toString();
                     Long millisInput = 0L;
 
                     if (input.length() == 0){
                         Snackbar.make(MainActivity.coordinatorLayout,"Enter valid time",Snackbar.LENGTH_SHORT).show();
-
+                        start_timer.setChecked(false);
                         return;
                     }
 
@@ -83,7 +84,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
 
                     if (millisInput == 0){
                         Snackbar.make(MainActivity.coordinatorLayout,"Enter positive time",Snackbar.LENGTH_SHORT).show();
-
+                        start_timer.setChecked(false);
                         return;
                     }
                     setTime(millisInput);
