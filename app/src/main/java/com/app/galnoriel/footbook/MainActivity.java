@@ -137,6 +137,8 @@ public class MainActivity extends AppCompatActivity
         coordinatorLayout = findViewById(R.id.coordinator_layout);
 //endregion
 
+
+
         //region Layout and views assignment
 
         //endregion

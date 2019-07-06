@@ -1,6 +1,9 @@
 package com.app.galnoriel.footbook.fragments;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
@@ -10,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -21,6 +23,7 @@ import android.widget.ToggleButton;
 
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
+import com.app.galnoriel.footbook.Services.TimerService;
 
 import java.util.Locale;
 
@@ -87,7 +90,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
                     timer_et.setVisibility(View.GONE);
                 }
                 if (isChecked){ //play
-                    //timer_et.setVisibility(View.GONE);
+
                     startTimer();
 
                 }
@@ -103,7 +106,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
                     start_timer.setChecked(false);
                 }
                 timer_et.setVisibility(View.VISIBLE);
-                resetTimer();
+                leftTimeInMillis=0;
             }
         });
 
@@ -120,32 +123,31 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
             }
             @Override
             public void onFinish() {
-                //isTimerRunning = false;
                 start_timer.setChecked(false);
-                updateWatchInterface();
+                Intent intent = new Intent(getActivity(), TimerService.class);
+                getActivity().startService(intent);
+
                 //need to add notification
             }
         }.start();
 
         start_timer.setChecked(true);
-        updateWatchInterface();
+
     }
     private void pauseTimer() {
         mCountDownTimer.cancel();
         start_timer.setChecked(false);
-        updateWatchInterface();
     }
 
     private void setTime(Long milliSeconds) {
         startTimeInMillis = milliSeconds;
-        resetTimer();
+        updateTimer();
         closeKeyboard();
     }
 
-    private void resetTimer() {
+    private void updateTimer() {
         leftTimeInMillis = startTimeInMillis;
         updateCountdown();
-        updateWatchInterface();
     }
 
     private void closeKeyboard() {
@@ -157,9 +159,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         }
     }
 
-    private void updateWatchInterface() {
 
-    }
 
     private void updateCountdown() {
 
