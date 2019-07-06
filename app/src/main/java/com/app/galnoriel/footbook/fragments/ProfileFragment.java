@@ -11,13 +11,19 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
@@ -86,7 +92,6 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         positionTV.setOnClickListener(this);
         pitchTV.setOnClickListener(this);
 
-
             //add groups:
         view.findViewById(R.id.groups_title_lay_prf).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,11 +108,6 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 //                openChat(sPref.getUserId(),sPref.getDisplayingUid);
             }
         });
-            //change pitch: (spinner)
-
-            //change region: (spinner)
-
-
         //endregion
 
         //listener for player from server to set display (implemented beneath)
@@ -136,8 +136,6 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
                 dialog.dismiss();
             }
         });
-
-
         dialog.show();
     }
 
@@ -185,48 +183,77 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 
     @Override
     public void onClick(View v) { //clicked on text view to edit it
+        //setting declaration for calling the dialog. need the following:
+        //boolean withSpinner, Drawable img, String hint, View v, ArrayAdapter<CharSequence> spAdapter
+        //can see additional info in showEditDialog function
         String hint ="";
-        Resources r = getResources();
-        Drawable img = r.getDrawable(R.drawable.profile_ic_tab);
+        Resources r = getResources(); //just because im lazy
+        Drawable img = r.getDrawable(R.drawable.group_ic_tab); //set default img
+        int arrayId = R.array.pitch_spinner;  //set defualt array id which the adapter will use to initialize
+        boolean withSpinner = true;
+        //check which textView was pressed and change the params
         switch (v.getId()){
-            case R.id.name_tv_prf: hint = r.getString(R.string.full_name); break;
-            case R.id.pitch_tv_prf: img = r.getDrawable(R.drawable.football_field_ic);  break;
-            case R.id.position_tv_prf:img = r.getDrawable(R.drawable.striker); break;
+            case R.id.name_tv_prf:
+                withSpinner = false;
+                hint = r.getString(R.string.full_name);
+                break;
+            case R.id.pitch_tv_prf: img = r.getDrawable(R.drawable.football_field_ic); arrayId = R.array.pitch_spinner; break;
+            case R.id.position_tv_prf:img = r.getDrawable(R.drawable.striker); arrayId = R.array.position_spinner; break;
             case R.id.where_from_tv_prf:
+                withSpinner = false;
                 hint = r.getString(R.string.address);
                 img = r.getDrawable(R.drawable.location);
                 break;
-            case R.id.where_play_tv_prf: img = r.getDrawable(R.drawable.where); break;
+            case R.id.where_play_tv_prf: img = r.getDrawable(R.drawable.where);arrayId = R.array.where_play_spinner; break;
         }
-
         //make alert dialog pop dynamically
+        ArrayAdapter<CharSequence> spAdapter = ArrayAdapter.createFromResource(getContext(),arrayId,
+                android.R.layout.simple_spinner_item); //create adapter for the spinner in showEditDialog function
+        showEditDialog(withSpinner, img, hint, v, spAdapter);
+    }
+
+    private void showEditDialog(final boolean withSpinner, Drawable img, String hint, View v, final ArrayAdapter<CharSequence> spAdapter) {
+        // withSpinner? if true -> show spinner instead of edit text
+        // img -> this will be the image show in dialog
+        // hint -> in case dialog is with edit text , this will be its hint
+        // v -> the TextView pressed that called the dialog, use it to change it's text after confirmation
+        //spAdapter -> relevant only in case spinner is on. this will be the value adapter for the spinner
+        //make alert dialog pop dynamically
+        final TextView tvFromFragment = (TextView) v;
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        final View dialogSignView = getLayoutInflater().inflate(R.layout.dialog_create_group,null);
-        builder.setView(dialogSignView);
+        final View dialogEditView = getLayoutInflater().inflate(R.layout.dialog_edit_user_profile,null);
+        final EditText editText = dialogEditView.findViewById(R.id.text_edit_dialog);
+        final Spinner spinner = dialogEditView.findViewById(R.id.spinner_edit_dialog);
+        ImageView icon = dialogEditView.findViewById(R.id.image_edit_dialog);
+        builder.setView(dialogEditView);
         final AlertDialog dialog = builder.create();
-        final EditText editText = dialogSignView.findViewById(R.id.text_edit_dialog);
-        final Spinner spinner = dialogSignView.findViewById(R.id.spinner_edit_dialog);
-        final ImageView icon = dialogSignView.findViewById(R.id.image_edit_dialog);
-        if (!hint.isEmpty())editText.setHint(hint);
+        if (!hint.isEmpty()) editText.setHint(hint);
+        if (withSpinner){
+            spinner.setVisibility(View.VISIBLE);
+            spinner.setAdapter(spAdapter);
+            editText.setVisibility(View.GONE);
+        }
         icon.setImageDrawable(img);
-
-
-        dialogSignView.findViewById(R.id.confirm_btn_edit_dialog).setOnClickListener(new View.OnClickListener() {
+        dialogEditView.findViewById(R.id.confirm_btn_edit_dialog).setOnClickListener(new View.OnClickListener() {
             //create button will create group on server and move to group frag
+
             @Override
             public void onClick(View v) {
-                String newValue = editText.getText().toString();
-                ((TextView)v).setText(newValue);
+                final String newValue;
+                if (withSpinner)
+                    newValue = spinner.getSelectedItem().toString();
+                else
+                    newValue = editText.getText().toString();
+                tvFromFragment.setText(newValue);
                 dialog.dismiss();
             }
         });
-
-
         dialog.show();
-
     }
 
     private void editProfileDisplay(int view_id,String value){
 //        getTargetFragment()
     }
+
+
 }
