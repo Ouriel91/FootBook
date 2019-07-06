@@ -15,8 +15,6 @@ public class GroupPlay {
     private Game nextGame;
 
 
-
-
     //region functions
 
     public HashMap<String,Object> toHashMap(){

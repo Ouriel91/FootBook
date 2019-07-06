@@ -16,7 +16,7 @@ import java.util.List;
 
 public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter.MembersViewHolder> {
 
-    private List<Player> playerList;
+    public List<Player> playerList;
     private Context mContext;
 
     public MembersListAdapter(Context mContext, List<Player> playerList) {

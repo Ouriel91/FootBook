@@ -18,9 +18,10 @@ import java.util.List;
 
 public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.GroupViewHolder> {
 
-    private List<GroupPlay> groupPlayList;
+    private static List<GroupPlay> groupPlayList;
     private Context mContext;
     private OnGroupCardClickListener clickListener;
+
 
     public interface OnGroupCardClickListener {
         void onGroupCardClick(int position, String group_id);
