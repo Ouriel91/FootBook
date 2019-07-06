@@ -1,6 +1,11 @@
 package com.app.galnoriel.footbook.fragments;
 
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
@@ -10,17 +15,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
+import com.app.galnoriel.footbook.Services.TimerService;
 
 import java.util.Locale;
 
@@ -36,8 +42,8 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
     private long endTime;
     private boolean isTimerRunning;
 
-    private EditText timer_et;
     private TextView timer_tv;
+    private int time = 0;
 
     @Nullable
     @Override
@@ -57,9 +63,45 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
 //region timer layout and listeners
         start_timer = view.findViewById(R.id.start_timer_gamf);
         ImageButton reset_timer = view.findViewById(R.id.reset_timer_gamf);
-        timer_et = view.findViewById(R.id.timer_et);
+
+
         timer_tv = view.findViewById(R.id.timer_tv);
 //endregion
+
+        timer_tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Update game time")
+                        .setMessage("Scroll the time to change game length");
+                final View dialogView = getLayoutInflater().inflate(R.layout.edit_time_picker,null);
+
+                final NumberPicker timerNumberPicker = dialogView.findViewById(R.id.timer_num_picker);
+                timerNumberPicker.setMaxValue(90);
+                timerNumberPicker.setMinValue(1);
+                timerNumberPicker.setWrapSelectorWheel(true);
+
+                if (!start_timer.isChecked()){
+                    builder.setView(dialogView)
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    time = timerNumberPicker.getValue();
+                                    timer_tv.setText(time+":00");
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+            }
+        });
 
         start_timer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -67,27 +109,21 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
 
                 //need some check
                 if (leftTimeInMillis == 0){
-                    String input = timer_et.getText().toString();
                     Long millisInput = 0L;
-                    if (input.length() == 0){
-                        Snackbar.make(MainActivity.coordinatorLayout,"Enter valid time",Snackbar.LENGTH_SHORT).show();
+                    if (time == 0){
+                        Snackbar.make(MainActivity.coordinatorLayout,"Enter valid time by click the text",Snackbar.LENGTH_SHORT).show();
                         start_timer.setChecked(false);
                         return;
                     }
+
                     try {
-                        millisInput = Long.parseLong(input) *60000;
+                        millisInput = Long.valueOf(time) *60000;
                     }catch (NumberFormatException e){}
-                    if (millisInput == 0){
-                        Snackbar.make(MainActivity.coordinatorLayout,"Enter positive time",Snackbar.LENGTH_SHORT).show();
-                        start_timer.setChecked(false);
-                        return;
-                    }
+
                     setTime(millisInput);
-                    timer_et.setText("");
-                    timer_et.setVisibility(View.GONE);
                 }
                 if (isChecked){ //play
-                    //timer_et.setVisibility(View.GONE);
+
                     startTimer();
 
                 }
@@ -102,8 +138,9 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
                 if (start_timer.isChecked()){
                     start_timer.setChecked(false);
                 }
-                timer_et.setVisibility(View.VISIBLE);
-                resetTimer();
+
+                timer_tv.setText(time+":00");
+                leftTimeInMillis=0;
             }
         });
 
@@ -120,32 +157,31 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
             }
             @Override
             public void onFinish() {
-                //isTimerRunning = false;
                 start_timer.setChecked(false);
-                updateWatchInterface();
+                Intent intent = new Intent(getActivity(), TimerService.class);
+                getActivity().startService(intent);
+
                 //need to add notification
             }
         }.start();
 
         start_timer.setChecked(true);
-        updateWatchInterface();
+
     }
     private void pauseTimer() {
         mCountDownTimer.cancel();
         start_timer.setChecked(false);
-        updateWatchInterface();
     }
 
     private void setTime(Long milliSeconds) {
         startTimeInMillis = milliSeconds;
-        resetTimer();
+        updateTimer();
         closeKeyboard();
     }
 
-    private void resetTimer() {
+    private void updateTimer() {
         leftTimeInMillis = startTimeInMillis;
         updateCountdown();
-        updateWatchInterface();
     }
 
     private void closeKeyboard() {
@@ -157,9 +193,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         }
     }
 
-    private void updateWatchInterface() {
 
-    }
 
     private void updateCountdown() {
 

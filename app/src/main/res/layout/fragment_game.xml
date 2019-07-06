@@ -153,14 +153,6 @@
                 android:orientation="vertical"
                 android:layout_margin="5dp">
 
-                <EditText
-                    android:hint="Enter time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:inputType="number"
-                    android:id="@+id/timer_et"
-                    />
 
                 <TextView
                     android:layout_width="match_parent"
