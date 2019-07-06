@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +31,7 @@ import com.app.galnoriel.footbook.fragments.GroupFragment;
 import com.app.galnoriel.footbook.fragments.GameFragment;
 import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
 
+import com.app.galnoriel.footbook.interfaces.FragAndMain;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -43,6 +45,11 @@ import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    //region interfaces
+    public FragAndMain sendToFrag;
+
+    //endregion
+
     //region global declarations
     private SectionsAdapter sectionsAdapter;
     private ViewPager viewPager;
@@ -116,24 +123,7 @@ public class MainActivity extends AppCompatActivity
 
                 if (currentUser != null){ //user is logged in
                     sharedPref.setUserId(currentUser.getUid());  //save user id
-                    //region get user from DB
-                    db.collection(GlobConst.DB_USER_TABLE)  //fetch user info from server and store in share pref for further display
-                            .document(currentUser.getUid())
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        DocumentSnapshot playerProfile = task.getResult();
-                                        if(playerProfile.exists()){
-                                            sharedPref.setDisplayProfile(new Player(playerProfile));
-                                        }
-                                        else
-                                            Toast.makeText(MainActivity.this, "Profile"+currentUser.getUid()+" Not Found", Toast.LENGTH_SHORT).show();;
-                                    }
-                                }
-                            });
-                    //endregion
+                    getPlayerFromServer(currentUser.getUid());
                     loginTV.setText("Welcome!!!");
                     userLoginTV.setText(currentUser.getDisplayName());
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(false);
@@ -190,6 +180,8 @@ public class MainActivity extends AppCompatActivity
         adapter.addFragment(new GameFragment());
         adapter.addFragment(new SearchGameFieldFragment());
         viewPager.setAdapter(adapter);
+        viewPager.getCurrentItem();
+
 
     }
 
@@ -229,10 +221,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        int navBtnId = item.getItemId();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View dialogSignView = getLayoutInflater().inflate(R.layout.sign_dialog,null);
+        View dialogSignView = getLayoutInflater().inflate(R.layout.dialog_sign_in,null);
 
         emailLayout = dialogSignView.findViewById(R.id.email_layout);
         userNameLayout = dialogSignView.findViewById(R.id.username_layout);
@@ -243,7 +235,7 @@ public class MainActivity extends AppCompatActivity
         signUpBtn = dialogSignView.findViewById(R.id.sign_up_btn_logdia);
         signInBtn = dialogSignView.findViewById(R.id.sign_in_btn_logdia);
 
-        switch (id){
+        switch (navBtnId){
             case R.id.sign_up: //sign up btn pressed
                 signUpUser();
                 builder.setView(dialogSignView);
@@ -282,6 +274,7 @@ public class MainActivity extends AppCompatActivity
         Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
         currentUser = null;
         firebaseAuth.signOut();
+        sendToFrag.onGetPlayerComplete(new Player());
     }
 
     private void singInUser() {
@@ -304,8 +297,7 @@ public class MainActivity extends AppCompatActivity
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()){
                                     Snackbar.make(coordinatorLayout, "Sign in succesfull", Snackbar.LENGTH_SHORT).show();
-                                }
-                                else {
+                                }else {
                                     Snackbar.make(coordinatorLayout, "Sign in failed", Snackbar.LENGTH_SHORT).show();
                                 }
                             }
@@ -385,18 +377,38 @@ public class MainActivity extends AppCompatActivity
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-//                        userName = null; //username = null means user is signing in , not singup
                         if (task.isSuccessful()){
                             Snackbar.make(coordinatorLayout, firebaseAuth.getCurrentUser().getDisplayName() + " Welcome",Snackbar.LENGTH_SHORT).show();
                         }
                     }
                 });
-        Player newProfile = new Player(curUser.getUid(),userName);
+        String whereFrom = "City";
+        try{whereFrom = regionLayout.getEditText().getText().toString();}
+        catch (Exception e){ Log.e("not home adress",e.getMessage());}
+        Player newProfile = new Player(curUser.getUid(),userName,whereFrom);
         db.collection(GlobConst.DB_USER_TABLE).document(curUser.getUid()).set(newProfile.toHashMap());
 
     }
 
-    private void getUserInfoServer(){
+    private void getPlayerFromServer(final String uid){
+        db.collection(GlobConst.DB_USER_TABLE)  //fetch user info from server and store in share pref for further display
+                .document(uid)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot playerProfile = task.getResult();
+                            if(playerProfile.exists()){
+                                Player profile =  new Player(playerProfile);
+                                sharedPref.setDisplayProfile(profile);
+                                sendToFrag.onGetPlayerComplete(profile);
+                            }
+                            else
+                                Toast.makeText(MainActivity.this, "Profile"+uid+" Not Found", Toast.LENGTH_SHORT).show();;
+                        }
+                    }
+                });
 
     }
 

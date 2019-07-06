@@ -20,4 +20,7 @@
     <string name="where_from">Where from?</string>
     <string name="team_name">Team Name</string>
     <string name="next_game_date">Next Game Date</string>
+    <string name="group_name">Group\'s Name</string>
+    <string name="where_do_u_play">Where do you play?</string>
+    <string name="What_time">When do you play?</string>
 </resources>

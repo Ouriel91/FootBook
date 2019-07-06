@@ -83,7 +83,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:gravity="center_vertical"
-            android:text="preffered time"
+            android:text="preffered whenPlay"
             style="@style/ProfileFrag_TextView"/>
 
         <!--next game section-->

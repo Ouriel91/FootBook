@@ -39,7 +39,7 @@
             android:layout_toEndOf="@id/thumbnail_prf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Oriel Ohayun"
+            android:text="Please Sign In"
             android:textColor="@color/primaryTextView"
             android:textStyle="bold"
             style="@style/ProfileFrag_TextView"/>
@@ -85,7 +85,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:gravity="center_vertical"
-            android:text="Defender"
+            android:text="Position"
             style="@style/ProfileFrag_TextView"/>
 
         <ImageView

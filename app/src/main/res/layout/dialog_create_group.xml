@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingBottom="30dp"
+    android:layout_margin="30dp"
+    >
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:src="@drawable/grass_background"
+        android:background="@color/sandy_brown"
+        android:scaleType="centerCrop"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/team_avatar"
+            android:layout_gravity="center"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
+            app:errorEnabled="true"
+            android:id="@+id/name_layout_cr_gr_dia"
+            style="@style/Login_Dialog_TextLayout">
+
+
+            <EditText
+                android:id="@+id/name_cr_gr_dia"
+                style="@style/Group_Dialog_EditText"
+                android:hint="@string/group_name"
+                android:inputType="textEmailAddress"
+                />
+        </android.support.design.widget.TextInputLayout>
+        <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/location"
+        android:layout_gravity="center"/>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
+            app:errorEnabled="true"
+            android:id="@+id/region_layout_cr_gr_dia"
+            style="@style/Login_Dialog_TextLayout"
+            android:orientation="horizontal">
+
+
+
+            <EditText
+                android:id="@+id/region_cr_gr_dia"
+                style="@style/Group_Dialog_EditText"
+                android:hint="@string/where_do_u_play"
+                android:inputType="textCapWords"
+                />
+        </android.support.design.widget.TextInputLayout>
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/clock"
+            android:layout_gravity="center"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:passwordToggleEnabled="true"
+            app:errorEnabled="true"
+            android:id="@+id/time_layout_cr_gr_dia"
+            style="@style/Login_Dialog_TextLayout">
+            <EditText
+                android:id="@+id/time_cr_gr_dia"
+                style="@style/Group_Dialog_EditText"
+                android:hint="@string/What_time"
+                android:inputType="textCapWords"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+
+    </LinearLayout>
+    <ImageButton
+        style="@style/Login_Dialog_Button"
+        android:id="@+id/create_btn_cr_gr_dia"
+        android:background="@color/colorAccent"
+
+        />
+    <ImageButton
+        style="@style/Login_Dialog_Button"
+        android:id="@+id/cancel_btn_cr_gr_dia"
+        android:background="@color/colorPrimary"
+        />
+
+</LinearLayout>

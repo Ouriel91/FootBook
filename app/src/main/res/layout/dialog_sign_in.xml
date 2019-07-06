@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:src="@drawable/grass_background"
-        android:background="@android:color/transparent"
+        android:background="@color/sandy_brown"
         android:scaleType="centerCrop"/>
 
     <LinearLayout

@@ -139,9 +139,9 @@ public class CustomSharedPrefAdapter {
 
     public void setDefaultGroup(GroupPlay g){
         sharedPreferences.edit()
-                .putInt(DEFAULT_GROUP_ID,g.getId())
+                .putString(DEFAULT_GROUP_ID,g.getId())
                 .putString(DEFAULT_GROUP_NAME,g.getName())
-                .putString(DEFAULT_GROUP_TIME,g.getTime())
+                .putString(DEFAULT_GROUP_TIME,g.getWhenPlay())
                 .putString(DEFAULT_GROUP_WHERE_PLAY,g.getWherePlay())
                 .putString(DEFAULT_GROUP_PICTURE,g.getPicture())
                 .putString(DEFAULT_GROUP_MEMBERS,g.getMembers().toString())
@@ -151,9 +151,9 @@ public class CustomSharedPrefAdapter {
 
     public void setDisplayGroup(GroupPlay g){
         sharedPreferences.edit()
-                .putInt(DISPLAY_GROUP_ID,g.getId())
+                .putString(DISPLAY_GROUP_ID,g.getId())
                 .putString(DISPLAY_GROUP_NAME,g.getName())
-                .putString(DISPLAY_GROUP_TIME,g.getTime())
+                .putString(DISPLAY_GROUP_TIME,g.getWhenPlay())
                 .putString(DISPLAY_GROUP_WHERE_PLAY,g.getWherePlay())
                 .putString(DISPLAY_GROUP_PICTURE,g.getPicture())
                 .putString(DISPLAY_GROUP_MEMBERS,g.getMembers().toString())

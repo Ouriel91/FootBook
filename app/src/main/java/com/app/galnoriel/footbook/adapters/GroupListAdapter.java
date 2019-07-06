@@ -40,7 +40,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
         GroupPlay groupPlay = groupPlayList.get(i);
 
         String nameGroup = groupPlay.getName();
-        String dateGroup = groupPlay.getTime();
+        String dateGroup = groupPlay.getWhenPlay();
 
         groupViewHolder.nameGroupCardTV.setText(nameGroup);
         groupViewHolder.dateGroupCardTV.setText(dateGroup);

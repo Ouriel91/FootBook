@@ -46,6 +46,16 @@ public class Player {
     //endregion
 
     //region constructors
+    public Player(){
+        _id = "";
+        name = "Guest";
+        whereFrom = "City";
+        wherePlay = "Anywhere";
+        picture = null;
+        position = "Free Role";
+        pitch = "Asphalt";
+        groups_ids = new ArrayList<String>();
+    }
 
     public Player(DocumentSnapshot playerProfile) { //construct player from server
         _id = playerProfile.getId(); //document name is the user id

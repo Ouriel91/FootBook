@@ -3,9 +3,16 @@ package com.app.galnoriel.footbook.classes;
 import java.util.ArrayList;
 
 public class GroupPlay {
-    int id;
-    String name,time,wherePlay,picture;
-    ArrayList<Player> members;
+
+    private String name, whenPlay,wherePlay,picture,id;
+    private ArrayList<Player> members;
+
+    public GroupPlay(String id, String name, String wherePlay, String whenPlay) {
+        this.id = id;
+        this.name = name;
+        this.wherePlay = wherePlay;
+        this.whenPlay = whenPlay;
+    }
 
 
     //region functions
@@ -25,20 +32,20 @@ public class GroupPlay {
     //region constructors
 
 
-    public GroupPlay(int id, String name, String wherePlay) {
+    public GroupPlay(String id, String name, String wherePlay) {
         this.id = id;
         this.name = name;
         this.wherePlay = wherePlay;
         picture = null;
         members = null;
-        time = null;
+        whenPlay = null;
 
     }
 
-    public GroupPlay(int id, String name, String time, String wherePlay, String picture, ArrayList<Player> members) {
+    public GroupPlay(String id, String name, String whenPlay, String wherePlay, String picture, ArrayList<Player> members) {
         this.id = id;
         this.name = name;
-        this.time = time;
+        this.whenPlay = whenPlay;
         this.wherePlay = wherePlay;
         this.picture = picture;
         this.members = members;
@@ -48,11 +55,11 @@ public class GroupPlay {
 
     //region getters and setters
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -64,12 +71,12 @@ public class GroupPlay {
         this.name = name;
     }
 
-    public String getTime() {
-        return time;
+    public String getWhenPlay() {
+        return whenPlay;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setWhenPlay(String whenPlay) {
+        this.whenPlay = whenPlay;
     }
 
     public String getWherePlay() {
