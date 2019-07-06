@@ -14,6 +14,7 @@ public class CustomSharedPrefAdapter {
 
     //region constants
     private static String PREFS_NAME = "PREFS_NAME";
+    private static String IS_SIGNED_IN = "IS_SIGNED_IN";
     private static String FIRST_INITIALIZE = "FIRST_INITIALIZE";
     private static String MY_USER_ID = "user_id";
     private static String USER_NAME = "user_name";
@@ -54,6 +55,13 @@ public class CustomSharedPrefAdapter {
 //    }
 
 
+    public boolean getLoginStatus(){
+        return sharedPreferences.getBoolean(IS_SIGNED_IN,false);
+    }
+
+    public void setLoginStatus(boolean isLogged){
+        sharedPreferences.edit().putBoolean(IS_SIGNED_IN,isLogged).apply();
+    }
 
     public String getUserId(){
         return getString(MY_USER_ID,"Not Found");
@@ -75,7 +83,7 @@ public class CustomSharedPrefAdapter {
 
     public Player getDisplayProfile() {
         Player player = new Player(
-                sharedPreferences.getString(DISPLAY_USER_ID,null),
+                sharedPreferences.getString(DISPLAY_USER_ID,getUserId()),
                 sharedPreferences.getString(DISPLAY_USER_NAME,null),
                 sharedPreferences.getString(DISPLAY_USER_WHERE_FROM,null),
                 sharedPreferences.getString(DISPLAY_USER_POSITION,null),

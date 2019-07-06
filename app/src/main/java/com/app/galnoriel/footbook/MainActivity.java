@@ -152,14 +152,17 @@ public class MainActivity extends AppCompatActivity
 
                 if (currentUser != null){ //user is logged in
                     sharedPref.setUserId(currentUser.getUid());  //save user id
+                    sharedPref.setLoginStatus(true);
                     getPlayerFromServer(currentUser.getUid());
                     loginTV.setText("Welcome!!!");
                     userLoginTV.setText(currentUser.getDisplayName());
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(false);
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(false);
                     navigationView.getMenu().findItem(R.id.sign_out).setVisible(true);
+
                 }
                 else { //signed out
+                    sharedPref.setLoginStatus(false);
                     sharedPref.removeCurrentUserInfo();
                     loginTV.setText("Please Log in");
                     userLoginTV.setText("We are waiting for you");
@@ -302,6 +305,7 @@ public class MainActivity extends AppCompatActivity
         currentUser = null;
         firebaseAuth.signOut();
         sendToFrag.onGetPlayerComplete(new Player());
+        sharedPref.removeCurrentUserInfo();
     }
 
     private void singInUser() {
@@ -417,26 +421,30 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void getPlayerFromServer(final String uid){
-        db.collection(GlobConst.DB_USER_TABLE)  //fetch user info from server and store in share pref for further display
-                .document(uid)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot playerProfile = task.getResult();
-                            if(playerProfile.exists()){
-                                Player profile =  new Player(playerProfile);
-                                sharedPref.setDisplayProfile(profile);
-                                sendToFrag.onGetPlayerComplete(profile);
-                            }
-                            else
-                                Toast.makeText(MainActivity.this, "Profile"+uid+" Not Found", Toast.LENGTH_SHORT).show();;
-                        }
-                    }
-                });
+    public void getPlayerFromServer(final String uid){
+        if (sharedPref.getLoginStatus()) { //enable only if user looged in
+            db.collection(GlobConst.DB_USER_TABLE)  //fetch user info from server and store in share pref for further display
+                    .document(uid)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot playerProfile = task.getResult();
+                                if (playerProfile.exists()) {
+                                    Player profile = new Player(playerProfile);
+                                    profile.set_id(uid);
 
+                                    sharedPref.setDisplayProfile(profile);
+                                    sendToFrag.onGetPlayerComplete(profile);
+
+                                } else
+                                    Toast.makeText(MainActivity.this, "Profile" + uid + " Not Found", Toast.LENGTH_SHORT).show();
+                                ;
+                            }
+                        }
+                    });
+        }
     }
 
     private boolean validateEmail(TextInputLayout emailLayout) {
@@ -593,7 +601,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful())
-                            Log.d("UPDATE SERVER ","success : "+player.get_id());
+                            Log.d("UPDATE SERVER ","success : "+player.toLogString());
                         else
                             Log.w("UPDATE SERVER ","FAILED!! : "+player.get_id());
                     }

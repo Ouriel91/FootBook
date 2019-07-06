@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
     private RecyclerView profileRV;
     private CustomSharedPrefAdapter sPref;
     TextView nameTV,whereFromTV,positionTV, pitchTV, wherePlayTV;
-    ImageView pitchIV,chatIV,positionIV;
+    ImageView pitchIV,chatIV,positionIV,wherePlayIV,whereFromIV;
     List<GroupPlay> groupPlayList;
     public MoveToTab showTab;
     public UpdateGroupDB updateGroupDB;
@@ -55,11 +56,25 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        if (sPref.getUserId().equals(sPref.getDisplayProfile().get_id()))
-            updatePlayerDB.updatePlayerInServer(sPref.getDisplayProfile());
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)getActivity()).getPlayerFromServer(sPref.getDisplayProfile().get_id());
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("Profile frag Paused!", sPref.getUserId()+"   "+sPref.getDisplayProfile().get_id());
+
+        if (sPref.getUserId().equals(sPref.getDisplayProfile().get_id()) )
+            sPref.setDisplayProfile(createPlayerFromView());
+            if (!(sPref.getDisplayProfile().getName().equals("Guest")||
+                    sPref.getDisplayProfile().getName().contains("Please Sign")))
+                updatePlayerDB.updatePlayerInServer(sPref.getDisplayProfile());
+
+    }
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -83,6 +98,9 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         chatIV = view.findViewById(R.id.msg_btn_prf);
         pitchIV = view.findViewById(R.id.pitch_ic_prf);
         positionIV = view.findViewById(R.id.position_ic_prf);
+        wherePlayIV = view.findViewById(R.id.pref_region_ic_prf);
+        whereFromIV = view.findViewById(R.id.region_ic_prf);
+
         //endregion
 
         //region assign views click listeners
@@ -91,8 +109,12 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         wherePlayTV.setOnClickListener(this);
         positionTV.setOnClickListener(this);
         pitchTV.setOnClickListener(this);
+//        whereFromIV.setOnClickListener(this);
+//        wherePlayIV.setOnClickListener(this);
+//        positionIV.setOnClickListener(this);
+//        pitchIV.setOnClickListener(this);
 
-            //add groups:
+            //add groups btn:
         view.findViewById(R.id.groups_title_lay_prf).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,9 +162,20 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
     }
 
     private void displayProfile(Player p) {
+        String pitch,position,wherePlay;
+        try{pitch = p.getPitch();}
+        catch (Exception e){e.printStackTrace();pitch = "Asphalt";}
+        try{position = p.getPosition();}
+        catch (Exception e){e.printStackTrace();position = "Free Role";}
+        try{wherePlay = p.getWherePlay();}
+        catch (Exception e){e.printStackTrace();wherePlay = "Anywhere";}
+        pitchTV.setText(pitch);
+        wherePlayTV.setText(wherePlay);
         nameTV.setText(p.getName());
-        positionTV.setText(p.getPosition());
+        positionTV.setText(position);
         whereFromTV.setText(p.getWhereFrom());
+
+
         //region recycler adapter
         //setting gridLayout
         profileRV.setHasFixedSize(true);
@@ -193,17 +226,20 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         boolean withSpinner = true;
         //check which textView was pressed and change the params
         switch (v.getId()){
-            case R.id.name_tv_prf:
+            case R.id.name_tv_prf: //change name:
                 withSpinner = false;
                 hint = r.getString(R.string.full_name);
                 break;
+//            case R.id.pitch_ic_prf: //change pitch:
             case R.id.pitch_tv_prf: img = r.getDrawable(R.drawable.football_field_ic); arrayId = R.array.pitch_spinner; break;
+//            case R.id.position_ic_prf: //change position:
             case R.id.position_tv_prf:img = r.getDrawable(R.drawable.striker); arrayId = R.array.position_spinner; break;
-            case R.id.where_from_tv_prf:
+            case R.id.where_from_tv_prf: //change city (free text)
                 withSpinner = false;
                 hint = r.getString(R.string.address);
                 img = r.getDrawable(R.drawable.location);
                 break;
+//            case R.id.pref_region_ic_prf: //change where user prefer playing
             case R.id.where_play_tv_prf: img = r.getDrawable(R.drawable.where);arrayId = R.array.where_play_spinner; break;
         }
         //make alert dialog pop dynamically
@@ -232,6 +268,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
             spinner.setVisibility(View.VISIBLE);
             spinner.setAdapter(spAdapter);
             editText.setVisibility(View.GONE);
+
         }
         icon.setImageDrawable(img);
         dialogEditView.findViewById(R.id.confirm_btn_edit_dialog).setOnClickListener(new View.OnClickListener() {
@@ -244,15 +281,18 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
                     newValue = spinner.getSelectedItem().toString();
                 else
                     newValue = editText.getText().toString();
-                tvFromFragment.setText(newValue);
+                if (!newValue.isEmpty())
+                    tvFromFragment.setText(newValue);
                 dialog.dismiss();
             }
         });
         dialog.show();
     }
 
-    private void editProfileDisplay(int view_id,String value){
-//        getTargetFragment()
+    private Player createPlayerFromView(){
+        return new Player(sPref.getDisplayProfile().get_id(),
+                nameTV.getText().toString(), whereFromTV.getText().toString(),positionTV.getText().toString(),
+                pitchTV.getText().toString(),wherePlayTV.getText().toString(),null);
     }
 
 

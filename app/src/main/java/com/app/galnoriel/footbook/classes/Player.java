@@ -40,7 +40,9 @@ public class Player {
     }
 
     public  String toLogString(){
-        return get_id()+"\n"+getName()+"\n"+getWhereFrom()+"\n"+getPosition()+"\n"+getPitch()+"\n"+getWherePlay()+"\n"+getGroups_ids().toString();
+        return get_id()+"\n"+getName()+"\n"+getWhereFrom()+"\n"+getPosition()+"\n"+getPitch()+"\n"+getWherePlay()
+     //                +"\n"+getGroups_ids().toString()
+                ;
     }
 
     //endregion
