@@ -24,4 +24,29 @@
     <string name="where_do_u_play">Where do you play?</string>
     <string name="What_time">When do you play?</string>
     <string name="address">City you from</string>
+    <string-array name="pitch_spinner">
+        <item>Asphalt</item>
+        <item>Synthetic</item>
+        <item>Grass</item>
+    </string-array>
+    <string-array name="position_spinner">
+        <item>Free Role</item>
+        <item>Defender</item>
+        <item>Midfielder</item>
+        <item>Striker</item>
+        <item>Goalkeeper</item>
+    </string-array>
+    <string-array name="where_play_spinner">
+        <item>Center</item>
+        <item>North</item>
+        <item>South</item>
+        <item>Shfela</item>
+        <item>Sharon</item>
+        <item>Tel Aviv</item>
+        <item>Beer Sheva</item>
+        <item>Eilat</item>
+        <item>Ashdod</item>
+        <item>Haifa</item>
+        <item>Haifa</item>
+    </string-array>
 </resources>
