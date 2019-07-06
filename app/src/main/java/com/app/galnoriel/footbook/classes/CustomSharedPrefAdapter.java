@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -70,6 +71,21 @@ public class CustomSharedPrefAdapter {
 //                .putString(DISPLAY_USER_GROUPS,player.getGroups_ids().toString())
                 .apply();
         Log.d("CURRENT display user:\n",player.toLogString());
+    }
+
+    public Player getDisplayProfile() {
+        Player player = new Player(
+                sharedPreferences.getString(DISPLAY_USER_ID,null),
+                sharedPreferences.getString(DISPLAY_USER_NAME,null),
+                sharedPreferences.getString(DISPLAY_USER_WHERE_FROM,null),
+                sharedPreferences.getString(DISPLAY_USER_POSITION,null),
+                sharedPreferences.getString(DISPLAY_USER_PITCH,null),
+                sharedPreferences.getString(DISPLAY_USER_WHERE_PLAY,null),
+                sharedPreferences.getString(DISPLAY_USER_PICTURE,null)
+
+        );
+        Log.d("CURRENT display user:\n",player.toLogString());
+        return player;
     }
 
     public void clearDisplayProfileInfo(){
@@ -144,7 +160,7 @@ public class CustomSharedPrefAdapter {
                 .putString(DEFAULT_GROUP_TIME,g.getWhenPlay())
                 .putString(DEFAULT_GROUP_WHERE_PLAY,g.getWherePlay())
                 .putString(DEFAULT_GROUP_PICTURE,g.getPicture())
-                .putString(DEFAULT_GROUP_MEMBERS,g.getMembers().toString())
+                .putString(DEFAULT_GROUP_MEMBERS,g.getMembers_id().toString())
                 .apply();
         //also set default group id on server
     }
@@ -156,7 +172,7 @@ public class CustomSharedPrefAdapter {
                 .putString(DISPLAY_GROUP_TIME,g.getWhenPlay())
                 .putString(DISPLAY_GROUP_WHERE_PLAY,g.getWherePlay())
                 .putString(DISPLAY_GROUP_PICTURE,g.getPicture())
-                .putString(DISPLAY_GROUP_MEMBERS,g.getMembers().toString())
+                .putString(DISPLAY_GROUP_MEMBERS,g.getMembers_id().toString())
                 .apply();
         //also set default group id on server
     }

@@ -69,19 +69,14 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
                 if (leftTimeInMillis == 0){
                     String input = timer_et.getText().toString();
                     Long millisInput = 0L;
-
                     if (input.length() == 0){
                         Snackbar.make(MainActivity.coordinatorLayout,"Enter valid time",Snackbar.LENGTH_SHORT).show();
                         start_timer.setChecked(false);
                         return;
                     }
-
                     try {
                         millisInput = Long.parseLong(input) *60000;
-                    }catch (NumberFormatException e){
-
-                    }
-
+                    }catch (NumberFormatException e){}
                     if (millisInput == 0){
                         Snackbar.make(MainActivity.coordinatorLayout,"Enter positive time",Snackbar.LENGTH_SHORT).show();
                         start_timer.setChecked(false);
@@ -91,9 +86,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
                     timer_et.setText("");
                     timer_et.setVisibility(View.GONE);
                 }
-
                 if (isChecked){ //play
-
                     //timer_et.setVisibility(View.GONE);
                     startTimer();
 
@@ -103,7 +96,6 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
                 }
             }
         });
-
         reset_timer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,41 +111,32 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void startTimer() {
-
         endTime = System.currentTimeMillis() + leftTimeInMillis;
-
         mCountDownTimer = new CountDownTimer(leftTimeInMillis,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-
                 leftTimeInMillis = millisUntilFinished;
                 updateCountdown();
             }
-
             @Override
             public void onFinish() {
-
                 //isTimerRunning = false;
                 start_timer.setChecked(false);
                 updateWatchInterface();
                 //need to add notification
-
             }
         }.start();
 
         start_timer.setChecked(true);
         updateWatchInterface();
     }
-
     private void pauseTimer() {
-
         mCountDownTimer.cancel();
         start_timer.setChecked(false);
         updateWatchInterface();
     }
 
     private void setTime(Long milliSeconds) {
-
         startTimeInMillis = milliSeconds;
         resetTimer();
         closeKeyboard();
@@ -166,12 +149,9 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void closeKeyboard() {
-
         //closing keyboard after enter time
-
         View view = getActivity().getCurrentFocus();
         if (view != null){
-
             InputMethodManager methodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             methodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
@@ -211,8 +191,10 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         //normal click wil set to true
         Button btn = view.findViewById(id);
         int score = Integer.valueOf(btn.getText().toString());
+        if (!increase && score == 0)
+            return;
         score += increase? 1 : -1;
-        btn.setText(score+"");
+        btn.setText(String.valueOf(score));
 
     }
 

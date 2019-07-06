@@ -40,7 +40,7 @@ public class Player {
     }
 
     public  String toLogString(){
-        return get_id()+"\n"+getName()+"\n"+getWhereFrom()+"\n"+getPosition()+"\n"+getPitch()+"\n"+getWherePlay();
+        return get_id()+"\n"+getName()+"\n"+getWhereFrom()+"\n"+getPosition()+"\n"+getPitch()+"\n"+getWherePlay()+"\n"+getGroups_ids().toString();
     }
 
     //endregion
@@ -57,6 +57,16 @@ public class Player {
         groups_ids = new ArrayList<String>();
     }
 
+    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, String picture) {
+        this._id = _id;
+        this.name = name;
+        this.whereFrom = whereFrom;
+        this.position = position;
+        this.pitch = pitch;
+        this.wherePlay = wherePlay;
+        this.picture = picture;
+    }
+
     public Player(DocumentSnapshot playerProfile) { //construct player from server
         _id = playerProfile.getId(); //document name is the user id
         name = playerProfile.getString(GlobConst.DB_USER_NAME);
@@ -70,8 +80,8 @@ public class Player {
         catch (Exception e){wherePlay = "Anywhere";}
         try{picture = playerProfile.getString(GlobConst.DB_USER_PICTURE).toString();}
         catch (Exception e){picture = null;}
-        try {
-            groups_ids.addAll((Collection) playerProfile.get(GlobConst.DB_USER_GROUPS));}
+        try {groups_ids = (ArrayList<String>) playerProfile.get(GlobConst.DB_USER_GROUPS);
+        Log.d("GROUPS UNDER ",groups_ids.get(0));}
         catch (Exception e){groups_ids = new ArrayList<String>();}
         Log.d("Player Saved", _id+"\n"+name+"\n"+whereFrom+"\n"+position+"\n"+pitch+"\n"+ wherePlay+"\n"+picture +"\n"+groups_ids.toString());
 

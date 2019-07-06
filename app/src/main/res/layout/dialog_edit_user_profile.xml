@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_margin="30dp"
+    android:paddingBottom="30dp">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:src="@drawable/grass_background"
+        android:background="@color/sandy_brown"
+        android:scaleType="centerCrop"/>
+
+    <LinearLayout
+        style="@style/Dialog_Inner_Frame"
+        android:background="@color/lists_background">
+    <ImageView
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    android:layout_gravity="center"
+    android:src="@drawable/profile_ic_tab"
+        android:id="@+id/image_edit_dialog"/>
+
+        <EditText
+            android:id="@+id/text_edit_dialog"
+            style="@style/Edit_Dialog_EditText"/>
+        <Spinner
+            android:id="@+id/spinner_edit_dialog"
+            style="@style/Edit_Dialog_EditText"
+            android:layout_height="50dp"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+    <ImageButton
+        style="@style/Dialog_Buttons"
+        android:background="@color/colorAccent"
+        android:id="@+id/confirm_btn_edit_dialog"
+        />
+</LinearLayout>

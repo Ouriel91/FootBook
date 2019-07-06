@@ -73,7 +73,7 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Login_Dialog_Button">
+    <style name="Dialog_Buttons">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">40dp</item>
         <item name="android:layout_marginTop">30dp</item>
@@ -115,8 +115,8 @@
     </style>
 
     <style name="Timer_Settings_Toggle" parent="android:Widget">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:background">@drawable/timer_toggle_layers</item>
@@ -131,8 +131,30 @@
         <!--<item name="android:background">@android:color/transparent</item>-->
         <item name="android:paddingStart">40dp</item>
         <item name="android:paddingEnd">40dp</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Dialog_Inner_Frame">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingBottom">20dp</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:layout_marginStart">40dp</item>
+        <item name="android:layout_marginEnd">40dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+
+    </style>
+
+    <style name="Edit_Dialog_EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:hint">@string/full_name</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center_horizontal</item>
     </style>
 
 

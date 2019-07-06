@@ -106,18 +106,19 @@
             app:layout_constraintStart_toEndOf="@id/pitch_ic_prf"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:id="@+id/pitch_tv_prf"
+            android:id="@+id/const_p_tv_prf"
             android:text="Preferred Pitch :"
             style="@style/ProfileFrag_TextView"
             />
-        <Spinner
+        <TextView
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/pitch_tv_prf"
-            app:layout_constraintBottom_toBottomOf="@id/pitch_tv_prf"
-            app:layout_constraintStart_toEndOf="@id/pitch_tv_prf"
-            android:id="@+id/pitch_spin_prf"
+            app:layout_constraintTop_toTopOf="@id/const_p_tv_prf"
+            app:layout_constraintBottom_toBottomOf="@id/const_p_tv_prf"
+            app:layout_constraintStart_toEndOf="@id/const_p_tv_prf"
+            android:id="@+id/pitch_tv_prf"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            style="@style/ProfileFrag_TextView"
             />
 
         <ImageView
@@ -138,18 +139,19 @@
             app:layout_constraintStart_toEndOf="@id/pref_region_ic_prf"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:id="@+id/pref_region_tv_prf"
+            android:id="@+id/const_r_tv_prf"
             android:text="Preferred Region :"
             style="@style/ProfileFrag_TextView"
             />
-        <Spinner
+        <TextView
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/pref_region_tv_prf"
-            app:layout_constraintBottom_toBottomOf="@id/pref_region_tv_prf"
-            app:layout_constraintStart_toEndOf="@id/pref_region_tv_prf"
-            android:id="@+id/pref_region_spin_prf"
+            app:layout_constraintTop_toTopOf="@id/const_r_tv_prf"
+            app:layout_constraintBottom_toBottomOf="@id/const_r_tv_prf"
+            app:layout_constraintStart_toEndOf="@id/const_r_tv_prf"
+            android:id="@+id/where_play_tv_prf"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            style="@style/ProfileFrag_TextView"
             />
 
 

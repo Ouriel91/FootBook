@@ -30,7 +30,7 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
     public MembersViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
         //inflate layout of card view and store it in viewHolder
-        View view = LayoutInflater.from(mContext).inflate(R.layout.members_list_card, viewGroup, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.card_members_list, viewGroup, false);
         MembersViewHolder holder = new MembersViewHolder(view);
         return holder;
     }

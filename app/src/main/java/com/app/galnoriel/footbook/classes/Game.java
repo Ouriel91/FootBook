@@ -1,5 +1,6 @@
 package com.app.galnoriel.footbook.classes;
 
+import com.app.galnoriel.footbook.GlobConst;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.sql.DataTruncation;
@@ -16,6 +17,17 @@ public class Game {
     public static String GAME_LON = "GAME_LON";
 
     //region functions
+
+    public HashMap<String,Object> toHashMap(){
+        HashMap<String, Object> game = new HashMap<>();
+        game.put(PITCH_TYPE, getPitch());
+        game.put(GAME_PRICE, getPrice());
+        game.put(GAME_DATE, getDate());
+        game.put(GAME_LAT, getLocation().latitude);
+        game.put(GAME_LON, getLocation().longitude);
+        return game;
+    }
+
     public String stringify(){
         HashMap<String,String> hash = new HashMap<>();
         hash.put(PITCH_TYPE,pitch);

@@ -38,6 +38,7 @@
                 android:id="@+id/name_cr_gr_dia"
                 style="@style/Group_Dialog_EditText"
                 android:hint="@string/group_name"
+                android:textSize="20sp"
                 android:inputType="textEmailAddress"
                 />
         </android.support.design.widget.TextInputLayout>
@@ -88,15 +89,15 @@
 
     </LinearLayout>
     <ImageButton
-        style="@style/Login_Dialog_Button"
+        style="@style/Dialog_Buttons"
         android:id="@+id/create_btn_cr_gr_dia"
         android:background="@color/colorAccent"
 
         />
-    <ImageButton
-        style="@style/Login_Dialog_Button"
-        android:id="@+id/cancel_btn_cr_gr_dia"
-        android:background="@color/colorPrimary"
-        />
+    <!--<ImageButton-->
+        <!--style="@style/Dialog_Buttons"-->
+        <!--android:id="@+id/cancel_btn_cr_gr_dia"-->
+        <!--android:background="@color/colorPrimary"-->
+        <!--/>-->
 
 </LinearLayout>

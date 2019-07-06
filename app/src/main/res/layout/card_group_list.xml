@@ -10,7 +10,11 @@
     app:cardBackgroundColor="@color/tranparent_back"
     android:animateLayoutChanges="true"
     >
-
+<TextView
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:visibility="invisible"
+    android:id="@+id/id_group_card"/>
     <ImageView
         android:scaleType="fitCenter"
         android:id="@+id/team_avatar_group_card"

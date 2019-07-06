@@ -142,15 +142,16 @@
 
             <ToggleButton
                 android:id="@+id/start_timer_gamf"
-                android:layout_weight="1"
-                android:layout_margin="5dp"
-                style="@style/Timer_Settings_Toggle"/>
+                android:layout_marginStart="30dp"
+                style="@style/Timer_Settings_Toggle"
+                />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_margin="5dp">
 
                 <EditText
                     android:hint="Enter time"
@@ -172,9 +173,10 @@
 
             <ImageButton
                 android:id="@+id/reset_timer_gamf"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="30dp"
+
                 android:background="@android:color/transparent"
                 android:scaleType="fitCenter"
                 android:src="@drawable/repeat" />

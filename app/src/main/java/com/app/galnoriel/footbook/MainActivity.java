@@ -6,6 +6,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,13 +26,17 @@ import android.widget.Toast;
 
 import com.app.galnoriel.footbook.adapters.SectionsAdapter;
 import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
+import com.app.galnoriel.footbook.classes.GroupPlay;
 import com.app.galnoriel.footbook.classes.Player;
 import com.app.galnoriel.footbook.fragments.ProfileFragment;
 import com.app.galnoriel.footbook.fragments.GroupFragment;
 import com.app.galnoriel.footbook.fragments.GameFragment;
 import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
 
-import com.app.galnoriel.footbook.interfaces.FragAndMain;
+import com.app.galnoriel.footbook.interfaces.UpdateGroupDB;
+import com.app.galnoriel.footbook.interfaces.MainToFrag;
+import com.app.galnoriel.footbook.interfaces.MoveToTab;
+import com.app.galnoriel.footbook.interfaces.UpdatePlayerDB;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -39,14 +44,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MoveToTab, UpdateGroupDB, UpdatePlayerDB {
     //region interfaces
-    public FragAndMain sendToFrag;
+    public UpdateGroupDB updateGroupDB;
+    public UpdatePlayerDB updatePlayerDB;
+    public MainToFrag sendToFrag;
+    public static final int TAB_PROFILE = 0;
+    public static final int TAB_GROUP = 1;
+    public static final int TAB_GAME = 2;
+    public static final int TAB_MAP= 3;
 
     //endregion
 
@@ -83,6 +95,23 @@ public class MainActivity extends AppCompatActivity
     //region decleration for user database
 
     //endregion
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof ProfileFragment){ //set interface with Profile frag
+            ((ProfileFragment) fragment).showTab = this;
+            ((ProfileFragment) fragment).updateGroupDB = this;
+            ((ProfileFragment) fragment).updatePlayerDB = this;
+
+        }else if (fragment instanceof GroupFragment){
+
+        }else if (fragment instanceof GameFragment){
+//            /set listerner
+        }else if (fragment instanceof SearchGameFieldFragment){
+            //set listerenrerasdfgk
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,8 +195,6 @@ public class MainActivity extends AppCompatActivity
 //endregion
 
     }
-
-
 
     private void updateUserDataBase(){
 
@@ -412,7 +439,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
     private boolean validateEmail(TextInputLayout emailLayout) {
 
         String emailInput = emailLayout.getEditText().getText().toString().trim();
@@ -498,5 +524,80 @@ public class MainActivity extends AppCompatActivity
             passwordConfirmLayout.setError(null);
             return true;
         }
+    }
+
+    @Override //receive info from tab and move to other tab
+    public void goToFrag(int to, String... params) {
+        switch (to){
+            case TAB_PROFILE:
+
+                break;
+            case TAB_GROUP:
+            //getGroup , id is in params[0]
+                viewPager.setCurrentItem(TAB_GROUP,true);
+                break;
+            case TAB_GAME:
+
+                break;
+            case TAB_MAP:
+
+                break;
+            default:
+
+                break;
+        }
+    }
+
+    @Override
+    public String createNewGroupInServer(final GroupPlay group) {
+        group.addMember(sharedPref.getUserId());
+        group.addAdmins(sharedPref.getUserId());
+        group.setId(db.collection(GlobConst.DB_GROUP_TABLE).document().getId());//auto create id
+        db.collection(GlobConst.DB_GROUP_TABLE).document(group.getId())//add group
+                .set(group.toHashMap())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Snackbar.make(coordinatorLayout, "New group create :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
+                        sharedPref.setDisplayGroup(group);
+                    }
+                });
+        //add group to user`s profile
+        db.collection(GlobConst.DB_USER_TABLE).document(sharedPref.getUserId())
+                .update(GlobConst.DB_USER_GROUPS, FieldValue.arrayUnion(group.getId()));
+        return group.getId();
+    }
+
+    @Override
+    public String updateGroupInServer(final GroupPlay group) {
+        group.addMember(sharedPref.getUserId());
+        group.addAdmins(sharedPref.getUserId());
+        group.setId(db.collection(GlobConst.DB_GROUP_TABLE).document().getId());//auto create id
+        db.collection(GlobConst.DB_GROUP_TABLE).document(group.getId())//add group
+                .set(group.toHashMap())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Snackbar.make(coordinatorLayout, "Updated group :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
+                        sharedPref.setDisplayGroup(group);
+                    }
+                });
+        return group.getName();
+    }
+
+    @Override
+    public String updatePlayerInServer(final Player player) {
+        db.collection(GlobConst.DB_USER_TABLE).document(player.get_id())
+                .set(player.toHashMap())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful())
+                            Log.d("UPDATE SERVER ","success : "+player.get_id());
+                        else
+                            Log.w("UPDATE SERVER ","FAILED!! : "+player.get_id());
+                    }
+                });
+        return player.get_id();
     }
 }
