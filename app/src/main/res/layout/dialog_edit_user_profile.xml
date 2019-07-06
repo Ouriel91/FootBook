@@ -25,7 +25,8 @@
 
         <EditText
             android:id="@+id/text_edit_dialog"
-            style="@style/Edit_Dialog_EditText"/>
+            style="@style/Edit_Dialog_EditText"
+            android:inputType="textPersonName"/>
         <Spinner
             android:id="@+id/spinner_edit_dialog"
             style="@style/Edit_Dialog_EditText"

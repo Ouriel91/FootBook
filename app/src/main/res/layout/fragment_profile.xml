@@ -49,13 +49,13 @@
             android:id="@+id/region_ic_prf"
             style="@style/ProfileFrag_SmallImageView"
             android:src="@drawable/pin"
-            app:layout_constraintBottom_toBottomOf="@id/region_tv_prf"
-            app:layout_constraintEnd_toStartOf="@id/region_tv_prf"
+            app:layout_constraintBottom_toBottomOf="@id/where_from_tv_prf"
+            app:layout_constraintEnd_toStartOf="@id/where_from_tv_prf"
             app:layout_constraintStart_toEndOf="@id/thumbnail_prf"
-            app:layout_constraintTop_toTopOf="@id/region_tv_prf" />
+            app:layout_constraintTop_toTopOf="@id/where_from_tv_prf" />
 
         <TextView
-            android:id="@+id/region_tv_prf"
+            android:id="@+id/where_from_tv_prf"
             app:layout_constraintStart_toEndOf="@id/region_ic_prf"
             app:layout_constraintTop_toBottomOf="@id/name_tv_prf"
             app:layout_constraintEnd_toEndOf="parent"
