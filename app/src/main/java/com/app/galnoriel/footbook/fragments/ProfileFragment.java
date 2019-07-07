@@ -77,8 +77,6 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 
     }
 
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -129,12 +127,12 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 
         //just fot trying
         //region try
-        groupPlayList.add(new GroupPlay(1+"","The lions","Bat yam","07/07/19 17:00"));
-        groupPlayList.add(new GroupPlay(1+"","The though guys","Modii'n","07/08/19 19:00"));
-        groupPlayList.add(new GroupPlay(1+"","The footballers","Givatim","06/07/19 16:00"));
-        groupPlayList.add(new GroupPlay(1+"","The lions","Bat yam","07/07/19 17:00"));
-        groupPlayList.add(new GroupPlay(1+"","The though guys","Modii'n","07/08/19 19:00"));
-        groupPlayList.add(new GroupPlay(1+"","The footballers","Givatim","06/07/19 16:00"));
+//        groupPlayList.add(new GroupPlay(1+"","The lions","Bat yam","07/07/19 17:00"));
+//        groupPlayList.add(new GroupPlay(1+"","The though guys","Modii'n","07/08/19 19:00"));
+//        groupPlayList.add(new GroupPlay(1+"","The footballers","Givatim","06/07/19 16:00"));
+//        groupPlayList.add(new GroupPlay(1+"","The lions","Bat yam","07/07/19 17:00"));
+//        groupPlayList.add(new GroupPlay(1+"","The though guys","Modii'n","07/08/19 19:00"));
+//        groupPlayList.add(new GroupPlay(1+"","The footballers","Givatim","06/07/19 16:00"));
         //endregion
 
         //region movement listeners from list adapter
@@ -170,7 +168,6 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
     }
 
     private ItemTouchHelper.SimpleCallback createNewCallback() {
-
         ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -204,12 +201,10 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
                         .show();
             }
         };
-
         return callback;
     }
 
     private void moveItem(int fromPos, int toPos) {
-
         GroupPlay groupPlay = groupPlayList.get(fromPos);
         groupPlayList.remove(fromPos);
         groupPlayList.add(toPos, groupPlay);
@@ -265,10 +260,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         refreshGroupList();
     }
 
-
     //endregion
-
-
     private void joinGroup() {
         Snackbar.make(getView(),"Create add groups from server",Snackbar.LENGTH_LONG).show();
     }
@@ -311,7 +303,6 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         });
         profileRV.setAdapter(adapter);
     }
-
 
     @Override
     public void onClick(View v) { //clicked on text view to edit it
