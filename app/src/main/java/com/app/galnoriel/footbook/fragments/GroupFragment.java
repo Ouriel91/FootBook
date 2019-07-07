@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -48,6 +49,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     ArrayList<String> admins_id,member_id;
     MembersListAdapter adapter;
     boolean isAdmin = false;
+
+    private android.support.v7.app.AlertDialog alertDialog;
+    private ImageView thumbnailIV;
     public MoveToTab showTab;
     public AccessGroupDB groupDB;
     public AccessPlayerDB playerDB;
@@ -166,27 +170,38 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             @Override
             public boolean onLongClick(View v) {
                 android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-                builder.setTitle("Image change")
-                        .setMessage("Select image change option")
-                        .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
 
-                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                startActivityForResult(intent,IMAGE_CAPTURE_REQUEST);
-                            }
-                        })
-                        .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                TextView titleTV = dialogView.findViewById(R.id.title_tv);
+                TextView messageTV = dialogView.findViewById(R.id.message_tv);
+                ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
+                ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
 
-                                Intent intent = new Intent();
-                                intent.setType("image/*");
-                                intent.setAction(Intent.ACTION_GET_CONTENT);
-                                startActivityForResult(intent,IMAGE_PICK_REQUEST);
-                            }
-                        })
-                        .show();
+                builder.setView(dialogView);
+                alertDialog = builder.create();
+                alertDialog.show();
+
+                titleTV.setText("Image change");
+                messageTV.setText("Select image change option");
+                confirmIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(intent,IMAGE_CAPTURE_REQUEST);
+                        alertDialog.dismiss();
+                    }
+                });
+                unConfirmIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(intent,IMAGE_PICK_REQUEST);
+                        alertDialog.dismiss();
+                    }
+                });
+
                 return true;
             }
         });
@@ -209,24 +224,37 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             }
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int i) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Remove player")
-                        .setMessage("Are you sure that you want to remove this player?")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //change the original adapter because we remove item from
-                                adapter.playerList.remove(viewHolder.getAdapterPosition());
-                                adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                adapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                            }
-                        })
-                        .show();
+
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
+
+                TextView titleTV = dialogView.findViewById(R.id.title_tv);
+                TextView messageTV = dialogView.findViewById(R.id.message_tv);
+                ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
+                ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
+
+                builder.setView(dialogView);
+                alertDialog = builder.create();
+                alertDialog.show();
+
+                titleTV.setText("Remove player ?");
+                messageTV.setText("Are you sure that you want to remove this player?");
+                confirmIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //change the original adapter because we remove item from
+                        adapter.playerList.remove(viewHolder.getAdapterPosition());
+                        adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                        alertDialog.dismiss();
+                    }
+                });
+                unConfirmIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        adapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                        alertDialog.dismiss();
+                    }
+                });
             }
         };
     }
