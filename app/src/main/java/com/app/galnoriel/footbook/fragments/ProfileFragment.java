@@ -52,7 +52,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
     private RecyclerView profileRV;
     private CustomSharedPrefAdapter sPref;
     TextView nameTV,whereFromTV,positionTV, pitchTV, wherePlayTV;
-    ImageView pitchIV,chatIV,positionIV,wherePlayIV,whereFromIV,avatarIV;
+    ImageView pitchIV,chatIV,positionIV,wherePlayIV,whereFromIV,thumbnailIV;
     List<GroupPlay> groupPlayList = new ArrayList<>();
     GroupListAdapter adapter;
     public MoveToTab showTab;
@@ -100,7 +100,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
         //all layout ids end with ' prf ' (for PRofile Fragment)//
         // region var assignments
-        avatarIV = view.findViewById(R.id.thumbnail_prf);
+        thumbnailIV = view.findViewById(R.id.thumbnail_prf);
         createGroupBtn = view.findViewById(R.id.groups_title_lay_prf);
         profileRV = view.findViewById(R.id.profile_rv);
         nameTV = view.findViewById(R.id.name_tv_prf);
@@ -430,7 +430,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
     private Player createPlayerFromView(){
         return new Player(sPref.getDisplayProfile().get_id(),
                 nameTV.getText().toString(), whereFromTV.getText().toString(),positionTV.getText().toString(),
-                pitchTV.getText().toString(),wherePlayTV.getText().toString(),avatarIV.getTag().toString(),getGroupIdFromArray(groupPlayList));
+                pitchTV.getText().toString(),wherePlayTV.getText().toString(),thumbnailIV.getTag().toString(),getGroupIdFromArray(groupPlayList));
     }
 
     private ArrayList<String> getGroupIdFromArray(List<GroupPlay> groupPlayList) {
@@ -465,4 +465,3 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 }
 
 
-}

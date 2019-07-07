@@ -87,12 +87,23 @@
             style="@style/ProfileFrag_TextView"/>
 
         <!--next game section-->
-        <FrameLayout
+        <TextView
+            android:gravity="center"
             android:layout_marginTop="15dp"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
             app:layout_constraintStart_toStartOf="@id/thumbnail_grf"
             app:layout_constraintTop_toBottomOf="@id/thumbnail_grf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/next_game_tv_grf"
+            android:text="Next game "
+            style="@style/Title_TextView"
+            android:tag="@string/next_game_tag"
+            />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            app:layout_constraintStart_toStartOf="@id/thumbnail_grf"
+            app:layout_constraintTop_toBottomOf="@id/next_game_tv_grf"
             android:id="@+id/next_game_frame_grf">
 
             <android.support.constraint.ConstraintLayout
@@ -100,17 +111,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 >
-                <TextView
-                    android:gravity="center"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/next_date_ic_grf"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/next_game_tv_grf"
-                    android:text="Next game "
-                    style="@style/Title_TextView"
-                    android:tag="@string/next_game_tag"
-                    />
 
                 <ImageView
                     android:tag="@string/next_game_tag"
@@ -118,7 +118,7 @@
                     android:id="@+id/pitch_ic_grf"
                     android:src="@drawable/football_field_ic"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/next_game_tv_grf" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:layout_marginTop="0dp"
@@ -139,7 +139,7 @@
                     style="@style/GroupFrag_ImageView"
                     android:src="@drawable/calendar"
                     app:layout_constraintStart_toEndOf="@id/pitch_tv_grf"
-                    app:layout_constraintTop_toBottomOf="@id/next_game_tv_grf" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:layout_width="0dp"

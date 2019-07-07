@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,6 +18,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.app.galnoriel.footbook.R;
@@ -33,6 +35,8 @@ public class GroupFragment extends Fragment {
     RecyclerView groupRV;
     List<Player> players;
     MembersListAdapter adapter;
+    boolean isAdmin = false;
+
 
     private ImageView thumbnailIV;
     private Bitmap bitmap = null;
@@ -75,8 +79,8 @@ public class GroupFragment extends Fragment {
         groupRV.setAdapter(adapter);
         //region next game frame
         //if no next game is set, nextgame layout = gone , add animation instead
-//        ConstraintLayout next_game_lay = view.findViewById(R.id.next_game_lay_group_frag);
-//        next_game_lay.setVisibility(View.GONE);
+//        FrameLayout frameLayout = view.findViewById(R.id.next_game_frame_grf);
+//        frameLayout.removeAllViewsInLayout();
         //endregion
 
         //region add group members
