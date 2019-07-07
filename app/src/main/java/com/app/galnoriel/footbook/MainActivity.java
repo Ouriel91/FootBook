@@ -34,7 +34,8 @@ import com.app.galnoriel.footbook.fragments.GameFragment;
 import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
 
 import com.app.galnoriel.footbook.interfaces.AccessGroupDB;
-import com.app.galnoriel.footbook.interfaces.MainToFrag;
+import com.app.galnoriel.footbook.interfaces.MainToGroupFrag;
+import com.app.galnoriel.footbook.interfaces.MainToPlayerFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
 import com.app.galnoriel.footbook.interfaces.AccessPlayerDB;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,7 +55,8 @@ public class MainActivity extends AppCompatActivity
     //region interfaces
     public AccessGroupDB accessGroupDB;
     public AccessPlayerDB accessPlayerDB;
-    public MainToFrag sendToFrag;
+    public MainToPlayerFrag sendToPlayerFrag;
+    public MainToGroupFrag sendToGroupFrag;
     public static final int TAB_PROFILE = 0;
     public static final int TAB_GROUP = 1;
     public static final int TAB_GAME = 2;
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity
         super.onAttachFragment(fragment);
         if (fragment instanceof ProfileFragment){ //set interface with Profile frag
             ((ProfileFragment) fragment).showTab = this;
-            ((ProfileFragment) fragment).accessGroupDB = this;
+            ((ProfileFragment) fragment).groupDB = this;
             ((ProfileFragment) fragment).playerDB = this;
 
         }else if (fragment instanceof GroupFragment){
@@ -306,7 +308,7 @@ public class MainActivity extends AppCompatActivity
         Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
         currentUser = null;
         firebaseAuth.signOut();
-        sendToFrag.onGetPlayerComplete(new Player());
+        sendToPlayerFrag.onGetPlayerComplete(new Player());
         sharedPref.removeCurrentUserInfo();
     }
 
@@ -514,10 +516,14 @@ public class MainActivity extends AppCompatActivity
     public void goToFrag(int to, String... params) {
         switch (to){
             case TAB_PROFILE:
-
+                sharedPref.setDisplayProfileId(params[0]);
+                requestPlayerFromServer(params[0]);
+                viewPager.setCurrentItem(TAB_PROFILE,true);
                 break;
             case TAB_GROUP:
             //getGroup , id is in params[0]
+                sharedPref.setDisplayGroupId(params[0]);
+                requestGroupFromServer(params[0]);
                 viewPager.setCurrentItem(TAB_GROUP,true);
                 break;
             case TAB_GAME:
@@ -544,7 +550,8 @@ public class MainActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Void> task) {
                         Snackbar.make(coordinatorLayout, "New group create :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
                         sharedPref.setDisplayGroup(group);
-                        sendToFrag.onGetGroupComplete(group);
+                        sendToPlayerFrag.onGetGroupComplete(group); //add to member in group view
+                        sendToGroupFrag.onGetGroupComplete(group); //display in fragment
                     }
                 });
         //add group to user`s profile
@@ -565,7 +572,7 @@ public class MainActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Void> task) {
                         Snackbar.make(coordinatorLayout, "Updated group :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
                         sharedPref.setDisplayGroup(group);
-//                        sendToFrag.onGetGroupComplete(group);
+//                        sendToPlayerFrag.onGetGroupComplete(group);
                     }
                 });
         return group.getName();
@@ -594,8 +601,10 @@ public class MainActivity extends AppCompatActivity
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult().exists())
-                            sendToFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                        if (task.isSuccessful() && task.getResult().exists()) {
+                            sendToPlayerFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                            sendToGroupFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                        }
                     }
                 });
         return null;
@@ -621,7 +630,8 @@ public class MainActivity extends AppCompatActivity
                                     Player profile = new Player(playerProfile);
                                     profile.set_id(uid);
                                     sharedPref.setDisplayProfile(profile);
-                                    sendToFrag.onGetPlayerComplete(profile);
+                                    sendToPlayerFrag.onGetPlayerComplete(profile);
+                                    Log.d("SuccesS Profile server ",profile.get_id());
 
                                 } else
                                     Toast.makeText(MainActivity.this, "Profile" + uid + " Not Found", Toast.LENGTH_SHORT).show();

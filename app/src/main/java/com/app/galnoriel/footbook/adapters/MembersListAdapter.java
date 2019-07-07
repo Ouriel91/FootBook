@@ -18,6 +18,13 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
 
     public List<Player> playerList;
     private Context mContext;
+    private OnPlayerCardClickListener clickListener;
+
+    public interface OnPlayerCardClickListener {
+        void onPlayerCardClick(int position, String player_id);
+    }
+    public void setOnPlayerCardClickListener(OnPlayerCardClickListener listener){this.clickListener = listener;}
+
 
     public MembersListAdapter(Context mContext, List<Player> playerList) {
         this.playerList = playerList;
@@ -58,15 +65,22 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
     public class MembersViewHolder extends RecyclerView.ViewHolder{
 
         //fields in recycler view that referenced to viewHolder
-        public TextView nameMemberCardTV;
+        public TextView nameMemberCardTV,idMemberCardTV;
         public ImageView positionMemberCardIV, playerAvatarMemberCardIV;
 
         public MembersViewHolder(@NonNull View itemView) {
             super(itemView);
-
             nameMemberCardTV = itemView.findViewById(R.id.name_member_card);
             playerAvatarMemberCardIV = itemView.findViewById(R.id.avatar_player_member_card);
             positionMemberCardIV = itemView.findViewById(R.id.position_member_card);
+            idMemberCardTV = itemView.findViewById(R.id.id_member_card);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (clickListener!=null)
+                        clickListener.onPlayerCardClick(getAdapterPosition(),idMemberCardTV.getText().toString());
+                }
+            });
         }
     }
 }

@@ -17,15 +17,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -38,7 +35,7 @@ import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.classes.GroupPlay;
 import com.app.galnoriel.footbook.classes.Player;
 import com.app.galnoriel.footbook.interfaces.AccessGroupDB;
-import com.app.galnoriel.footbook.interfaces.MainToFrag;
+import com.app.galnoriel.footbook.interfaces.MainToPlayerFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
 import com.app.galnoriel.footbook.interfaces.AccessPlayerDB;
 
@@ -47,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ProfileFragment extends Fragment implements MainToFrag, View.OnClickListener {
+public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.OnClickListener {
     //region declarations
     private RecyclerView profileRV;
     private CustomSharedPrefAdapter sPref;
@@ -56,7 +53,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
     List<GroupPlay> groupPlayList = new ArrayList<>();
     GroupListAdapter adapter;
     public MoveToTab showTab;
-    public AccessGroupDB accessGroupDB;
+    public AccessGroupDB groupDB;
     public AccessPlayerDB playerDB;
     boolean canEdit = false;
     LinearLayout createGroupBtn;
@@ -91,7 +88,6 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
     public void onAttach(Context context) {
         super.onAttach(context);
         sPref = new CustomSharedPrefAdapter(context);
-
     }
 
     @Nullable
@@ -206,7 +202,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         });
 
         //listener for player and groups from server to set display (implemented beneath)
-        ((MainActivity)getActivity()).sendToFrag = this;
+        ((MainActivity)getActivity()).sendToPlayerFrag = this;
 
         return view;
     }
@@ -274,7 +270,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
                 String groupName = nameGroup.getText().toString();
                 String groupWhere = wherePlayGroup.getText().toString();
                 String groupWhen = whenPlayGroup.getText().toString();
-                String groupCreatedId =  accessGroupDB.createNewGroupInServer(new GroupPlay("",groupName,groupWhere,groupWhen));
+                String groupCreatedId =  groupDB.createNewGroupInServer(new GroupPlay("",groupName,groupWhere,groupWhen));
                 showTab.goToFrag(MainActivity.TAB_GROUP,groupCreatedId);
                 dialog.dismiss();
             }
@@ -303,8 +299,9 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         //will show name, avatar and when usualy play
         for (String id:p.getGroups_ids()) {
             Log.d("Trying to fetch group: ",id);
-            accessGroupDB.requestGroupFromServer(id);
+            groupDB.requestGroupFromServer(id);
         }
+        Log.d("DISPLAY profile: ", p.get_id());
         refreshGroupList();
     }
 
@@ -315,6 +312,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 
     @Override
     public void onGetPlayerComplete(Player player) {
+        Log.d("get Player called ", player.get_id());
         displayProfile(player);
     }
 

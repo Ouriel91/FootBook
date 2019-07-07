@@ -1,7 +1,10 @@
 package com.app.galnoriel.footbook.classes;
 
+import android.util.Log;
+
 import com.app.galnoriel.footbook.GlobConst;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.sql.DataTruncation;
 import java.util.HashMap;
@@ -41,6 +44,18 @@ public class Game {
     //endregion
 
     //region constructors
+    public Game(DocumentSnapshot game){
+        try{pitch= game.getString(PITCH_TYPE);}
+        catch (Exception e){pitch = "Synthetic";}
+        try{price= game.getString(GAME_PRICE);}
+        catch (Exception e){price = "Free";}
+        try{date= game.getString(GAME_DATE);}
+        catch (Exception e){date = "Not Set";}
+        try{location = new LatLng(Double.valueOf(game.getString(GAME_LAT)),Double.valueOf(game.getString(GAME_LON))); }
+        catch (Exception e){location = null;e.printStackTrace();}
+
+    }
+
     public Game(HashMap hash){
         pitch = hash.get(PITCH_TYPE).toString();
         price = hash.get(GAME_PRICE).toString();

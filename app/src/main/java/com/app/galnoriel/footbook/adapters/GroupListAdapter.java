@@ -86,7 +86,6 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
                 @Override
                 public void onClick(View v) {
                     if (clickListener != null)
-                        Log.e("ARRIVED \n","in ONCLICK adapter");
                         clickListener.onGroupCardClick(getAdapterPosition(),idGRoupCardTV.getText().toString());
                 }
             });

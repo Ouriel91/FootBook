@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GroupPlay {
-
     private String name, whenPlay,wherePlay,picture,id;
     private ArrayList<String> members_id,admins_id;
     private Game nextGame;

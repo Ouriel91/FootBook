@@ -116,6 +116,7 @@ public class CustomSharedPrefAdapter {
                 .apply();
         Log.d("CURRENT display user:\n",player.toLogString());
     }
+
     public void removeCurrentUserInfo(){
         sharedPreferences.edit()
                 .remove(MY_USER_ID).remove(USER_NAME).remove(USER_WHERE_FROM)
@@ -125,6 +126,22 @@ public class CustomSharedPrefAdapter {
 
     public void setUserId(String currentUserId){
         putString(MY_USER_ID,currentUserId);
+    }
+
+    public void setDisplayGroupId(String groupId){
+        putString(DISPLAY_GROUP_ID,groupId);
+    }
+
+    public String getDisplayGroupId(){
+        return getString(DISPLAY_GROUP_ID,null);
+    }
+
+    public void setDisplayProfileId(String groupId){
+        putString(DISPLAY_USER_ID,groupId);
+    }
+
+    public String getDisplayUserId(){
+        return getString(DISPLAY_USER_ID,null);
     }
 
     public CustomSharedPrefAdapter(Context context) { //constructor
