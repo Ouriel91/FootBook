@@ -5,11 +5,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
@@ -17,9 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.app.galnoriel.footbook.R;
-import com.app.galnoriel.footbook.adapters.GroupListAdapter;
 import com.app.galnoriel.footbook.adapters.MembersListAdapter;
-import com.app.galnoriel.footbook.classes.GroupPlay;
 import com.app.galnoriel.footbook.classes.Player;
 
 import java.util.ArrayList;
@@ -42,7 +38,6 @@ public class GroupFragment extends Fragment {
         groupRV.setLayoutManager(new GridLayoutManager(getActivity(),2)); //getcontext?
 
         //region list
-        //just for try
         players = new ArrayList<>();
         players.add(new Player(1+"","Ouriel","Modii'n"));
         players.add(new Player(2+"","Gal","Givatiim"));
@@ -58,12 +53,12 @@ public class GroupFragment extends Fragment {
 //region movement listeners from list adapter
 
         adapter = new MembersListAdapter(getActivity(),players);
-        ItemTouchHelper.SimpleCallback callback = createNewCallback();
+
+        ItemTouchHelper.SimpleCallback callback = createMemberListCallBack();
+//endregion
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(groupRV);
         groupRV.setAdapter(adapter);
-        //endregion
-
         //region next game frame
         //if no next game is set, nextgame layout = gone , add animation instead
 //        ConstraintLayout next_game_lay = view.findViewById(R.id.next_game_lay_group_frag);
@@ -84,9 +79,8 @@ public class GroupFragment extends Fragment {
         return view;
     }
 
-    private ItemTouchHelper.SimpleCallback createNewCallback() {
-
-       ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
+    private ItemTouchHelper.SimpleCallback createMemberListCallBack() {
+        return new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
@@ -119,16 +113,14 @@ public class GroupFragment extends Fragment {
                         .show();
             }
         };
-
-       return callback;
     }
 
     private void moveItem(int fromPos, int toPos) {
-
         Player player = players.get(fromPos);
         players.remove(fromPos);
         players.add(toPos, player);
         adapter.notifyItemMoved(fromPos, toPos);
+
     }
 
     private void addGroupMembers() {

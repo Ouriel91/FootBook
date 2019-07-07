@@ -21,7 +21,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
     public List<GroupPlay> groupPlayList;
     private Context mContext;
     private OnGroupCardClickListener clickListener;
-
+    boolean isAdmin;
 
     public interface OnGroupCardClickListener {
         void onGroupCardClick(int position, String group_id);

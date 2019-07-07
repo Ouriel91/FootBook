@@ -127,7 +127,7 @@ public class Player {
         this.picture = null;
     }
 
-    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, ArrayList<String> groups_ids, String picture) {
+    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<String> groups_ids) {
         this._id = _id;
         this.name = name;
         this.whereFrom = whereFrom;
@@ -138,7 +138,7 @@ public class Player {
         this.picture = picture;
     }
 
-    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<String> groups_ids, Game next_game) {
+    public Player(String _id, String name, String whereFrom, String position, String pitch, String wherePlay, String picture, ArrayList<String> groups_ids,  Game next_game) {
         this._id = _id;
         this.name = name;
         this.whereFrom = whereFrom;
@@ -147,6 +147,7 @@ public class Player {
         this.wherePlay = wherePlay;
         this.picture = picture;
         this.groups_ids = groups_ids;
+        if (next_game!=null)
         this.next_game = next_game;
     }
     //endregion

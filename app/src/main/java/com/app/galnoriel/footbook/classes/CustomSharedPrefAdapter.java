@@ -76,7 +76,7 @@ public class CustomSharedPrefAdapter {
                 .putString(DISPLAY_USER_PITCH,player.getPitch())
                 .putString(DISPLAY_USER_WHERE_PLAY,player.getWherePlay())
 //                .putString(DISPLAY_USER_PICTURE,player.getPicture())
-//                .putString(DISPLAY_USER_GROUPS,player.getGroups_ids().toString())
+                .putString(DISPLAY_USER_GROUPS,player.getGroups_ids().toString())
                 .apply();
         Log.d("CURRENT display user:\n",player.toLogString());
     }

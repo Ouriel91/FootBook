@@ -19,14 +19,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
@@ -34,34 +33,35 @@ import com.app.galnoriel.footbook.adapters.GroupListAdapter;
 import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.classes.GroupPlay;
 import com.app.galnoriel.footbook.classes.Player;
-import com.app.galnoriel.footbook.interfaces.UpdateGroupDB;
+import com.app.galnoriel.footbook.interfaces.AccessGroupDB;
 import com.app.galnoriel.footbook.interfaces.MainToFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
-import com.app.galnoriel.footbook.interfaces.UpdatePlayerDB;
+import com.app.galnoriel.footbook.interfaces.AccessPlayerDB;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ProfileFragment extends Fragment implements MainToFrag, View.OnClickListener {
-//region declarations
+    //region declarations
     private RecyclerView profileRV;
     private CustomSharedPrefAdapter sPref;
     TextView nameTV,whereFromTV,positionTV, pitchTV, wherePlayTV;
-    ImageView pitchIV,chatIV,positionIV,wherePlayIV,whereFromIV;
-    List<GroupPlay> groupPlayList;
+    ImageView pitchIV,chatIV,positionIV,wherePlayIV,whereFromIV,avatarIV;
+    List<GroupPlay> groupPlayList = new ArrayList<>();
     GroupListAdapter adapter;
     public MoveToTab showTab;
-    public UpdateGroupDB updateGroupDB;
-    public UpdatePlayerDB updatePlayerDB;
-
+    public AccessGroupDB accessGroupDB;
+    public AccessPlayerDB playerDB;
+    boolean canEdit = false;
+    LinearLayout createGroupBtn;
 //endregion
 
 
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)getActivity()).getPlayerFromServer(sPref.getDisplayProfile().get_id());
+        playerDB.requestPlayerFromServer(sPref.getDisplayProfile().get_id());
     }
 
     @Override
@@ -71,9 +71,9 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 
         if (sPref.getUserId().equals(sPref.getDisplayProfile().get_id()) )
             sPref.setDisplayProfile(createPlayerFromView());
-            if (!(sPref.getDisplayProfile().getName().equals("Guest")||
-                    sPref.getDisplayProfile().getName().contains("Please Sign")))
-                updatePlayerDB.updatePlayerInServer(sPref.getDisplayProfile());
+        if (!(sPref.getDisplayProfile().getName().equals("Guest")||
+                sPref.getDisplayProfile().getName().contains("Please Sign")))
+            playerDB.updatePlayerInServer(createPlayerFromView());
 
     }
 
@@ -92,6 +92,8 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
         //all layout ids end with ' prf ' (for PRofile Fragment)//
         // region var assignments
+        avatarIV = view.findViewById(R.id.thumbnail_prf);
+        createGroupBtn = view.findViewById(R.id.groups_title_lay_prf);
         profileRV = view.findViewById(R.id.profile_rv);
         nameTV = view.findViewById(R.id.name_tv_prf);
         whereFromTV = view.findViewById(R.id.where_from_tv_prf);
@@ -103,15 +105,18 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         positionIV = view.findViewById(R.id.position_ic_prf);
         wherePlayIV = view.findViewById(R.id.pref_region_ic_prf);
         whereFromIV = view.findViewById(R.id.region_ic_prf);
-
+//check for edit profile permissions:
+        if (sPref.getDisplayProfile().get_id().equals(sPref.getUserId()))
+            canEdit = true;
         //endregion
-
-        //region assign views click listeners
-        nameTV.setOnClickListener(this);
-        whereFromTV.setOnClickListener(this);
-        wherePlayTV.setOnClickListener(this);
-        positionTV.setOnClickListener(this);
-        pitchTV.setOnClickListener(this);
+        //only if has edit permission all listeners of edit will be set:
+        if (canEdit) {
+            nameTV.setOnClickListener(this);
+            whereFromTV.setOnClickListener(this);
+            wherePlayTV.setOnClickListener(this);
+            positionTV.setOnClickListener(this);
+            pitchTV.setOnClickListener(this);
+            //create listener from thumbnail//
 //        whereFromIV.setOnClickListener(this);
 //        wherePlayIV.setOnClickListener(this);
 //        positionIV.setOnClickListener(this);
@@ -141,14 +146,15 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         //endregion
 
             //add groups btn:
-        view.findViewById(R.id.groups_title_lay_prf).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createNewGroup();
-                joinGroup();
-            }
-        });
-            //open chat with player:
+            createGroupBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    createNewGroup();
+                    joinGroup();
+                }
+            });
+        }
+        //open chat with player:
         chatIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,9 +162,8 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 //                openChat(sPref.getUserId(),sPref.getDisplayingUid);
             }
         });
-        //endregion
 
-        //listener for player from server to set display (implemented beneath)
+        //listener for player and groups from server to set display (implemented beneath)
         ((MainActivity)getActivity()).sendToFrag = this;
 
         return view;
@@ -226,7 +231,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
                 String groupName = nameGroup.getText().toString();
                 String groupWhere = wherePlayGroup.getText().toString();
                 String groupWhen = whenPlayGroup.getText().toString();
-                String groupCreatedId =  updateGroupDB.createNewGroupInServer(new GroupPlay("",groupName,groupWhere,groupWhen));
+                String groupCreatedId =  accessGroupDB.createNewGroupInServer(new GroupPlay("",groupName,groupWhere,groupWhen));
                 showTab.goToFrag(MainActivity.TAB_GROUP,groupCreatedId);
                 dialog.dismiss();
             }
@@ -247,30 +252,22 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         nameTV.setText(p.getName());
         positionTV.setText(position);
         whereFromTV.setText(p.getWhereFrom());
-
-
         //region recycler adapter
         //setting gridLayout
         profileRV.setHasFixedSize(true);
         profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
         //list of groups player is member in - make sure it's scroll
-        groupPlayList = new ArrayList<>();
         //will show name, avatar and when usualy play
-        if (!p.get_id().isEmpty()) {
-            groupPlayList.add(new GroupPlay("maksdf", "Work Friends", "GoalTime TLV", "Wed , July 10"));
-            groupPlayList.add(new GroupPlay("maskdflr", "School Amigos", "Beit Dagan", "Thu , July 18"));
+        for (String id:p.getGroups_ids()) {
+            Log.d("Trying to fetch group: ",id);
+            accessGroupDB.requestGroupFromServer(id);
         }
-        GroupListAdapter adapter = new GroupListAdapter(getActivity(), groupPlayList);
-        adapter.setOnGroupCardClickListener(new GroupListAdapter.OnGroupCardClickListener() {
-            @Override
-            public void onGroupCardClick(int position, String group_id) {
-                showTab.goToFrag(MainActivity.TAB_GROUP,group_id);
-            }
-        });
-        profileRV.setAdapter(adapter);
-
-        //endregion
+        refreshGroupList();
     }
+
+
+    //endregion
+
 
     private void joinGroup() {
         Snackbar.make(getView(),"Create add groups from server",Snackbar.LENGTH_LONG).show();
@@ -283,7 +280,36 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 
     @Override
     public void onGetGroupComplete(GroupPlay group) {
-//do nothing
+        //add to array
+        for (GroupPlay g:groupPlayList) {
+            if (g.getId().equals(group.getId())) { //found reoccurring
+                if (!(g.getWhenPlay().equals(group.getWhenPlay()) && g.getName().equals(group.getName()))) {
+                    //if true --> found update for name or pref t ime
+                    //update list from server
+                    groupPlayList.remove(g);
+                    groupPlayList.add(group);
+                    Log.d("added fetch group : ", group.getId());
+                }
+                Log.d("fetched same groupid: ", group.getId());
+                return;
+            }
+        }
+        //if got to this point -> grouop id wasnt found, so we need to add
+        groupPlayList.add(group);
+        Log.d("done fetching", "*********");
+        //refresh list
+        refreshGroupList();
+    }
+
+    private void refreshGroupList() {
+        GroupListAdapter adapter = new GroupListAdapter(getActivity(), groupPlayList);
+        adapter.setOnGroupCardClickListener(new GroupListAdapter.OnGroupCardClickListener() {
+            @Override
+            public void onGroupCardClick(int position, String group_id) {
+                showTab.goToFrag(MainActivity.TAB_GROUP,group_id);
+            }
+        });
+        profileRV.setAdapter(adapter);
     }
 
 
@@ -365,7 +391,15 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
     private Player createPlayerFromView(){
         return new Player(sPref.getDisplayProfile().get_id(),
                 nameTV.getText().toString(), whereFromTV.getText().toString(),positionTV.getText().toString(),
-                pitchTV.getText().toString(),wherePlayTV.getText().toString(),null);
+                pitchTV.getText().toString(),wherePlayTV.getText().toString(),avatarIV.getTag().toString(),getGroupIdFromArray(groupPlayList));
+    }
+
+    private ArrayList<String> getGroupIdFromArray(List<GroupPlay> groupPlayList) {
+        ArrayList<String> idArray = new ArrayList<>();
+        for (GroupPlay g:groupPlayList) {
+            idArray.add(g.getId());
+        }
+        return idArray;
     }
 
 

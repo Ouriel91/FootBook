@@ -33,10 +33,10 @@ import com.app.galnoriel.footbook.fragments.GroupFragment;
 import com.app.galnoriel.footbook.fragments.GameFragment;
 import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
 
-import com.app.galnoriel.footbook.interfaces.UpdateGroupDB;
+import com.app.galnoriel.footbook.interfaces.AccessGroupDB;
 import com.app.galnoriel.footbook.interfaces.MainToFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
-import com.app.galnoriel.footbook.interfaces.UpdatePlayerDB;
+import com.app.galnoriel.footbook.interfaces.AccessPlayerDB;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -50,10 +50,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MoveToTab, UpdateGroupDB, UpdatePlayerDB {
+        implements NavigationView.OnNavigationItemSelectedListener, MoveToTab, AccessGroupDB, AccessPlayerDB {
     //region interfaces
-    public UpdateGroupDB updateGroupDB;
-    public UpdatePlayerDB updatePlayerDB;
+    public AccessGroupDB accessGroupDB;
+    public AccessPlayerDB accessPlayerDB;
     public MainToFrag sendToFrag;
     public static final int TAB_PROFILE = 0;
     public static final int TAB_GROUP = 1;
@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity
         super.onAttachFragment(fragment);
         if (fragment instanceof ProfileFragment){ //set interface with Profile frag
             ((ProfileFragment) fragment).showTab = this;
-            ((ProfileFragment) fragment).updateGroupDB = this;
-            ((ProfileFragment) fragment).updatePlayerDB = this;
+            ((ProfileFragment) fragment).accessGroupDB = this;
+            ((ProfileFragment) fragment).playerDB = this;
 
         }else if (fragment instanceof GroupFragment){
 
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity
                 if (currentUser != null){ //user is logged in
                     sharedPref.setUserId(currentUser.getUid());  //save user id
                     sharedPref.setLoginStatus(true);
-                    getPlayerFromServer(currentUser.getUid());
+//                    getPlayerFromServer(currentUser.getUid());
                     loginTV.setText("Welcome!!!");
                     userLoginTV.setText(currentUser.getDisplayName());
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(false);
@@ -423,32 +423,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void getPlayerFromServer(final String uid){
-        if (sharedPref.getLoginStatus()) { //enable only if user looged in
-            db.collection(GlobConst.DB_USER_TABLE)  //fetch user info from server and store in share pref for further display
-                    .document(uid)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot playerProfile = task.getResult();
-                                if (playerProfile.exists()) {
-                                    Player profile = new Player(playerProfile);
-                                    profile.set_id(uid);
-
-                                    sharedPref.setDisplayProfile(profile);
-                                    sendToFrag.onGetPlayerComplete(profile);
-
-                                } else
-                                    Toast.makeText(MainActivity.this, "Profile" + uid + " Not Found", Toast.LENGTH_SHORT).show();
-                                ;
-                            }
-                        }
-                    });
-        }
-    }
-
     private boolean validateEmail(TextInputLayout emailLayout) {
 
         String emailInput = emailLayout.getEditText().getText().toString().trim();
@@ -557,7 +531,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
-
+//region interfaces with fragment for server data fetching
     @Override
     public String createNewGroupInServer(final GroupPlay group) {
         group.addMember(sharedPref.getUserId());
@@ -570,6 +544,7 @@ public class MainActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Void> task) {
                         Snackbar.make(coordinatorLayout, "New group create :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
                         sharedPref.setDisplayGroup(group);
+                        sendToFrag.onGetGroupComplete(group);
                     }
                 });
         //add group to user`s profile
@@ -590,12 +565,13 @@ public class MainActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Void> task) {
                         Snackbar.make(coordinatorLayout, "Updated group :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
                         sharedPref.setDisplayGroup(group);
+//                        sendToFrag.onGetGroupComplete(group);
                     }
                 });
         return group.getName();
     }
 
-    @Override
+   @Override
     public String updatePlayerInServer(final Player player) {
         db.collection(GlobConst.DB_USER_TABLE).document(player.get_id())
                 .set(player.toHashMap())
@@ -610,4 +586,51 @@ public class MainActivity extends AppCompatActivity
                 });
         return player.get_id();
     }
+
+    @Override
+    public String requestGroupFromServer(String group_id) {
+        db.collection(GlobConst.DB_GROUP_TABLE).document(group_id)//get group
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful() && task.getResult().exists())
+                            sendToFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                    }
+                });
+        return null;
+    }
+
+    @Override
+    public String requestPlayerFromServer(String playerId) {
+        getPlayerFromServer(playerId);
+        return playerId;
+    }
+
+    private void getPlayerFromServer(final String uid){
+        if (sharedPref.getLoginStatus()) { //enable only if user looged in
+            db.collection(GlobConst.DB_USER_TABLE)  //fetch user info from server and store in share pref for further display
+                    .document(uid)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot playerProfile = task.getResult();
+                                if (playerProfile.exists()) {
+                                    Player profile = new Player(playerProfile);
+                                    profile.set_id(uid);
+                                    sharedPref.setDisplayProfile(profile);
+                                    sendToFrag.onGetPlayerComplete(profile);
+
+                                } else
+                                    Toast.makeText(MainActivity.this, "Profile" + uid + " Not Found", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
+    }
+
+
+    //endregion
 }
