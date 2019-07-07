@@ -1,6 +1,7 @@
 package com.app.galnoriel.footbook.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -48,6 +50,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
     TextView nameTV,whereFromTV,positionTV, pitchTV, wherePlayTV;
     ImageView pitchIV,chatIV,positionIV,wherePlayIV,whereFromIV;
     List<GroupPlay> groupPlayList;
+    GroupListAdapter adapter;
     public MoveToTab showTab;
     public UpdateGroupDB updateGroupDB;
     public UpdatePlayerDB updatePlayerDB;
@@ -114,6 +117,27 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
 //        positionIV.setOnClickListener(this);
 //        pitchIV.setOnClickListener(this);
 
+        profileRV.setHasFixedSize(true);
+        profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        groupPlayList = new ArrayList<>();
+
+        //just fot trying
+        //region try
+        groupPlayList.add(new GroupPlay(1+"","The lions","Bat yam","07/07/19 17:00"));
+        groupPlayList.add(new GroupPlay(1+"","The though guys","Modii'n","07/08/19 19:00"));
+        groupPlayList.add(new GroupPlay(1+"","The footballers","Givatim","06/07/19 16:00"));
+        groupPlayList.add(new GroupPlay(1+"","The lions","Bat yam","07/07/19 17:00"));
+        groupPlayList.add(new GroupPlay(1+"","The though guys","Modii'n","07/08/19 19:00"));
+        groupPlayList.add(new GroupPlay(1+"","The footballers","Givatim","06/07/19 16:00"));
+        //endregion
+
+        adapter = new GroupListAdapter(getActivity(), groupPlayList);
+        ItemTouchHelper.SimpleCallback callback = createNewCallback();
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(profileRV);
+        profileRV.setAdapter(adapter);
+
             //add groups btn:
         view.findViewById(R.id.groups_title_lay_prf).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,6 +160,53 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         ((MainActivity)getActivity()).sendToFrag = this;
 
         return view;
+    }
+
+    private ItemTouchHelper.SimpleCallback createNewCallback() {
+
+        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                final int fromPos = viewHolder.getAdapterPosition();
+                final int toPos = target.getAdapterPosition();
+                //not changing the original list, only the view
+                moveItem(fromPos,toPos);
+                return true;
+            }
+            @Override
+            public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int i) {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+                builder.setTitle("Remove player")
+                        .setMessage("Are you sure that you want to remove this player?")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //change the original adapter because we remove item from
+                                adapter.groupPlayList.remove(viewHolder.getAdapterPosition());
+                                adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                adapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                            }
+                        })
+                        .show();
+            }
+        };
+
+        return callback;
+    }
+
+    private void moveItem(int fromPos, int toPos) {
+
+        GroupPlay groupPlay = groupPlayList.get(fromPos);
+        groupPlayList.remove(fromPos);
+        groupPlayList.add(toPos, groupPlay);
+        adapter.notifyItemMoved(fromPos, toPos);
     }
 
     private void createNewGroup() {

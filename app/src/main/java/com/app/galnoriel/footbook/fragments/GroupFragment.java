@@ -58,7 +58,38 @@ public class GroupFragment extends Fragment {
 
         adapter = new MembersListAdapter(getActivity(),players);
 
-        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
+
+        ItemTouchHelper.SimpleCallback callback = createNewCallback();
+
+
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(groupRV);
+        groupRV.setAdapter(adapter);
+        //endregion
+
+        //region next game frame
+        //if no next game is set, nextgame layout = gone , add animation instead
+//        ConstraintLayout next_game_lay = view.findViewById(R.id.next_game_lay_group_frag);
+//        next_game_lay.setVisibility(View.GONE);
+        //endregion
+
+        //region add group members
+        view.findViewById(R.id.groups_title_grf).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addGroupMembers();
+            }
+        });
+        //endregion
+
+
+
+        return view;
+    }
+
+    private ItemTouchHelper.SimpleCallback createNewCallback() {
+
+       ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
@@ -91,28 +122,8 @@ public class GroupFragment extends Fragment {
                         .show();
             }
         };
-//endregion
-        ItemTouchHelper helper = new ItemTouchHelper(callback);
-        helper.attachToRecyclerView(groupRV);
-        groupRV.setAdapter(adapter);
-        //region next game frame
-        //if no next game is set, nextgame layout = gone , add animation instead
-//        ConstraintLayout next_game_lay = view.findViewById(R.id.next_game_lay_group_frag);
-//        next_game_lay.setVisibility(View.GONE);
-        //endregion
 
-        //region add group members
-        view.findViewById(R.id.groups_title_grf).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addGroupMembers();
-            }
-        });
-        //endregion
-
-
-
-        return view;
+       return callback;
     }
 
     private void moveItem(int fromPos, int toPos) {
