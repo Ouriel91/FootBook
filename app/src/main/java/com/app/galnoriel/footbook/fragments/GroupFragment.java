@@ -2,7 +2,11 @@ package com.app.galnoriel.footbook.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -15,6 +19,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.app.galnoriel.footbook.R;
 import com.app.galnoriel.footbook.adapters.GroupListAdapter;
@@ -22,6 +27,7 @@ import com.app.galnoriel.footbook.adapters.MembersListAdapter;
 import com.app.galnoriel.footbook.classes.GroupPlay;
 import com.app.galnoriel.footbook.classes.Player;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +38,18 @@ public class GroupFragment extends Fragment {
     List<Player> players;
     MembersListAdapter adapter;
 
+    private ImageView thumbnailIV;
+    private Bitmap bitmap = null;
+    private Uri uri;
+    private static final int IMAGE_CAPTURE_REQUEST = 1;
+    private static final int IMAGE_PICK_REQUEST = 2;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_group, container, false);
+
+        thumbnailIV = view.findViewById(R.id.thumbnail_grf);
 
         groupRV = view.findViewById(R.id.group_rv);
         groupRV.setHasFixedSize(true);
@@ -79,7 +93,36 @@ public class GroupFragment extends Fragment {
         });
         //endregion
 
+        //region image
+        thumbnailIV.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                builder.setTitle("Image change")
+                        .setMessage("Select image change option")
+                        .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(intent,IMAGE_CAPTURE_REQUEST);
+                            }
+                        })
+                        .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                Intent intent = new Intent();
+                                intent.setType("image/*");
+                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                startActivityForResult(intent,IMAGE_PICK_REQUEST);
+                            }
+                        })
+                        .show();
+                return true;
+            }
+        });
+        //endregion
 
         return view;
     }
@@ -133,5 +176,27 @@ public class GroupFragment extends Fragment {
 
     private void addGroupMembers() {
         Snackbar.make(getView(),"Create add members to group from server",Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
+
+            bitmap = (Bitmap) data.getExtras().get("data");
+            thumbnailIV.setImageBitmap(bitmap);
+        }
+        else if (requestCode == IMAGE_PICK_REQUEST && resultCode == getActivity().RESULT_OK){
+
+            uri = data.getData();
+
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),uri);
+                thumbnailIV.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
