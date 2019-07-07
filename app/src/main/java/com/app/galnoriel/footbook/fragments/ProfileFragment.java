@@ -132,11 +132,13 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         groupPlayList.add(new GroupPlay(1+"","The footballers","Givatim","06/07/19 16:00"));
         //endregion
 
+        //region movement listeners from list adapter
         adapter = new GroupListAdapter(getActivity(), groupPlayList);
         ItemTouchHelper.SimpleCallback callback = createNewCallback();
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(profileRV);
         profileRV.setAdapter(adapter);
+        //endregion
 
             //add groups btn:
         view.findViewById(R.id.groups_title_lay_prf).setOnClickListener(new View.OnClickListener() {

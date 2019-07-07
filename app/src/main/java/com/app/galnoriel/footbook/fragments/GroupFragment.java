@@ -42,6 +42,7 @@ public class GroupFragment extends Fragment {
         groupRV.setLayoutManager(new GridLayoutManager(getActivity(),2)); //getcontext?
 
         //region list
+        //just for try
         players = new ArrayList<>();
         players.add(new Player(1+"","Ouriel","Modii'n"));
         players.add(new Player(2+"","Gal","Givatiim"));
@@ -57,11 +58,7 @@ public class GroupFragment extends Fragment {
 //region movement listeners from list adapter
 
         adapter = new MembersListAdapter(getActivity(),players);
-
-
         ItemTouchHelper.SimpleCallback callback = createNewCallback();
-
-
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(groupRV);
         groupRV.setAdapter(adapter);
