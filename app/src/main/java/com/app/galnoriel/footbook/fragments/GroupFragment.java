@@ -54,34 +54,29 @@ public class GroupFragment extends Fragment {
 
 
 //endregion
-
+//region movement listeners from list adapter
 
         adapter = new MembersListAdapter(getActivity(),players);
 
-        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
-                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
                                   @NonNull RecyclerView.ViewHolder target) {
-
                 final int fromPos = viewHolder.getAdapterPosition();
                 final int toPos = target.getAdapterPosition();
-                
                 //not changing the original list, only the view
                 moveItem(fromPos,toPos);
                 return true;
             }
-
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int i) {
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Remove player")
                         .setMessage("Are you sure that you want to remove this player?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
                                 //change the original adapter because we remove item from
                                 adapter.playerList.remove(viewHolder.getAdapterPosition());
                                 adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
@@ -96,7 +91,7 @@ public class GroupFragment extends Fragment {
                         .show();
             }
         };
-
+//endregion
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(groupRV);
         groupRV.setAdapter(adapter);
