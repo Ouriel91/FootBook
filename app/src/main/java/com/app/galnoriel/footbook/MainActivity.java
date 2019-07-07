@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity
                     userLoginTV.setText(currentUser.getDisplayName());
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(false);
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(false);
+                    navigationView.getMenu().findItem(R.id.reset_password).setVisible(false);
                     navigationView.getMenu().findItem(R.id.sign_out).setVisible(true);
 
                 }
@@ -173,6 +174,7 @@ public class MainActivity extends AppCompatActivity
                     userLoginTV.setText("We are waiting for you");
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(true);
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(true);
+                    navigationView.getMenu().findItem(R.id.reset_password).setVisible(true);
                     navigationView.getMenu().findItem(R.id.sign_out).setVisible(false);
                 }
 
@@ -290,8 +292,11 @@ public class MainActivity extends AppCompatActivity
                 signOutUser(); //sign out btn pressed
                 break;
 
-            case R.id.nav_share:
-
+            case R.id.reset_password:
+                builder.setView(dialogSignView);
+                alertDialog = builder.create();
+                resetPassword();
+                alertDialog.show();
                 break;
 
             case  R.id.nav_send:
@@ -305,43 +310,56 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void signOutUser() {
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
-        currentUser = null;
-        firebaseAuth.signOut();
-        sendToPlayerFrag.onGetPlayerComplete(new Player());
-        sharedPref.removeCurrentUserInfo();
-    }
+    private void resetPassword() {
 
-    private void singInUser() {
         signInBtn.setVisibility(View.VISIBLE);
         signUpBtn.setVisibility(View.GONE);
         userNameLayout.setVisibility(View.GONE);
+        passwordLayout.setVisibility(View.GONE);
         passwordConfirmLayout.setVisibility(View.GONE);
         regionLayout.setVisibility(View.GONE);
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = emailLayout.getEditText().getText().toString();
-                String password = passwordLayout.getEditText().getText().toString();
-                if (!validateEmail(emailLayout) | !validatePasswordSignIn()){
+
+                String emailInput = emailLayout.getEditText().getText().toString().trim();
+                if (!validateEmail(emailLayout) ){
                     return;
                 }
-                firebaseAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()){
-                                    Snackbar.make(coordinatorLayout, "Sign in succesfull", Snackbar.LENGTH_SHORT).show();
-                                }else {
-                                    Snackbar.make(coordinatorLayout, "Sign in failed", Snackbar.LENGTH_SHORT).show();
-                                }
+                else {
+                    firebaseAuth.sendPasswordResetEmail(emailInput).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Snackbar.make(coordinatorLayout, "Check your email account to restore your user and sign in again",
+                                        Snackbar.LENGTH_SHORT).show();
                             }
-                        });
+                            else {
+                                String message = task.getException().getMessage();
+                                Snackbar.make(coordinatorLayout, message,
+                                        Snackbar.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+
                 alertDialog.dismiss();
             }
-        });signInBtn.setVisibility(View.VISIBLE);
+        });
+    }
+
+    private void signOutUser() {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
+        currentUser = null;
+        firebaseAuth.signOut();
+        sendToFrag.onGetPlayerComplete(new Player());
+        sharedPref.removeCurrentUserInfo();
+    }
+
+    private void singInUser() {
+
+        signInBtn.setVisibility(View.VISIBLE);
         signUpBtn.setVisibility(View.GONE);
         userNameLayout.setVisibility(View.GONE);
         passwordConfirmLayout.setVisibility(View.GONE);
