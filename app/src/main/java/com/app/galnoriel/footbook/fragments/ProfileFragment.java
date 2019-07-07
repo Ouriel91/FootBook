@@ -2,9 +2,13 @@ package com.app.galnoriel.footbook.fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -38,6 +42,7 @@ import com.app.galnoriel.footbook.interfaces.MainToFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
 import com.app.galnoriel.footbook.interfaces.AccessPlayerDB;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +60,11 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
     public AccessPlayerDB playerDB;
     boolean canEdit = false;
     LinearLayout createGroupBtn;
+    private Bitmap bitmap = null;
+    private Uri uri;
+    private static final int IMAGE_CAPTURE_REQUEST = 1;
+    private static final int IMAGE_PICK_REQUEST = 2;
+
 //endregion
 
 
@@ -103,10 +113,10 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         positionIV = view.findViewById(R.id.position_ic_prf);
         wherePlayIV = view.findViewById(R.id.pref_region_ic_prf);
         whereFromIV = view.findViewById(R.id.region_ic_prf);
+        //endregion
 //check for edit profile permissions:
         if (sPref.getDisplayProfile().get_id().equals(sPref.getUserId()))
             canEdit = true;
-        //endregion
         //only if has edit permission all listeners of edit will be set:
         if (canEdit) {
             nameTV.setOnClickListener(this);
@@ -143,6 +153,40 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         profileRV.setAdapter(adapter);
         //endregion
 
+        //region image
+
+        thumbnailIV.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Image change")
+                        .setMessage("Select image change option")
+                        .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(intent,IMAGE_CAPTURE_REQUEST);
+                            }
+                        })
+                        .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                Intent intent = new Intent();
+                                intent.setType("image/*");
+                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                startActivityForResult(intent,IMAGE_PICK_REQUEST);
+                            }
+                        })
+                        .show();
+                return true;
+            }
+        });
+
+        //endregion
+
             //add groups btn:
             createGroupBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -167,6 +211,7 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         return view;
     }
 
+    //region helper func
     private ItemTouchHelper.SimpleCallback createNewCallback() {
         ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -210,6 +255,9 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         groupPlayList.add(toPos, groupPlay);
         adapter.notifyItemMoved(fromPos, toPos);
     }
+
+    //endregion
+
 
     private void createNewGroup() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -392,6 +440,29 @@ public class ProfileFragment extends Fragment implements MainToFrag, View.OnClic
         }
         return idArray;
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
+
+            bitmap = (Bitmap) data.getExtras().get("data");
+            thumbnailIV.setImageBitmap(bitmap);
+        }
+        else if (requestCode == IMAGE_PICK_REQUEST && resultCode == getActivity().RESULT_OK){
+
+            uri = data.getData();
+
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),uri);
+                thumbnailIV.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
 
 
 }
