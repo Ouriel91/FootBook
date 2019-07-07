@@ -273,6 +273,7 @@ public class MainActivity extends AppCompatActivity
                 builder.setView(dialogSignView);
                 alertDialog = builder.create();
                 alertDialog.show();
+
                 break;
 
             case R.id.sign_in: //sign in btn pressed
