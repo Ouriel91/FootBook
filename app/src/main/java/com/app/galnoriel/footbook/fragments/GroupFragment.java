@@ -51,7 +51,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     boolean isAdmin = false;
 
     private android.support.v7.app.AlertDialog alertDialog;
-    private ImageView thumbnailIV;
     public MoveToTab showTab;
     public AccessGroupDB groupDB;
     public AccessPlayerDB playerDB;
@@ -298,6 +297,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         adapter.setOnPlayerCardClickListener(new MembersListAdapter.OnPlayerCardClickListener() {
             @Override
             public void onPlayerCardClick(int position, String player_id) {
+                Log.d("Clicked on id: ",player_id);
+                //TODO: check why run time crash here
                 showTab.goToFrag(MainActivity.TAB_PROFILE,player_id);
             }
         });

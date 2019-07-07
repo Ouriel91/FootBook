@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity
             ((ProfileFragment) fragment).playerDB = this;
 
         }else if (fragment instanceof GroupFragment){
+            ((GroupFragment) fragment).showTab = this;
 
         }else if (fragment instanceof GameFragment){
 //            /set listerner
@@ -515,10 +516,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override //receive info from tab and move to other tab
     public void goToFrag(int to, String... params) {
+        Log.d("moving to tab: ", to + "\n"+ params.toString());
         switch (to){
             case TAB_PROFILE:
-                sharedPref.setDisplayProfileId(params[0]);
-                requestPlayerFromServer(params[0]);
+//                sharedPref.setDisplayProfileId(params[0]);
+//                requestPlayerFromServer(params[0]);
                 viewPager.setCurrentItem(TAB_PROFILE,true);
                 break;
             case TAB_GROUP:
@@ -614,6 +616,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public String requestPlayerFromServer(String playerId) {
         getPlayerFromServer(playerId);
+
         return playerId;
     }
 
@@ -632,6 +635,7 @@ public class MainActivity extends AppCompatActivity
                                     profile.set_id(uid);
                                     sharedPref.setDisplayProfile(profile);
                                     sendToPlayerFrag.onGetPlayerComplete(profile);
+                                    sendToGroupFrag.onGetPlayerComplete(profile);
                                     Log.d("SuccesS Profile server ",profile.get_id());
 
                                 } else

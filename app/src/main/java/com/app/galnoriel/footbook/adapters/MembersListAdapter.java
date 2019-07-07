@@ -46,15 +46,12 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
     public void onBindViewHolder(@NonNull MembersViewHolder membersViewHolder, int i) {
 
         Player player = playerList.get(i);
-
         String memberName = player.getName();
-
         membersViewHolder.nameMemberCardTV.setText(memberName);
-
+        membersViewHolder.idMemberCardTV.setText(player.get_id());
         //need to replace with url to firebase and load the image with glide or picasso
         membersViewHolder.playerAvatarMemberCardIV.setImageResource(R.drawable.player_avatar);
         membersViewHolder.positionMemberCardIV.setImageResource(R.drawable.goalkeeper);
-
     }
 
     @Override
@@ -78,6 +75,7 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
                 @Override
                 public void onClick(View v) {
                     if (clickListener!=null)
+//                        clickListener.onPlayerCardClick(getAdapterPosition(),idMemberCardTV.getText().toString());
                         clickListener.onPlayerCardClick(getAdapterPosition(),idMemberCardTV.getText().toString());
                 }
             });
