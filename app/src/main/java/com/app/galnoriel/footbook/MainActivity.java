@@ -620,19 +620,21 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public String requestGroupFromServer(String group_id, final int frag) {
-        db.collection(GlobConst.DB_GROUP_TABLE).document(group_id)//get group
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult().exists()) {
-                            if (frag == TAB_PROFILE)
-                                sendToPlayerFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
-                            if (frag == TAB_GROUP)
-                                sendToGroupFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+        try {
+            db.collection(GlobConst.DB_GROUP_TABLE).document(group_id)//get group
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful() && task.getResult().exists()) {
+                                if (frag == TAB_PROFILE)
+                                    sendToPlayerFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                                if (frag == TAB_GROUP)
+                                    sendToGroupFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                            }
                         }
-                    }
-                });
+                    });
+        }catch (Exception e){Log.e("requestGroupFromServer","FAILED For: "+frag);}
         return null;
     }
 
