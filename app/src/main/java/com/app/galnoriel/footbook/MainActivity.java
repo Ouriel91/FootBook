@@ -53,8 +53,7 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MoveToTab, AccessGroupDB, AccessPlayerDB {
     //region interfaces
-    public AccessGroupDB accessGroupDB;
-    public AccessPlayerDB accessPlayerDB;
+
     public MainToPlayerFrag sendToPlayerFrag;
     public MainToGroupFrag sendToGroupFrag;
     public static final int TAB_PROFILE = 0;
