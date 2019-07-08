@@ -2,7 +2,9 @@ package com.app.galnoriel.footbook.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -10,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -17,8 +20,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.app.galnoriel.footbook.MainActivity;
@@ -72,7 +78,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     @Override
     public void onPause() {
         super.onPause();
-//        grfGroupDB.updateGroupInServer(createGroupFromView());
+        if (isAdmin){
+            grfGroupDB.updateGroupInServer(createGroupFromView());
+        }
     }
 
 
@@ -104,7 +112,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         whenPlayTV = view.findViewById(R.id.pref_time_tv_grf);
         ngPitchTV = view.findViewById(R.id.next_pitch_tv_grf);
         ngDateTV = view.findViewById(R.id.next_game_date_grf);
-        ngPriceTV = view.findViewById(R.id.price_tv_grf);
+        ngPriceTV = view.findViewById(R.id.next_price_tv_grf);
         ngLocationTV = view.findViewById(R.id.next_game_location_grf);
         //endregion
         addMemberLin.setOnClickListener(new View.OnClickListener() {
@@ -119,13 +127,13 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 //        ngDateIV.setOnClickListener(this);
 //        ngPriceIV.setOnClickListener(this);
 //        ngLocationIV.setOnClickListener(this);
-            nameTV.setOnClickListener(this);
-            wherePlayTV.setOnClickListener(this);
-            whenPlayTV.setOnClickListener(this);
-            ngPitchTV.setOnClickListener(this);
-            ngDateTV.setOnClickListener(this);
-            ngPriceTV.setOnClickListener(this);
-            ngLocationTV.setOnClickListener(this);
+        nameTV.setOnClickListener(this);
+        wherePlayTV.setOnClickListener(this);
+        whenPlayTV.setOnClickListener(this);
+        ngPitchTV.setOnClickListener(this);
+        ngDateTV.setOnClickListener(this);
+        ngPriceTV.setOnClickListener(this);
+        ngLocationTV.setOnClickListener(this);
 
 
 
@@ -343,6 +351,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     private void displayGroup(GroupPlay g) {
 
         playersList = new ArrayList<>();
+        admins_id = new ArrayList<>();
+        member_id = new ArrayList<>();
         String name, whenPlay,wherePlay,picture;
         Game nextGame;
         try{nextGame = g.getNextGame();}
@@ -374,11 +384,15 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             if (spref.getUserId().equals(admin))
                 isAdmin = true;
         }
+        admins_id = g.getAdmins_id();
         try {
             for (String id : g.getMembers_id()) {
                 Log.d("Trying to fetch group: ", id);
                 grfPlayerDB.requestPlayerFromServer(id,MainActivity.TAB_GROUP);
+                if (!member_id.contains(id))
+                    member_id.add(id);
             }
+
         }catch (Exception e ) {e.printStackTrace();}
 
         refreshList();
@@ -399,11 +413,11 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         try{wherePlay = wherePlayTV.getText().toString();}
         catch (Exception e){e.printStackTrace();wherePlay = defaultGroup.getWherePlay();}
         try{whenPlay = whenPlayTV.getText().toString();}
-        catch (Exception e){whenPlay = defaultGroup.getWhenPlay();}
+        catch (Exception e){e.printStackTrace();whenPlay = defaultGroup.getWhenPlay();}
         try{ngpitch = ngPitchTV.getText().toString();}
-        catch (Exception e){nextGameExist = false;}
+        catch (Exception e){e.printStackTrace();nextGameExist = false;}
         try{ngdate = ngDateTV.getText().toString();}
-        catch (Exception e){nextGameExist = false;}
+        catch (Exception e){e.printStackTrace();nextGameExist = false;}
         try{ngLocation = ngLocationTV.getText().toString();}
         catch (Exception e){e.printStackTrace();}
         try{ngprice = ngPriceTV.getText().toString();}
@@ -413,6 +427,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         if (nextGameExist)
             nextGame = new Game(ngpitch,ngdate,ngprice,ngLocation);
         else nextGame = null;
+        Log.d("createGroupFromView", "group admin -> "+admins_id.toString()+"\tmembers -> "+member_id.toString());
         return new GroupPlay(spref.getDisplayGroupId(),name,wherePlay,whenPlay,picture,member_id,admins_id,nextGame);
     }
 
@@ -421,27 +436,93 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         if (isAdmin) {
             Log.d("onClick override", "can edit: "+isAdmin);
             TextView tv = (TextView) v;
+            String hint = "";
+            Resources r = getResources(); //just because im lazy
+            Drawable img = r.getDrawable(R.drawable.group_ic_tab); //set default img
+            int arrayId = R.array.pitch_spinner;  //set defualt array id which the adapter will use to initialize
+            boolean withSpinner = true;
+            //check which textView was pressed and change the params
             switch (v.getId()) {
                 case R.id.region_tv_grf:
-
+                    img = r.getDrawable(R.drawable.where);
+                    arrayId = R.array.where_play_spinner;
                     break;
                 case R.id.pref_time_tv_grf:
-
+                    withSpinner = false;
+                    hint = r.getString(R.string.preffered_time);
+                    img = r.getDrawable(R.drawable.clock);
                     break;
-                case R.id.pitch_tv_prf:
-
+                case R.id.name_tv_grf:
+                    withSpinner = false;
+                    hint = r.getString(R.string.group_name);
+                    img = r.getDrawable(R.drawable.team_avatar);
                     break;
-                case R.id.next_game_date_grf:
-
-                    break;
-                case R.id.price_tv_grf:
-
+                case R.id.next_price_tv_grf:
+                    withSpinner = false;
+                    hint = r.getString(R.string.price);
+                    img = r.getDrawable(R.drawable.price);
                     break;
                 case R.id.next_game_location_grf:
-
+                    withSpinner = false;
+                    hint = r.getString(R.string.next_game_location);
+                    img = r.getDrawable(R.drawable.map);
+                    break;
+                case R.id.next_game_date_grf:
+                    withSpinner = false;
+                    hint = r.getString(R.string.next_game_when);
+                    img = r.getDrawable(R.drawable.calendar);
+                    break;
+                case R.id.next_pitch_tv_grf:
+                    img = r.getDrawable(R.drawable.football_field_ic);
+                    arrayId = R.array.pitch_spinner;
                     break;
 
             }
+            //make alert dialog pop dynamically
+            ArrayAdapter<CharSequence> spAdapter = ArrayAdapter.createFromResource(getContext(), arrayId,
+                    android.R.layout.simple_spinner_item); //create adapter for the spinner in showEditDialog function
+            showEditDialog(withSpinner, img, hint, v, spAdapter);
         }
+    }
+
+    private void showEditDialog(final boolean withSpinner, Drawable img, String hint, View v, final ArrayAdapter<CharSequence> spAdapter) {
+        // withSpinner? if true -> show spinner instead of edit text
+        // img -> this will be the image show in dialog
+        // hint -> in case dialog is with edit text , this will be its hint
+        // v -> the TextView pressed that called the dialog, use it to change it's text after confirmation
+        //spAdapter -> relevant only in case spinner is on. this will be the value adapter for the spinner
+        //make alert dialog pop dynamically
+        final TextView tvFromFragment = (TextView) v;
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final View dialogEditView = getLayoutInflater().inflate(R.layout.dialog_edit_user_profile,null);
+        final EditText editText = dialogEditView.findViewById(R.id.text_edit_dialog);
+        final Spinner spinner = dialogEditView.findViewById(R.id.spinner_edit_dialog);
+        ImageView icon = dialogEditView.findViewById(R.id.image_edit_dialog);
+        builder.setView(dialogEditView);
+        final AlertDialog dialog = builder.create();
+        if (!hint.isEmpty()) editText.setHint(hint);
+        if (withSpinner){
+            spinner.setVisibility(View.VISIBLE);
+            spinner.setAdapter(spAdapter);
+            editText.setVisibility(View.GONE);
+
+        }
+        icon.setImageDrawable(img);
+        dialogEditView.findViewById(R.id.confirm_btn_edit_dialog).setOnClickListener(new View.OnClickListener() {
+            //create button will create group on server and move to group frag
+
+            @Override
+            public void onClick(View v) {
+                final String newValue;
+                if (withSpinner)
+                    newValue = spinner.getSelectedItem().toString();
+                else
+                    newValue = editText.getText().toString();
+                if (!newValue.isEmpty())
+                    tvFromFragment.setText(newValue);
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }

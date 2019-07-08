@@ -30,6 +30,8 @@ public class GroupPlay {
         group.put(GlobConst.DB_GROUP_PICTURE, getPicture());
         group.put(GlobConst.DB_GROUP_MEMBERS, getMembers_id());
         group.put(GlobConst.DB_GROUP_ADMINS, getAdmins_id());
+
+        Log.d("Group.toHash","hashed this: "+group.toString());
         return group;
     }
 
@@ -63,7 +65,7 @@ public class GroupPlay {
         this.picture = picture;
         this.members_id = member_id;
         this.admins_id = admins_id;
-//        this.nextGame = nextGame;
+        this.nextGame = nextGame;
 
 
     }

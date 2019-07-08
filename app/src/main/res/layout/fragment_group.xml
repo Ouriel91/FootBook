@@ -164,7 +164,7 @@
 
                 <TextView
                     android:tag="@string/next_game_tag"
-                    android:id="@+id/price_tv_grf"
+                    android:id="@+id/next_price_tv_grf"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_margin="0dp"
@@ -181,7 +181,7 @@
                     android:id="@+id/next_loc_ic_grf"
                     style="@style/GroupFrag_ImageView"
                     android:src="@drawable/map"
-                    app:layout_constraintStart_toEndOf="@id/price_tv_grf"
+                    app:layout_constraintStart_toEndOf="@id/next_price_tv_grf"
                     app:layout_constraintTop_toBottomOf="@id/next_date_ic_grf" />
 
                 <TextView

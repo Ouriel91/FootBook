@@ -584,17 +584,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public String updateGroupInServer(final GroupPlay group) {
-        group.addMember(sharedPref.getUserId());
-        group.addAdmins(sharedPref.getUserId());
-        group.setId(db.collection(GlobConst.DB_GROUP_TABLE).document().getId());//auto create id
+
         db.collection(GlobConst.DB_GROUP_TABLE).document(group.getId())//add group
-                .set(group.toHashMap())
+                .update(group.toHashMap())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Snackbar.make(coordinatorLayout, "Updated group :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
-                        sharedPref.setDisplayGroup(group);
-//                        sendToPlayerFrag.onGetGroupComplete(group);
+//                        sharedPref.setDisplayGroup(group);
                     }
                 });
         return group.getName();

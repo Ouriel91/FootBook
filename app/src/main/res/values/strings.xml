@@ -24,6 +24,10 @@
     <string name="where_do_u_play">Where do you play?</string>
     <string name="What_time">When do you play?</string>
     <string name="address">City you from</string>
+    <string name="preffered_time">Wed, 7 PM</string>
+    <string name="price">Price</string>
+    <string name="next_game_location">Game Location</string>
+    <string name="next_game_when">Game time</string>
     <string-array name="pitch_spinner">
         <item>Asphalt</item>
         <item>Synthetic</item>
