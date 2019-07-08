@@ -399,8 +399,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                         }
                     });
 
-
-
             mUploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -542,11 +540,12 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     }
 
     private void changeNextGamePriceIcon(String price) {
-        if (price.toLowerCase().equals("free") || price.equals("0") )
-            ngPriceIV.setImageDrawable(getResources().getDrawable(R.drawable.price_free));
-        else
-            ngPriceIV.setImageDrawable(getResources().getDrawable(R.drawable.price));
-
+        Log.d("changeNextGamePriceIcon", "cahngin to: "+price);
+        if (price.toLowerCase().equals("free") || price.equals("0") || price.isEmpty()) {
+            ngPriceIV.setImageDrawable(res.getDrawable(R.drawable.price_free));
+            ngPriceTV.setText(res.getString(R.string.free));
+        }else
+            ngPriceIV.setImageDrawable(res.getDrawable(R.drawable.price));
     }
 
     private void changeNextGamePitchIcon(String pitch) {
@@ -687,14 +686,15 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                 final String newValue;
                 if (withSpinner) {
                     newValue = spinner.getSelectedItem().toString();
+//                    change icons on display
                     if (tvFromFragment.getId() == R.id.next_pitch_tv_grf)
                         changeNextGamePitchIcon(newValue);
-                    else if (tvFromFragment.getId() == R.id.next_price_tv_grf)
-                        changeNextGamePriceIcon(newValue);
                 }
                 else
                     newValue = editText.getText().toString();
-                if (!newValue.isEmpty())
+                if (tvFromFragment.getId() == R.id.next_price_tv_grf)
+                    changeNextGamePriceIcon(newValue);
+                else if (!newValue.isEmpty())
                     tvFromFragment.setText(newValue);
                 dialog.dismiss();
             }

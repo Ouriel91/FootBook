@@ -172,7 +172,7 @@
                     app:layout_constraintEnd_toEndOf="@id/next_pitch_tv_grf"
                     app:layout_constraintTop_toTopOf="@id/price_ic_grf"
                     app:layout_constraintBottom_toBottomOf="@id/price_ic_grf"
-                    android:text="25 $"
+                    android:text="Free"
                     style="@style/ProfileFrag_TextView"
                     />
 

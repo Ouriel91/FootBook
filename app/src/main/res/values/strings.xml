@@ -59,6 +59,7 @@
     <string name="next_game_location">Game Location</string>
 
     <string name="next_game_when">Game time</string>
+    <string name="free">Free</string>
 
 
     <string-array name="pitch_spinner">
@@ -87,7 +88,7 @@
     </string-array>
 
 
-    -<string-array name="where_play_spinner">
+    <string-array name="where_play_spinner">
 
     <item>Center</item>
 

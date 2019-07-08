@@ -70,6 +70,7 @@ import java.util.Locale;
 
 public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.OnClickListener {
     //region declarations
+    Resources res;
     private RecyclerView profileRV;
     private CustomSharedPrefAdapter sPref;
     TextView nameTV,whereFromTV,positionTV, pitchTV, wherePlayTV;
@@ -131,6 +132,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
         //all layout ids end with ' prf ' (for PRofile Fragment)//
         // region var assignments
+        res=getResources();
         thumbnailIV = view.findViewById(R.id.thumbnail_prf);
         createGroupBtn = view.findViewById(R.id.groups_title_lay_prf);
         profileRV = view.findViewById(R.id.profile_rv);
@@ -478,8 +480,10 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         String pitch,position,wherePlay;
         try{pitch = p.getPitch();}
         catch (Exception e){e.printStackTrace();pitch = "Asphalt";}
+        changePitchIcon(pitch);
         try{position = p.getPosition();}
         catch (Exception e){e.printStackTrace();position = "Free Role";}
+        changePositionIcon(position);
         try{wherePlay = p.getWherePlay();}
         catch (Exception e){e.printStackTrace();wherePlay = "Anywhere";}
         pitchTV.setText(pitch);
@@ -499,6 +503,45 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         }
         Log.d("displayProfile: ", p.get_id());
         refreshGroupList();
+    }
+
+    private void changePositionIcon(String position) {
+//        <item>Free Role</item>
+//        <item>Defender</item>
+//        <item>Midfielder</item>
+//        <item>Striker</item>
+//        <item>Goalkeeper</item>
+        String[] values = res.getStringArray(R.array.position_spinner);
+        Drawable icon = res.getDrawable(R.drawable.general_player);
+        if (position.equals(values[0]))
+            icon = res.getDrawable(R.drawable.general_player);
+        else if (position.equals(values[1]))
+            icon = res.getDrawable(R.drawable.defender);
+        else if (position.equals(values[2]))
+            icon = res.getDrawable(R.drawable.midfielder);
+        else if (position.equals(values[3]))
+            icon = res.getDrawable(R.drawable.striker);
+        else if (position.equals(values[4]))
+            icon = res.getDrawable(R.drawable.goalkeeper);
+        positionIV.setImageDrawable(icon);
+
+    }
+
+    private void changePitchIcon(String pitch) {
+//        <item>Asphalt</item>
+//        <item>Synthetic</item>
+//        <item>Grass</item>
+        String[] values = res.getStringArray(R.array.pitch_spinner);
+        Drawable icon = res.getDrawable(R.drawable.football_field_ic);
+        if (pitch.equals(values[0]))
+            icon = res.getDrawable(R.drawable.asphalt);
+        if (pitch.equals(values[1]))
+            icon = res.getDrawable(R.drawable.synthetic);
+        if (pitch.equals(values[2]))
+            icon = res.getDrawable(R.drawable.football_field_ic);
+        pitchIV.setImageDrawable(icon);
+
+
     }
 
     //endregion
@@ -613,7 +656,6 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
             spinner.setVisibility(View.VISIBLE);
             spinner.setAdapter(spAdapter);
             editText.setVisibility(View.GONE);
-
         }
         icon.setImageDrawable(img);
         dialogEditView.findViewById(R.id.confirm_btn_edit_dialog).setOnClickListener(new View.OnClickListener() {
@@ -622,8 +664,13 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
             @Override
             public void onClick(View v) {
                 final String newValue;
-                if (withSpinner)
+                if (withSpinner) {
                     newValue = spinner.getSelectedItem().toString();
+                    if (tvFromFragment.getId() == R.id.pitch_tv_prf)
+                        changePitchIcon(newValue);
+                    else if (tvFromFragment.getId() == R.id.position_tv_prf)
+                        changePositionIcon(newValue);
+                }
                 else
                     newValue = editText.getText().toString();
                 if (!newValue.isEmpty())
