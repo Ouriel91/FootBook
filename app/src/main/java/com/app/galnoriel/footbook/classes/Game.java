@@ -21,10 +21,12 @@ public class Game {
 
     public HashMap<String,Object> toHashMap(){
         HashMap<String, Object> game = new HashMap<>();
-        game.put(PITCH_TYPE, getPitch());
-        game.put(GAME_PRICE, getPrice());
-        game.put(GAME_DATE, getDate());
-        game.put(GAME_LOCATION,getLocation());
+        try {
+            game.put(PITCH_TYPE, getPitch());
+            game.put(GAME_PRICE, getPrice());
+            game.put(GAME_DATE, getDate());
+            game.put(GAME_LOCATION, getLocation());
+        }catch (Exception e){e.printStackTrace();return null;}
 //        game.put(GAME_LAT, getLocation().latitude);
 //        game.put(GAME_LON, getLocation().longitude);
         return game;

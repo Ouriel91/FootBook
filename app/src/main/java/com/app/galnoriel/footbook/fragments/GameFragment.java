@@ -168,6 +168,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         start_timer.setChecked(true);
 
     }
+
     private void pauseTimer() {
         mCountDownTimer.cancel();
         start_timer.setChecked(false);
@@ -193,8 +194,6 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         }
     }
 
-
-
     private void updateCountdown() {
 
         int hours = (int) (leftTimeInMillis / 1000) / 3600;
@@ -219,7 +218,6 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         changeScore(v.getId(),true);
     }
 
-    /*please add validation that make sure that score will not be negtive!! expensive brother :P */
     private void changeScore(int id, boolean increase) {
         //long click will set increase to false (cancel goal)
         //normal click wil set to true
