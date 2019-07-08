@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,7 +33,7 @@ import android.widget.Toast;
 
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
-import com.app.galnoriel.footbook.Upload;
+import com.app.galnoriel.footbook.classes.Upload;
 import com.app.galnoriel.footbook.adapters.GroupListAdapter;
 import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.classes.GroupPlay;
@@ -302,6 +301,9 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                             Upload upload = new Upload("blabla",taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
                             String uploadId = mDatabaseRef.push().getKey();
                             mDatabaseRef.child(uploadId).setValue(upload);
+
+                            //mDatabaseRef.child(uploadId).getKey()
+                            //sPref.setUserPathImage();
 
                         }
                     })
