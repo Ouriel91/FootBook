@@ -45,7 +45,7 @@ import java.util.List;
 
 public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnClickListener {
     //all layout ids end with ' grf ' (for Group Fragment)
-
+    Resources res;
     RecyclerView groupRV;
     List<Player> playersList = new ArrayList<>();
     ArrayList<String> admins_id,member_id;
@@ -53,8 +53,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     boolean isAdmin = false;
     private android.support.v7.app.AlertDialog alertDialog;
     public MoveToTab showTab;
-    public AccessGroupDB groupDB;
-    public AccessPlayerDB playerDB;
+    public AccessGroupDB grfGroupDB;
+    public AccessPlayerDB grfPlayerDB;
+
     CustomSharedPrefAdapter spref;
     private ImageView thumbnailIV,ngPitchIV,ngDateIV,ngPriceIV,ngLocationIV;
     private TextView nameTV,wherePlayTV,whenPlayTV,ngPitchTV,ngDateTV,ngPriceTV,ngLocationTV;
@@ -65,13 +66,11 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     private static final int IMAGE_PICK_REQUEST = 2;
 
 
-    public AccessGroupDB grfGroupDB;
-    public AccessPlayerDB grfPlayerDB;
 
     @Override
     public void onResume() {
         super.onResume();
-//        grfGroupDB.requestGroupFromServer(spref.getDisplayGroupId(),MainActivity.TAB_GROUP);
+        grfGroupDB.requestGroupFromServer(spref.getDisplayGroupId(),MainActivity.TAB_GROUP);
 
     }
 
@@ -121,6 +120,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                 //addmember function!!
             }
         });
+        res = getResources();
 //region clicklisteners
 //        thumbnailIV.setOnClickListener(this);
 //        ngPitchIV.setOnClickListener(this);
@@ -349,7 +349,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
 
     private void displayGroup(GroupPlay g) {
-
+        spref.setDisplayGroupId(g.getId());
         playersList = new ArrayList<>();
         admins_id = new ArrayList<>();
         member_id = new ArrayList<>();
@@ -360,11 +360,11 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         if (nextGame!=null){
             showNextGameView();
             ngPitchTV.setText(nextGame.getPitch());
-            ngDateTV.setText(nextGame.getDate());
-            ngLocationTV.setText(nextGame.getLocation().toString());
+            changeNextGamePitchIcon(nextGame.getPitch());
             ngPriceTV.setText(nextGame.getPrice());
-            if (nextGame.getPrice().equals("Free"))
-                ngPriceIV.setImageDrawable(getResources().getDrawable(R.drawable.price_free));
+            changeNextGamePriceIcon(nextGame.getPrice());
+            ngDateTV.setText(nextGame.getDate());
+            ngLocationTV.setText(nextGame.getLocation());
         }else
             hideNextGameView();
         //set thumbnail
@@ -394,10 +394,28 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                 if (!member_id.contains(id))
                     member_id.add(id);
             }
-
         }catch (Exception e ) {e.printStackTrace();}
 
         refreshList();
+    }
+
+    private void changeNextGamePriceIcon(String price) {
+        if (price.toLowerCase().equals("free") || price.equals("0") )
+            ngPriceIV.setImageDrawable(getResources().getDrawable(R.drawable.price_free));
+        else
+            ngPriceIV.setImageDrawable(getResources().getDrawable(R.drawable.price));
+
+    }
+
+    private void changeNextGamePitchIcon(String pitch) {
+        String[] type = getResources().getStringArray(R.array.pitch_spinner);
+        if (pitch.equals(type[0]))
+            ngPitchIV.setImageDrawable(res.getDrawable(R.drawable.asphalt));
+        else if (pitch.equals(type[1]))
+            ngPitchIV.setImageDrawable(res.getDrawable(R.drawable.synthetic));
+        else
+            ngPitchIV.setImageDrawable(res.getDrawable(R.drawable.football_field_ic));
+
     }
 
     private void hideNextGameView() {
@@ -407,6 +425,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     private void showNextGameView() {
         //hide next game frame
     }
+
 
     private GroupPlay createGroupFromView() {
         GroupPlay defaultGroup = spref.getDisplayGroup();
@@ -524,8 +543,13 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             @Override
             public void onClick(View v) {
                 final String newValue;
-                if (withSpinner)
+                if (withSpinner) {
                     newValue = spinner.getSelectedItem().toString();
+                    if (tvFromFragment.getId() == R.id.next_pitch_tv_grf)
+                        changeNextGamePitchIcon(newValue);
+                    else if (tvFromFragment.getId() == R.id.next_price_tv_grf)
+                        changeNextGamePriceIcon(newValue);
+                }
                 else
                     newValue = editText.getText().toString();
                 if (!newValue.isEmpty())

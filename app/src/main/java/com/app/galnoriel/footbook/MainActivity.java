@@ -538,6 +538,7 @@ public class MainActivity extends AppCompatActivity
         Log.d("moving to tab: ", to + "\n"+ params.toString());
         switch (to){
             case TAB_PROFILE:
+                //profile id in [0]
                 sharedPref.setDisplayProfileId(params[0]);
                 requestPlayerFromServer(params[0],TAB_PROFILE);
                 viewPager.setCurrentItem(TAB_PROFILE,true);
@@ -559,7 +560,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
-//region interfaces with fragment for server data fetching
+    //region interfaces with fragment for server data fetching
     @Override
     public String createNewGroupInServer(final GroupPlay group) {
         group.addMember(sharedPref.getUserId());
@@ -597,7 +598,7 @@ public class MainActivity extends AppCompatActivity
 //                        sharedPref.setDisplayGroup(group);
                     }
                 });
-//        Log.d("updateGroupInServer", group.toString());
+        Log.d("updateGroupInServer", group.toString());
         return group.getName();
     }
 
@@ -625,8 +626,10 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful() && task.getResult().exists()) {
-                            sendToPlayerFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
-                            sendToGroupFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                            if (frag == TAB_PROFILE)
+                                sendToPlayerFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                            if (frag == TAB_GROUP)
+                                sendToGroupFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
                         }
                     }
                 });
@@ -658,7 +661,7 @@ public class MainActivity extends AppCompatActivity
                                         sharedPref.setDisplayProfile(profile);
                                         sendToPlayerFrag.onGetPlayerComplete(profile);}
                                     else if (frag==TAB_GROUP)
-                                    sendToGroupFrag.onGetPlayerComplete(profile);
+                                        sendToGroupFrag.onGetPlayerComplete(profile);
                                     Log.d("SuccesS Profile server ",profile.get_id());
 
                                 } else
