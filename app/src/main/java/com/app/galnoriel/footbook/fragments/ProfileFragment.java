@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,11 +45,15 @@ import com.app.galnoriel.footbook.interfaces.MoveToTab;
 import com.app.galnoriel.footbook.interfaces.AccessPlayerDB;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
+
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -85,7 +89,9 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
     private StorageTask mUploadTask;
+    Uri photoURI;
     private Uri imageUri;
+
 
 //endregion
 
@@ -141,6 +147,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
+
         //endregion
 //check for edit profile permissions:
 
@@ -206,15 +213,15 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                                 return;
                             }
 
-                            Uri photoURI = FileProvider.getUriForFile(getActivity(),
-                                    getActivity().getPackageName() + ".provider",
-                                    pictureFile);
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                            startActivityForResult(intent, IMAGE_CAPTURE_REQUEST);
+                        photoURI = FileProvider.getUriForFile(getActivity(),
+                                getActivity().getPackageName()+".provider",
+                                pictureFile);
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        startActivityForResult(intent, IMAGE_CAPTURE_REQUEST);
 
 
-                            alertDialog.dismiss();
+                        alertDialog.dismiss();
                         }
                     });
 
@@ -275,20 +282,35 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
         if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
 
-            Glide.with(getActivity()).load(pictureFilePath)
-                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
-                    .into(thumbnailIV);
+            StorageReference reference = mStorageRef.child("photos").child(photoURI.getLastPathSegment());
 
-            sPref.setUserPathImage(pictureFilePath);
+            reference.putFile(photoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    Task<Uri> result = taskSnapshot.getMetadata().getReference().getDownloadUrl();
+                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            String photoStringLink = uri.toString();
+                            sPref.setUserPathImage(photoStringLink);
+
+                            Glide.with(getActivity()).load(sPref.getUserPathImage())
+                                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
+                                    .into(thumbnailIV);
+                        }
+                    });
+
+
+                }
+            });
+
         }
         else if (requestCode == IMAGE_PICK_REQUEST && resultCode == getActivity().RESULT_OK)
         {
             imageUri = data.getData();
-            Glide.with(getActivity()).load(imageUri)
-                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
-                    .into(thumbnailIV);
 
-            //sPref.setUserPathImage(pictureFilePath);
         }
     }
 
@@ -296,8 +318,8 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
         if (imageUri != null){
 
-            StorageReference reference = mStorageRef.child(System.currentTimeMillis()
-                    +"."+getFileExtension(imageUri));
+            final StorageReference reference = mStorageRef.child(System.currentTimeMillis()
+                +"."+getFileExtension(imageUri));
 
             mUploadTask = reference.putFile(imageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -308,17 +330,42 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                             String uploadId = mDatabaseRef.push().getKey();
                             mDatabaseRef.child(uploadId).setValue(upload);
 
-                            //mDatabaseRef.child(uploadId).getKey()
-                            //sPref.setUserPathImage();
-
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+
+            mUploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    // Continue with the task to get the download URL
+                    return reference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = task.getResult();
+                        String url = downloadUri.toString();
+
+                        sPref.setUserPathImage(url);
+
+                        Glide.with(getActivity()).load(sPref.getUserPathImage())
+                                .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
+                                .into(thumbnailIV);
+                    }
+                }
+            });
         }
     }
 
