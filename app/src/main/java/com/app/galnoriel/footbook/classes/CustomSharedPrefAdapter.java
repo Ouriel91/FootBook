@@ -178,6 +178,24 @@ public class CustomSharedPrefAdapter {
         sharedPreferences.edit().putInt(key,value).apply();
     }
 
+    public String getUserPathImage(){
+        return getString(DISPLAY_USER_PICTURE,"Not Found");
+    }
+
+    public void setGroupPathImage(String currentPath){
+        putString(DISPLAY_GROUP_PICTURE, currentPath);
+    }
+
+    public void setUserPathImage(String currentPath){
+        putString(DISPLAY_GROUP_PICTURE, currentPath);
+    }
+
+    public String getGroupPathImage(){
+        return getString(DISPLAY_GROUP_PICTURE,"Not Found");
+    }
+
+
+
     public void setDefaultGroup(GroupPlay g){
         sharedPreferences.edit()
                 .putString(DEFAULT_GROUP_ID,g.getId())
