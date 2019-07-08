@@ -25,14 +25,17 @@ public class GroupPlay {
         HashMap<String, Object> group = new HashMap<>();
         group.put(GlobConst.DB_GROUP_NAME, getName());
         group.put(GlobConst.DB_GROUP_WHENPLAY, getWhenPlay());
-        group.put(GlobConst.DB_GROUP_NEXT_GAME,nextGame.toHashMap());
+        try{group.put(GlobConst.DB_GROUP_NEXT_GAME,nextGame.toHashMap());}
+        catch (Exception e){e.printStackTrace();
+            Log.d("GrouopPlay.toHash()","failed hashing next game");
+            nextGame=null;}
         group.put(GlobConst.DB_GROUP_WHEREPLAY, getWherePlay());
         group.put(GlobConst.DB_GROUP_PICTURE, getPicture());
         group.put(GlobConst.DB_GROUP_MEMBERS, getMembers_id());
         group.put(GlobConst.DB_GROUP_ADMINS, getAdmins_id());
 
         Log.d("Group.toHash","hashed this: "+group.toString());
-        Log.d("Group.toHash","next game hashes: "+nextGame.stringify());
+
         return group;
     }
 
