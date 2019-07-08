@@ -1,8 +1,6 @@
 package com.app.galnoriel.footbook.fragments;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -20,7 +18,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -51,9 +48,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     boolean isAdmin = false;
 
     private android.support.v7.app.AlertDialog alertDialog;
-    public MoveToTab showTab;
-    public AccessGroupDB groupDB;
-    public AccessPlayerDB playerDB;
+    public MoveToTab grfShowTab;
+    public AccessGroupDB grfGroupDB;
+    public AccessPlayerDB grfPlayerDB;
     CustomSharedPrefAdapter spref;
     private ImageView thumbnailIV,ngPitchIV,ngDateIV,ngPriceIV,ngLocationIV;
     private TextView nameTV,wherePlayTV,whenPlayTV,ngPitchTV,ngDateTV,ngPriceTV,ngLocationTV;
@@ -298,11 +295,14 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             @Override
             public void onPlayerCardClick(int position, String player_id) {
                 Log.d("Clicked on id: ",player_id);
-                //TODO: check why run time crash here
-                showTab.goToFrag(MainActivity.TAB_PROFILE,player_id);
+                grfShowTab.goToFrag(MainActivity.TAB_PROFILE,player_id);
             }
         });
         groupRV.setAdapter(adapter);
+        for (Player player:playersList) {
+            Log.d("Displayin PLAYER: ",player.get_id());
+        }
+
     }
     @Override
     public void onGetPlayerComplete(Player player) {
@@ -316,8 +316,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                     playersList.add(player);
                     Log.d("added fetch group : ", player.get_id());
                 }
-                Log.d("fetched same groupid: ", player.get_id());
-                return;
+                Log.d("fetched same userId: ",
+                        player.get_id());
+
             }
         }
         //if got to this point -> grouop id wasnt found, so we need to add
@@ -367,7 +368,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         try {
             for (String id : g.getMembers_id()) {
                 Log.d("Trying to fetch group: ", id);
-                playerDB.requestPlayerFromServer(id);
+                grfPlayerDB.requestPlayerFromServer(id,MainActivity.TAB_GROUP);
             }
         }catch (Exception e ) {e.printStackTrace();}
         refreshList();

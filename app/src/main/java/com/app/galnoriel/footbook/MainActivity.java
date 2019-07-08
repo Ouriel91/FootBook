@@ -103,14 +103,16 @@ public class MainActivity extends AppCompatActivity
         super.onAttachFragment(fragment);
         if (fragment instanceof ProfileFragment){ //set interface with Profile frag
             ((ProfileFragment) fragment).showTab = this;
-            ((ProfileFragment) fragment).groupDB = this;
-            ((ProfileFragment) fragment).playerDB = this;
+            ((ProfileFragment) fragment).prfGroupDB = this;
+            ((ProfileFragment) fragment).prfPlayerDB = this;
 
         }else if (fragment instanceof GroupFragment){
-            ((GroupFragment) fragment).showTab = this;
+            ((GroupFragment) fragment).grfShowTab = this;
+            ((GroupFragment) fragment).grfGroupDB = this;
+            ((GroupFragment) fragment).grfPlayerDB = this;
 
         }else if (fragment instanceof GameFragment){
-//            /set listerner
+
         }else if (fragment instanceof SearchGameFieldFragment){
             //set listerenrerasdfgk
         }
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity
                 if (currentUser != null){ //user is logged in
                     sharedPref.setUserId(currentUser.getUid());  //save user id
                     sharedPref.setLoginStatus(true);
-//                    getPlayerFromServer(currentUser.getUid());
+                    getPlayerFromServer(currentUser.getUid(),TAB_PROFILE);
                     loginTV.setText("Welcome!!!");
                     userLoginTV.setText(currentUser.getDisplayName());
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(false);
@@ -542,9 +544,9 @@ public class MainActivity extends AppCompatActivity
                 viewPager.setCurrentItem(TAB_PROFILE,true);
                 break;
             case TAB_GROUP:
-            //getGroup , id is in params[0]
+                //getGroup , id is in params[0]
                 sharedPref.setDisplayGroupId(params[0]);
-                requestGroupFromServer(params[0]);
+                requestGroupFromServer(params[0], TAB_GROUP);
                 viewPager.setCurrentItem(TAB_GROUP,true);
                 break;
             case TAB_GAME:
@@ -558,7 +560,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
-//region interfaces with fragment for server data fetching
+    //region interfaces with fragment for server data fetching
     @Override
     public String createNewGroupInServer(final GroupPlay group) {
         group.addMember(sharedPref.getUserId());
@@ -599,7 +601,7 @@ public class MainActivity extends AppCompatActivity
         return group.getName();
     }
 
-   @Override
+    @Override
     public String updatePlayerInServer(final Player player) {
         db.collection(GlobConst.DB_USER_TABLE).document(player.get_id())
                 .set(player.toHashMap())
@@ -616,15 +618,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public String requestGroupFromServer(String group_id) {
+    public String requestGroupFromServer(String group_id, final int frag) {
         db.collection(GlobConst.DB_GROUP_TABLE).document(group_id)//get group
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful() && task.getResult().exists()) {
-                            sendToPlayerFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
-                            sendToGroupFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                            if (frag == TAB_GROUP)
+                                sendToGroupFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                            else if (frag == TAB_PROFILE)
+                                sendToPlayerFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
                         }
                     }
                 });
@@ -632,13 +636,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public String requestPlayerFromServer(String playerId) {
-        getPlayerFromServer(playerId);
+    public String requestPlayerFromServer(String playerId,int frag) {
+        getPlayerFromServer(playerId , frag);
 
         return playerId;
     }
 
-    private void getPlayerFromServer(final String uid){
+    private void getPlayerFromServer(final String uid, final int frag){
         if (sharedPref.getLoginStatus()) { //enable only if user looged in
             db.collection(GlobConst.DB_USER_TABLE)  //fetch user info from server and store in share pref for further display
                     .document(uid)
@@ -652,7 +656,9 @@ public class MainActivity extends AppCompatActivity
                                     Player profile = new Player(playerProfile);
                                     profile.set_id(uid);
                                     sharedPref.setDisplayProfile(profile);
+                                    if(frag==TAB_PROFILE)
                                     sendToPlayerFrag.onGetPlayerComplete(profile);
+                                    else if (frag==TAB_GROUP)
                                     sendToGroupFrag.onGetPlayerComplete(profile);
                                     Log.d("SuccesS Profile server ",profile.get_id());
 

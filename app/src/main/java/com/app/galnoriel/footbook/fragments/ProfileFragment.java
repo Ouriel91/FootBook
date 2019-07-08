@@ -1,7 +1,6 @@
 package com.app.galnoriel.footbook.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -53,8 +52,8 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     List<GroupPlay> groupPlayList = new ArrayList<>();
     GroupListAdapter adapter;
     public MoveToTab showTab;
-    public AccessGroupDB groupDB;
-    public AccessPlayerDB playerDB;
+    public AccessGroupDB prfGroupDB;
+    public AccessPlayerDB prfPlayerDB;
     boolean canEdit = false;
     LinearLayout createGroupBtn;
     private android.support.v7.app.AlertDialog alertDialog;
@@ -69,7 +68,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     @Override
     public void onResume() {
         super.onResume();
-        playerDB.requestPlayerFromServer(sPref.getDisplayProfile().get_id());
+        prfPlayerDB.requestPlayerFromServer(sPref.getDisplayProfile().get_id(),MainActivity.TAB_PROFILE);
     }
 
     @Override
@@ -81,7 +80,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
             sPref.setDisplayProfile(createPlayerFromView());
         if (!(sPref.getDisplayProfile().getName().equals("Guest")||
                 sPref.getDisplayProfile().getName().contains("Please Sign")))
-            playerDB.updatePlayerInServer(createPlayerFromView());
+            prfPlayerDB.updatePlayerInServer(createPlayerFromView());
 
     }
 
@@ -294,7 +293,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                 String groupName = nameGroup.getText().toString();
                 String groupWhere = wherePlayGroup.getText().toString();
                 String groupWhen = whenPlayGroup.getText().toString();
-                String groupCreatedId =  groupDB.createNewGroupInServer(new GroupPlay("",groupName,groupWhere,groupWhen));
+                String groupCreatedId =  prfGroupDB.createNewGroupInServer(new GroupPlay("",groupName,groupWhere,groupWhen));
                 showTab.goToFrag(MainActivity.TAB_GROUP,groupCreatedId);
                 dialog.dismiss();
             }
@@ -323,7 +322,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         //will show name, avatar and when usualy play
         for (String id:p.getGroups_ids()) {
             Log.d("Trying to fetch group: ",id);
-            groupDB.requestGroupFromServer(id);
+            prfGroupDB.requestGroupFromServer(id,MainActivity.TAB_PROFILE);
         }
         Log.d("DISPLAY profile: ", p.get_id());
         refreshGroupList();
