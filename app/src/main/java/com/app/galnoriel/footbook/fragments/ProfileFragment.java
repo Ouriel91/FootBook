@@ -30,9 +30,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
+import com.app.galnoriel.footbook.Upload;
 import com.app.galnoriel.footbook.adapters.GroupListAdapter;
 import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.classes.GroupPlay;
@@ -43,6 +45,7 @@ import com.app.galnoriel.footbook.interfaces.MoveToTab;
 import com.app.galnoriel.footbook.interfaces.AccessPlayerDB;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -211,12 +214,6 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                         startActivityForResult(intent, IMAGE_CAPTURE_REQUEST);
 
-                        if (mUploadTask != null && mUploadTask.isInProgress()){
-                            Snackbar.make(getView(),"Upload in progress",Snackbar.LENGTH_LONG).show();
-                        }
-                        else {
-                            uploadFile();
-                        }
 
                         alertDialog.dismiss();
                     }
@@ -229,6 +226,14 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                         intent.setType("image/*");
                         intent.setAction(Intent.ACTION_GET_CONTENT);
                         startActivityForResult(intent,IMAGE_PICK_REQUEST);
+
+                        if (mUploadTask != null && mUploadTask.isInProgress()){
+                            Snackbar.make(getView(),"Upload in progress",Snackbar.LENGTH_LONG).show();
+                        }
+                        else {
+                            uploadFile();
+                        }
+
                         alertDialog.dismiss();
                     }
                 });
@@ -263,6 +268,29 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         return view;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
+
+            Glide.with(getActivity()).load(pictureFilePath)
+                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
+                    .into(thumbnailIV);
+
+            sPref.setUserPathImage(pictureFilePath);
+        }
+        else if (requestCode == IMAGE_PICK_REQUEST && resultCode == getActivity().RESULT_OK)
+        {
+            imageUri = data.getData();
+            Glide.with(getActivity()).load(imageUri)
+                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
+                    .into(thumbnailIV);
+
+            //sPref.setUserPathImage(pictureFilePath);
+        }
+    }
+
     private void uploadFile() {
 
         if (imageUri != null){
@@ -275,9 +303,18 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            //add progress bar?!
+                            Upload upload = new Upload("blabla",taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                            String uploadId = mDatabaseRef.push().getKey();
+                            mDatabaseRef.child(uploadId).setValue(upload);
+
                         }
-                    });
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -543,28 +580,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         return idArray;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
-
-            Glide.with(getActivity()).load(pictureFilePath)
-                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
-                    .into(thumbnailIV);
-
-            sPref.setUserPathImage(pictureFilePath);
-        }
-        else if (requestCode == IMAGE_PICK_REQUEST && resultCode == getActivity().RESULT_OK)
-        {
-            imageUri = data.getData();
-            Glide.with(getActivity()).load(imageUri)
-                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
-                    .into(thumbnailIV);
-
-            sPref.setUserPathImage(pictureFilePath);
-        }
-    }
 }
 
 
