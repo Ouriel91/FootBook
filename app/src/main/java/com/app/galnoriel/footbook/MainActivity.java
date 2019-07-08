@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity
         Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
         currentUser = null;
         firebaseAuth.signOut();
-        sendToFrag.onGetPlayerComplete(new Player());
+        sendToGroupFrag.onGetPlayerComplete(new Player());
         sharedPref.removeCurrentUserInfo();
     }
 

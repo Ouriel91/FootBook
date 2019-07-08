@@ -2,7 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-    <group android:checkableBehavior="single">
+
+    <item android:title="Application">
         <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_search_black_24dp"
@@ -16,10 +17,14 @@
             android:icon="@drawable/profile_ic_tab"
             android:title="profile" />
 
-    </group>
+    </item>
 
     <item android:title="General">
         <menu>
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/about"
+                android:title="About" />
             <item
                 android:id="@+id/sign_up"
                 android:icon="@drawable/signup"
@@ -29,14 +34,11 @@
                 android:id="@+id/sign_in"
                 android:icon="@drawable/signin"
                 android:title="Sign In" />
-            <item
-                android:id="@+id/nav_about"
-                android:icon="@drawable/about"
-                android:title="About" />
+
             <item
                 android:id="@+id/reset_password"
-                android:icon="@drawable/signout"
-                android:title="reset password"
+                android:icon="@drawable/key"
+                android:title="Reset password"
                 />
             <item
                 android:id="@+id/sign_out"
