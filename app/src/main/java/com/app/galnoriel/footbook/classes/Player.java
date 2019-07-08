@@ -81,11 +81,11 @@ public class Player {
         try{wherePlay = playerProfile.get(GlobConst.DB_USER_WHEREPLAY).toString();}
         catch (Exception e){wherePlay = "Anywhere";}
         try{picture = playerProfile.getString(GlobConst.DB_USER_PICTURE).toString();}
-        catch (Exception e){picture = null;}
+        catch (Exception e){picture = null;Log.d("player construct GROUPS","    picture in null");}
         try {groups_ids = (ArrayList<String>) playerProfile.get(GlobConst.DB_USER_GROUPS);
-        Log.d("GROUPS UNDER ",groups_ids.get(0));}
-        catch (Exception e){groups_ids = new ArrayList<String>();}
-        Log.d("Player Saved", _id+"\n"+name+"\n"+whereFrom+"\n"+position+"\n"+pitch+"\n"+ wherePlay+"\n"+picture +"\n"+groups_ids.toString());
+        Log.d("player construct GROUPS","  "+groups_ids.toString());}
+        catch (Exception e){groups_ids = new ArrayList<String>();Log.d("player construct GROUPS","FAILED!! groups under "+_id);}
+        Log.d("player construct create", _id+"\n"+name+"\n"+whereFrom+"\n"+position+"\n"+pitch+"\n"+ wherePlay+"\n"+picture +"\n"+groups_ids.toString());
 
     }
 

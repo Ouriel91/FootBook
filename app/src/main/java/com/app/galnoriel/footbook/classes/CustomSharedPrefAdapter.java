@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 
@@ -54,6 +55,20 @@ public class CustomSharedPrefAdapter {
 //
 //    }
 
+    public GroupPlay getDisplayGroup(){
+        String tmp = sharedPreferences.getString(DISPLAY_GROUP_MEMBERS,null);
+        ArrayList<String> members = null;
+        try {
+            members = (ArrayList<String>) Arrays.asList(tmp.split(","));
+        }catch (Exception e){e.printStackTrace(); }
+        return new GroupPlay( sharedPreferences.getString(DISPLAY_GROUP_ID,getDisplayGroupId()),
+        sharedPreferences.getString(DISPLAY_GROUP_NAME,null),
+        sharedPreferences.getString(DISPLAY_GROUP_TIME,null),
+        sharedPreferences.getString(DISPLAY_GROUP_WHERE_PLAY,null),
+        sharedPreferences.getString(DISPLAY_GROUP_PICTURE,null),
+        members);
+
+    }
 
     public boolean getLoginStatus(){
         return sharedPreferences.getBoolean(IS_SIGNED_IN,false);
@@ -78,7 +93,7 @@ public class CustomSharedPrefAdapter {
 //                .putString(DISPLAY_USER_PICTURE,player.getPicture())
                 .putString(DISPLAY_USER_GROUPS,player.getGroups_ids().toString())
                 .apply();
-        Log.d("CURRENT display user:\n",player.toLogString());
+        Log.d("CURRENT display user:\n",player.get_id());
     }
 
     public Player getDisplayProfile() {
@@ -90,7 +105,6 @@ public class CustomSharedPrefAdapter {
                 sharedPreferences.getString(DISPLAY_USER_PITCH,null),
                 sharedPreferences.getString(DISPLAY_USER_WHERE_PLAY,null),
                 sharedPreferences.getString(DISPLAY_USER_PICTURE,null)
-
         );
         Log.d("CURRENT display user:\n",player.toLogString());
         return player;

@@ -69,19 +69,21 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     public void onResume() {
         super.onResume();
         prfPlayerDB.requestPlayerFromServer(sPref.getDisplayProfile().get_id(),MainActivity.TAB_PROFILE);
+        if (sPref.getDisplayProfile().get_id().equals(sPref.getUserId()))
+            canEdit = true;
+        else canEdit = false;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("Profile frag Paused!", sPref.getUserId()+"   "+sPref.getDisplayProfile().get_id());
+//        Log.d("Profile frag Paused!", sPref.getUserId()+"   "+sPref.getDisplayProfile().get_id());
 
-        if (sPref.getUserId().equals(sPref.getDisplayProfile().get_id()) )
+        if (canEdit) {
             sPref.setDisplayProfile(createPlayerFromView());
-        if (!(sPref.getDisplayProfile().getName().equals("Guest")||
-                sPref.getDisplayProfile().getName().contains("Please Sign")))
-            prfPlayerDB.updatePlayerInServer(createPlayerFromView());
-
+            if (!(sPref.getDisplayProfile().getName().equals("Guest") || sPref.getDisplayProfile().getName().contains("Please Sign")))
+                prfPlayerDB.updatePlayerInServer(createPlayerFromView());
+        }
     }
 
     @Override
@@ -111,10 +113,9 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         whereFromIV = view.findViewById(R.id.region_ic_prf);
         //endregion
 //check for edit profile permissions:
-        if (sPref.getDisplayProfile().get_id().equals(sPref.getUserId()))
-            canEdit = true;
+
         //only if has edit permission all listeners of edit will be set:
-        if (canEdit) {
+
             nameTV.setOnClickListener(this);
             whereFromTV.setOnClickListener(this);
             wherePlayTV.setOnClickListener(this);
@@ -126,72 +127,67 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 //        positionIV.setOnClickListener(this);
 //        pitchIV.setOnClickListener(this);
 
-        profileRV.setHasFixedSize(true);
-        profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+            profileRV.setHasFixedSize(true);
+            profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        groupPlayList = new ArrayList<>();
+            groupPlayList = new ArrayList<>();
 
-        //just fot trying
-        //region try
-//        groupPlayList.add(new GroupPlay(1+"","The lions","Bat yam","07/07/19 17:00"));
-//        groupPlayList.add(new GroupPlay(1+"","The though guys","Modii'n","07/08/19 19:00"));
-//        groupPlayList.add(new GroupPlay(1+"","The footballers","Givatim","06/07/19 16:00"));
-//        groupPlayList.add(new GroupPlay(1+"","The lions","Bat yam","07/07/19 17:00"));
-//        groupPlayList.add(new GroupPlay(1+"","The though guys","Modii'n","07/08/19 19:00"));
-//        groupPlayList.add(new GroupPlay(1+"","The footballers","Givatim","06/07/19 16:00"));
-        //endregion
+            //just fot trying
+            //region try
 
-        //region movement listeners from list adapter
-        adapter = new GroupListAdapter(getActivity(), groupPlayList);
-        ItemTouchHelper.SimpleCallback callback = createNewCallback();
-        ItemTouchHelper helper = new ItemTouchHelper(callback);
-        helper.attachToRecyclerView(profileRV);
-        profileRV.setAdapter(adapter);
-        //endregion
+            //endregion
 
-        //region image
+            //region movement listeners from list adapter
+            adapter = new GroupListAdapter(getActivity(), groupPlayList);
+            ItemTouchHelper.SimpleCallback callback = createNewCallback();
+            ItemTouchHelper helper = new ItemTouchHelper(callback);
+            helper.attachToRecyclerView(profileRV);
+            profileRV.setAdapter(adapter);
+            //endregion
 
-        thumbnailIV.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
+            //region image
 
-                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-                View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
+            thumbnailIV.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
 
-                TextView titleTV = dialogView.findViewById(R.id.title_tv);
-                TextView messageTV = dialogView.findViewById(R.id.message_tv);
-                ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
-                ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                    View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
 
-                builder.setView(dialogView);
-                alertDialog = builder.create();
-                alertDialog.show();
+                    TextView titleTV = dialogView.findViewById(R.id.title_tv);
+                    TextView messageTV = dialogView.findViewById(R.id.message_tv);
+                    ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
+                    ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
 
-                titleTV.setText("Image change");
-                messageTV.setText("Select image change option");
-                confirmIV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(intent,IMAGE_CAPTURE_REQUEST);
-                        alertDialog.dismiss();
-                    }
-                });
-                unConfirmIV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(intent,IMAGE_PICK_REQUEST);
-                        alertDialog.dismiss();
-                    }
-                });
-                return true;
-            }
-        });
+                    builder.setView(dialogView);
+                    alertDialog = builder.create();
+                    alertDialog.show();
 
-        //endregion
+                    titleTV.setText("Image change");
+                    messageTV.setText("Select image change option");
+                    confirmIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent,IMAGE_CAPTURE_REQUEST);
+                            alertDialog.dismiss();
+                        }
+                    });
+                    unConfirmIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(intent,IMAGE_PICK_REQUEST);
+                            alertDialog.dismiss();
+                        }
+                    });
+                    return true;
+                }
+            });
+
+            //endregion
 
             //add groups btn:
             createGroupBtn.setOnClickListener(new View.OnClickListener() {
@@ -201,7 +197,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                     joinGroup();
                 }
             });
-        }
+
         //open chat with player:
         chatIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -277,7 +273,6 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
     //endregion
 
-
     private void createNewGroup() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         final View dialogSignView = getLayoutInflater().inflate(R.layout.dialog_create_group,null);
@@ -302,6 +297,10 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     }
 
     private void displayProfile(Player p) {
+        //first, check if can edit anything on profile (owner of profile or not)
+        if (sPref.getDisplayProfile().get_id().equals(sPref.getUserId()))
+            canEdit = true;
+        else canEdit = false;
         String pitch,position,wherePlay;
         try{pitch = p.getPitch();}
         catch (Exception e){e.printStackTrace();pitch = "Asphalt";}
@@ -315,16 +314,16 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         positionTV.setText(position);
         whereFromTV.setText(p.getWhereFrom());
         //region recycler adapter
-        //setting gridLayout
         profileRV.setHasFixedSize(true);
         profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
         //list of groups player is member in - make sure it's scroll
         //will show name, avatar and when usualy play
+        groupPlayList = new ArrayList<>();
         for (String id:p.getGroups_ids()) {
-            Log.d("Trying to fetch group: ",id);
+            Log.d("displayProfile","Trying to fetch group: "+id);
             prfGroupDB.requestGroupFromServer(id,MainActivity.TAB_PROFILE);
         }
-        Log.d("DISPLAY profile: ", p.get_id());
+        Log.d("displayProfile: ", p.get_id());
         refreshGroupList();
     }
 
@@ -341,6 +340,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
     @Override
     public void onGetGroupComplete(GroupPlay group) {
+        Log.d("onGetGroupComplete", "trying to add group: "+group.getId());
         //add to array
         for (GroupPlay g:groupPlayList) {
             if (g.getId().equals(group.getId())) { //found reoccurring
@@ -355,9 +355,9 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                 return;
             }
         }
-        //if got to this point -> grouop id wasnt found, so we need to add
         groupPlayList.add(group);
-        Log.d("done fetching", "*********");
+        //if got to this point -> grouop id wasnt found, so we need to add
+        Log.d("onGetGroupComplete ", " in profile frag : group array is "+groupPlayList.toString() );
         //refresh list
         refreshGroupList();
     }
@@ -378,33 +378,44 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         //setting declaration for calling the dialog. need the following:
         //boolean withSpinner, Drawable img, String hint, View v, ArrayAdapter<CharSequence> spAdapter
         //can see additional info in showEditDialog function
-        String hint ="";
-        Resources r = getResources(); //just because im lazy
-        Drawable img = r.getDrawable(R.drawable.group_ic_tab); //set default img
-        int arrayId = R.array.pitch_spinner;  //set defualt array id which the adapter will use to initialize
-        boolean withSpinner = true;
-        //check which textView was pressed and change the params
-        switch (v.getId()){
-            case R.id.name_tv_prf: //change name:
-                withSpinner = false;
-                hint = r.getString(R.string.full_name);
-                break;
+        if (canEdit) {
+            String hint = "";
+            Resources r = getResources(); //just because im lazy
+            Drawable img = r.getDrawable(R.drawable.group_ic_tab); //set default img
+            int arrayId = R.array.pitch_spinner;  //set defualt array id which the adapter will use to initialize
+            boolean withSpinner = true;
+            //check which textView was pressed and change the params
+            switch (v.getId()) {
+                case R.id.name_tv_prf: //change name:
+                    withSpinner = false;
+                    hint = r.getString(R.string.full_name);
+                    break;
 //            case R.id.pitch_ic_prf: //change pitch:
-            case R.id.pitch_tv_prf: img = r.getDrawable(R.drawable.football_field_ic); arrayId = R.array.pitch_spinner; break;
+                case R.id.pitch_tv_prf:
+                    img = r.getDrawable(R.drawable.football_field_ic);
+                    arrayId = R.array.pitch_spinner;
+                    break;
 //            case R.id.position_ic_prf: //change position:
-            case R.id.position_tv_prf:img = r.getDrawable(R.drawable.striker); arrayId = R.array.position_spinner; break;
-            case R.id.where_from_tv_prf: //change city (free text)
-                withSpinner = false;
-                hint = r.getString(R.string.address);
-                img = r.getDrawable(R.drawable.location);
-                break;
+                case R.id.position_tv_prf:
+                    img = r.getDrawable(R.drawable.striker);
+                    arrayId = R.array.position_spinner;
+                    break;
+                case R.id.where_from_tv_prf: //change city (free text)
+                    withSpinner = false;
+                    hint = r.getString(R.string.address);
+                    img = r.getDrawable(R.drawable.location);
+                    break;
 //            case R.id.pref_region_ic_prf: //change where user prefer playing
-            case R.id.where_play_tv_prf: img = r.getDrawable(R.drawable.where);arrayId = R.array.where_play_spinner; break;
+                case R.id.where_play_tv_prf:
+                    img = r.getDrawable(R.drawable.where);
+                    arrayId = R.array.where_play_spinner;
+                    break;
+            }
+            //make alert dialog pop dynamically
+            ArrayAdapter<CharSequence> spAdapter = ArrayAdapter.createFromResource(getContext(), arrayId,
+                    android.R.layout.simple_spinner_item); //create adapter for the spinner in showEditDialog function
+            showEditDialog(withSpinner, img, hint, v, spAdapter);
         }
-        //make alert dialog pop dynamically
-        ArrayAdapter<CharSequence> spAdapter = ArrayAdapter.createFromResource(getContext(),arrayId,
-                android.R.layout.simple_spinner_item); //create adapter for the spinner in showEditDialog function
-        showEditDialog(withSpinner, img, hint, v, spAdapter);
     }
 
     private void showEditDialog(final boolean withSpinner, Drawable img, String hint, View v, final ArrayAdapter<CharSequence> spAdapter) {

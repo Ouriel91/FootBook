@@ -538,8 +538,8 @@ public class MainActivity extends AppCompatActivity
         Log.d("moving to tab: ", to + "\n"+ params.toString());
         switch (to){
             case TAB_PROFILE:
-//                sharedPref.setDisplayProfileId(params[0]);
-//                requestPlayerFromServer(params[0]);
+                sharedPref.setDisplayProfileId(params[0]);
+                requestPlayerFromServer(params[0],TAB_PROFILE);
                 viewPager.setCurrentItem(TAB_PROFILE,true);
                 break;
             case TAB_GROUP:

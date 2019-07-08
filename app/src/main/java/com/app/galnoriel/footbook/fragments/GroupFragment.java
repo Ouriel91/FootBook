@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
+import com.app.galnoriel.footbook.adapters.GroupListAdapter;
 import com.app.galnoriel.footbook.adapters.MembersListAdapter;
 import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.classes.Game;
@@ -35,18 +36,18 @@ import com.app.galnoriel.footbook.interfaces.MainToGroupFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
 
 import java.io.IOException;
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnClickListener {
-    //all layout ids end with ' grf ' (for GRoup Fragment)
+    //all layout ids end with ' grf ' (for Group Fragment)
 
     RecyclerView groupRV;
     List<Player> playersList = new ArrayList<>();
     ArrayList<String> admins_id,member_id;
     MembersListAdapter adapter;
     boolean isAdmin = false;
-
     private android.support.v7.app.AlertDialog alertDialog;
     public MoveToTab grfShowTab;
     public AccessGroupDB grfGroupDB;
@@ -63,14 +64,16 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     @Override
     public void onResume() {
         super.onResume();
-        //request group again
+//        grfGroupDB.requestGroupFromServer(spref.getDisplayGroupId(),MainActivity.TAB_GROUP);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        save to server
+//        grfGroupDB.updateGroupInServer(createGroupFromView());
     }
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -83,7 +86,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_group, container, false);
         ((MainActivity)getActivity()).sendToGroupFrag = this;
-    //region view assignments
+        //region view assignments
         thumbnailIV = view.findViewById(R.id.thumbnail_grf);
         groupRV = view.findViewById(R.id.group_rv);
         groupRV.setHasFixedSize(true);
@@ -300,7 +303,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         });
         groupRV.setAdapter(adapter);
         for (Player player:playersList) {
-            Log.d("Displayin PLAYER: ",player.get_id());
+            Log.d("Displaying PLAYER: ",player.get_id());
         }
 
     }
@@ -309,21 +312,20 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         //add to array
         for (Player p: playersList) {
             if (p.get_id().equals(player.get_id())) { //found reoccurring
+                Log.d("fetched same userId: ", player.get_id());
                 if (!(p.getPosition().equals(player.getPosition()) && p.getName().equals(player.getName()))) {
                     //if true --> found update for name or pref t ime
                     //update list from server
                     playersList.remove(p);
                     playersList.add(player);
-                    Log.d("added fetch group : ", player.get_id());
+                    Log.d("updated fetch group : ", player.get_id());
                 }
-                Log.d("fetched same userId: ",
-                        player.get_id());
-
+                return;
             }
         }
-        //if got to this point -> grouop id wasnt found, so we need to add
+//new player on list
         playersList.add(player);
-        Log.d("done fetch from groupfr", ":  *********");
+        Log.d("done fetch ", "from groupfr, plyers list is: "+playersList.toString());
         //refresh list
         refreshList();
     }
@@ -358,7 +360,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         //region recycler adapter
         //setting gridLayout
         groupRV.setHasFixedSize(true);
-        groupRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+        groupRV.setLayoutManager(new GridLayoutManager(getActivity(),2));
         //list of player is member in group - make sure it's scroll
         //will show name, avatar and position_ic
         for (String admin: g.getAdmins_id()){
@@ -374,23 +376,55 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         refreshList();
     }
 
+    private GroupPlay createGroupFromView() {
+        GroupPlay defaultGroup = spref.getDisplayGroup();
+        String name,wherePlay,whenPlay,ngpitch,ngprice,ngdate,ngLocation,picture;
+        Game nextGame;
+        ngprice = "Free";
+        ngpitch = "Asphalt";
+        ngLocation = "Not Set";
+        picture = "";
+        ngdate = "";
+        boolean nextGameExist = true;
+        try{name = nameTV.getText().toString();}
+        catch (Exception e){e.printStackTrace();name = defaultGroup.getName();}
+        try{wherePlay = wherePlayTV.getText().toString();}
+        catch (Exception e){e.printStackTrace();wherePlay = defaultGroup.getWherePlay();}
+        try{whenPlay = whenPlayTV.getText().toString();}
+        catch (Exception e){whenPlay = defaultGroup.getWhenPlay();}
+        try{ngpitch = ngPitchTV.getText().toString();}
+        catch (Exception e){nextGameExist = false;}
+        try{ngdate = ngDateTV.getText().toString();}
+        catch (Exception e){nextGameExist = false;}
+        try{ngLocation = ngLocationTV.getText().toString();}
+        catch (Exception e){e.printStackTrace();}
+        try{ngprice = ngPriceTV.getText().toString();}
+        catch (Exception e){e.printStackTrace(); }
+        try {picture = thumbnailIV.getTag().toString();}
+        catch (Exception e){e.printStackTrace();}
+        if (nextGameExist)
+            nextGame = new Game(ngpitch,ngdate,ngprice,ngLocation);
+        else nextGame = null;
+        return new GroupPlay(spref.getDisplayGroupId(),name,wherePlay,whenPlay,picture,member_id,admins_id,nextGame);
+    }
+
     @Override
     public void onClick(View v) {
         TextView tv = (TextView) v;
         switch (v.getId()){
-             case R.id.region_tv_grf:
+            case R.id.region_tv_grf:
 
-                 break;
-             case R.id.pref_time_tv_grf:
-                 break;
-             case R.id.pitch_tv_prf:
-                 break;
-             case R.id.next_game_date_grf:
-                 break;
-             case R.id.price_tv_grf:
-                 break;
-             case R.id.next_game_location_grf:
-                 break;
+                break;
+            case R.id.pref_time_tv_grf:
+                break;
+            case R.id.pitch_tv_prf:
+                break;
+            case R.id.next_game_date_grf:
+                break;
+            case R.id.price_tv_grf:
+                break;
+            case R.id.next_game_location_grf:
+                break;
 
         }
     }
