@@ -1,5 +1,6 @@
 package com.app.galnoriel.footbook.fragments;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -7,11 +8,13 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,15 +23,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
+import com.app.galnoriel.footbook.Upload;
 import com.app.galnoriel.footbook.adapters.GroupListAdapter;
 import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.classes.GroupPlay;
@@ -37,10 +43,24 @@ import com.app.galnoriel.footbook.interfaces.AccessGroupDB;
 import com.app.galnoriel.footbook.interfaces.MainToPlayerFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
 import com.app.galnoriel.footbook.interfaces.AccessPlayerDB;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.OnClickListener {
@@ -57,10 +77,14 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     boolean canEdit = false;
     LinearLayout createGroupBtn;
     private android.support.v7.app.AlertDialog alertDialog;
-    private Bitmap bitmap = null;
-    private Uri uri;
+    File pictureFile;
+    private String pictureFilePath ="";
     private static final int IMAGE_CAPTURE_REQUEST = 1;
     private static final int IMAGE_PICK_REQUEST = 2;
+    private StorageReference mStorageRef;
+    private DatabaseReference mDatabaseRef;
+    private StorageTask mUploadTask;
+    private Uri imageUri;
 
 //endregion
 
@@ -111,6 +135,9 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         positionIV = view.findViewById(R.id.position_ic_prf);
         wherePlayIV = view.findViewById(R.id.pref_region_ic_prf);
         whereFromIV = view.findViewById(R.id.region_ic_prf);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
         //endregion
 //check for edit profile permissions:
 
@@ -163,29 +190,53 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                     alertDialog = builder.create();
                     alertDialog.show();
 
-                    titleTV.setText("Image change");
-                    messageTV.setText("Select image change option");
-                    confirmIV.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            startActivityForResult(intent,IMAGE_CAPTURE_REQUEST);
-                            alertDialog.dismiss();
+                titleTV.setText("Image change");
+                messageTV.setText("Select image change option");
+                confirmIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        pictureFile = null;
+                        try {
+                            pictureFile = getPictureFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return;
                         }
-                    });
-                    unConfirmIV.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            startActivityForResult(intent,IMAGE_PICK_REQUEST);
-                            alertDialog.dismiss();
+
+                        Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                                getActivity().getPackageName()+".provider",
+                                pictureFile);
+                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        startActivityForResult(intent, IMAGE_CAPTURE_REQUEST);
+
+
+                        alertDialog.dismiss();
+                    }
+                });
+
+                unConfirmIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(intent,IMAGE_PICK_REQUEST);
+
+                        if (mUploadTask != null && mUploadTask.isInProgress()){
+                            Snackbar.make(getView(),"Upload in progress",Snackbar.LENGTH_LONG).show();
                         }
-                    });
-                    return true;
-                }
-            });
+                        else {
+                            uploadFile();
+                        }
+
+                        alertDialog.dismiss();
+                    }
+                });
+
+                return true;
+            }
+        });
 
             //endregion
 
@@ -211,6 +262,72 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         ((MainActivity)getActivity()).sendToPlayerFrag = this;
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
+
+            Glide.with(getActivity()).load(pictureFilePath)
+                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
+                    .into(thumbnailIV);
+
+            sPref.setUserPathImage(pictureFilePath);
+        }
+        else if (requestCode == IMAGE_PICK_REQUEST && resultCode == getActivity().RESULT_OK)
+        {
+            imageUri = data.getData();
+            Glide.with(getActivity()).load(imageUri)
+                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
+                    .into(thumbnailIV);
+
+            //sPref.setUserPathImage(pictureFilePath);
+        }
+    }
+
+    private void uploadFile() {
+
+        if (imageUri != null){
+
+            StorageReference reference = mStorageRef.child(System.currentTimeMillis()
+                +"."+getFileExtension(imageUri));
+
+            mUploadTask = reference.putFile(imageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            Upload upload = new Upload("blabla",taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                            String uploadId = mDatabaseRef.push().getKey();
+                            mDatabaseRef.child(uploadId).setValue(upload);
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getActivity().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+    private File getPictureFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "FOOTBOOK_" + timeStamp+"_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName,  ".jpg", storageDir);
+
+        pictureFilePath = image.getAbsolutePath();
+        return image;
     }
 
     //region helper func
@@ -263,6 +380,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         };
         return callback;
     }
+    //endregion
 
     private void moveItem(int fromPos, int toPos) {
         GroupPlay groupPlay = groupPlayList.get(fromPos);
@@ -473,27 +591,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         return idArray;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
-
-            bitmap = (Bitmap) data.getExtras().get("data");
-            thumbnailIV.setImageBitmap(bitmap);
-        }
-        else if (requestCode == IMAGE_PICK_REQUEST && resultCode == getActivity().RESULT_OK){
-
-            uri = data.getData();
-
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),uri);
-                thumbnailIV.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }
 
 

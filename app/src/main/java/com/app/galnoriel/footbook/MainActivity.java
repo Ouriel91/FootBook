@@ -354,7 +354,7 @@ public class MainActivity extends AppCompatActivity
         Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
         currentUser = null;
         firebaseAuth.signOut();
-        sendToGroupFrag.onGetPlayerComplete(new Player());
+        sendToPlayerFrag.onGetPlayerComplete(new Player());
         sharedPref.removeCurrentUserInfo();
     }
 
@@ -559,7 +559,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
-    //region interfaces with fragment for server data fetching
+//region interfaces with fragment for server data fetching
     @Override
     public String createNewGroupInServer(final GroupPlay group) {
         group.addMember(sharedPref.getUserId());
@@ -624,10 +624,8 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful() && task.getResult().exists()) {
-                            if (frag == TAB_GROUP)
-                                sendToGroupFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
-                            else if (frag == TAB_PROFILE)
-                                sendToPlayerFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                            sendToPlayerFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                            sendToGroupFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
                         }
                     }
                 });
