@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -95,6 +97,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         if (sPref.getDisplayProfile().get_id().equals(sPref.getUserId()))
             canEdit = true;
         else canEdit = false;
+
     }
 
     @Override
@@ -103,9 +106,10 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 //        Log.d("Profile frag Paused!", sPref.getUserId()+"   "+sPref.getDisplayProfile().get_id());
 
         if (canEdit) {
-            sPref.setDisplayProfile(createPlayerFromView());
+//            sPref.setDisplayProfile(createPlayerFromView());
             if (!(sPref.getDisplayProfile().getName().equals("Guest") || sPref.getDisplayProfile().getName().contains("Please Sign")))
                 prfPlayerDB.updatePlayerInServer(createPlayerFromView());
+            //will create player from view only if currently editing own profile
         }
     }
 
@@ -142,43 +146,43 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
         //only if has edit permission all listeners of edit will be set:
 
-            nameTV.setOnClickListener(this);
-            whereFromTV.setOnClickListener(this);
-            wherePlayTV.setOnClickListener(this);
-            positionTV.setOnClickListener(this);
-            pitchTV.setOnClickListener(this);
-            //create listener from thumbnail//
+        nameTV.setOnClickListener(this);
+        whereFromTV.setOnClickListener(this);
+        wherePlayTV.setOnClickListener(this);
+        positionTV.setOnClickListener(this);
+        pitchTV.setOnClickListener(this);
+        //create listener from thumbnail//
 //        whereFromIV.setOnClickListener(this);
 //        wherePlayIV.setOnClickListener(this);
 //        positionIV.setOnClickListener(this);
 //        pitchIV.setOnClickListener(this);
 
-            profileRV.setHasFixedSize(true);
-            profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
+        profileRV.setHasFixedSize(true);
+        profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-            groupPlayList = new ArrayList<>();
+        groupPlayList = new ArrayList<>();
 
-            //just fot trying
-            //region try
+        //just fot trying
+        //region try
 
-            //endregion
+        //endregion
 
-            //region movement listeners from list adapter
-            adapter = new GroupListAdapter(getActivity(), groupPlayList);
-            ItemTouchHelper.SimpleCallback callback = createNewCallback();
-            ItemTouchHelper helper = new ItemTouchHelper(callback);
-            helper.attachToRecyclerView(profileRV);
-            profileRV.setAdapter(adapter);
-            //endregion
+        //region movement listeners from list adapter
+        adapter = new GroupListAdapter(getActivity(), groupPlayList);
+        ItemTouchHelper.SimpleCallback callback = createNewCallback();
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(profileRV);
+        profileRV.setAdapter(adapter);
+        //endregion
 
-            //region image
+        //region image
 
-            thumbnailIV.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-
+        thumbnailIV.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (canEdit) {
                     android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-                    View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
+                    View dialogView = getLayoutInflater().inflate(R.layout.dialog_choices, null);
 
                     TextView titleTV = dialogView.findViewById(R.id.title_tv);
                     TextView messageTV = dialogView.findViewById(R.id.message_tv);
@@ -189,64 +193,66 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                     alertDialog = builder.create();
                     alertDialog.show();
 
-                titleTV.setText("Image change");
-                messageTV.setText("Select image change option");
-                confirmIV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        pictureFile = null;
-                        try {
-                            pictureFile = getPictureFile();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return;
+                    titleTV.setText("Image change");
+                    messageTV.setText("Select image change option");
+                    confirmIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pictureFile = null;
+                            try {
+                                pictureFile = getPictureFile();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return;
+                            }
+
+                            Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                                    getActivity().getPackageName() + ".provider",
+                                    pictureFile);
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                            startActivityForResult(intent, IMAGE_CAPTURE_REQUEST);
+
+
+                            alertDialog.dismiss();
                         }
+                    });
 
-                        Uri photoURI = FileProvider.getUriForFile(getActivity(),
-                                getActivity().getPackageName()+".provider",
-                                pictureFile);
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                        startActivityForResult(intent, IMAGE_CAPTURE_REQUEST);
+                    unConfirmIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(intent, IMAGE_PICK_REQUEST);
 
+                            if (mUploadTask != null && mUploadTask.isInProgress()) {
+                                Snackbar.make(getView(), "Upload in progress", Snackbar.LENGTH_LONG).show();
+                            } else {
+                                uploadFile();
+                            }
 
-                        alertDialog.dismiss();
-                    }
-                });
-
-                unConfirmIV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(intent,IMAGE_PICK_REQUEST);
-
-                        if (mUploadTask != null && mUploadTask.isInProgress()){
-                            Snackbar.make(getView(),"Upload in progress",Snackbar.LENGTH_LONG).show();
+                            alertDialog.dismiss();
                         }
-                        else {
-                            uploadFile();
-                        }
-
-                        alertDialog.dismiss();
-                    }
-                });
-
+                    });
+                }
                 return true;
             }
+
         });
 
-            //endregion
+        //endregion
 
-            //add groups btn:
-            createGroupBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        //add groups btn:
+        createGroupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (canEdit) {
                     createNewGroup();
                     joinGroup();
                 }
-            });
+            }
+        });
 
         //open chat with player:
         chatIV.setOnClickListener(new View.OnClickListener() {
@@ -291,7 +297,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         if (imageUri != null){
 
             StorageReference reference = mStorageRef.child(System.currentTimeMillis()
-                +"."+getFileExtension(imageUri));
+                    +"."+getFileExtension(imageUri));
 
             mUploadTask = reference.putFile(imageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -308,11 +314,11 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 
@@ -418,9 +424,10 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
     private void displayProfile(Player p) {
         //first, check if can edit anything on profile (owner of profile or not)
-        if (sPref.getDisplayProfile().get_id().equals(sPref.getUserId()))
+        if (p.get_id().equals(sPref.getUserId()))
             canEdit = true;
         else canEdit = false;
+        Log.d("displayProfile", "can edit? "+canEdit);
         String pitch,position,wherePlay;
         try{pitch = p.getPitch();}
         catch (Exception e){e.printStackTrace();pitch = "Asphalt";}
@@ -438,7 +445,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
         //list of groups player is member in - make sure it's scroll
         //will show name, avatar and when usualy play
-        groupPlayList = new ArrayList<>();
+
         for (String id:p.getGroups_ids()) {
             Log.d("displayProfile","Trying to fetch group: "+id);
             prfGroupDB.requestGroupFromServer(id,MainActivity.TAB_PROFILE);
@@ -455,6 +462,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     @Override
     public void onGetPlayerComplete(Player player) {
         Log.d("get Player called ", player.get_id());
+        groupPlayList = new ArrayList<>();
         displayProfile(player);
     }
 
@@ -580,7 +588,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     }
 
     private Player createPlayerFromView(){
-        return new Player(sPref.getDisplayProfile().get_id(),
+        return new Player(sPref.getUserId(),
                 nameTV.getText().toString(), whereFromTV.getText().toString(),positionTV.getText().toString(),
                 pitchTV.getText().toString(),wherePlayTV.getText().toString(),thumbnailIV.getTag().toString(),getGroupIdFromArray(groupPlayList));
     }

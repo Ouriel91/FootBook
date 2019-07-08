@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
             ((ProfileFragment) fragment).prfPlayerDB = this;
 
         }else if (fragment instanceof GroupFragment){
-            ((GroupFragment) fragment).grfShowTab = this;
+            ((GroupFragment) fragment).showTab = this;
             ((GroupFragment) fragment).grfGroupDB = this;
             ((GroupFragment) fragment).grfPlayerDB = this;
 
@@ -652,9 +652,10 @@ public class MainActivity extends AppCompatActivity
                                 if (playerProfile.exists()) {
                                     Player profile = new Player(playerProfile);
                                     profile.set_id(uid);
-                                    sharedPref.setDisplayProfile(profile);
-                                    if(frag==TAB_PROFILE)
-                                    sendToPlayerFrag.onGetPlayerComplete(profile);
+
+                                    if(frag==TAB_PROFILE){
+                                        sharedPref.setDisplayProfile(profile);
+                                        sendToPlayerFrag.onGetPlayerComplete(profile);}
                                     else if (frag==TAB_GROUP)
                                     sendToGroupFrag.onGetPlayerComplete(profile);
                                     Log.d("SuccesS Profile server ",profile.get_id());

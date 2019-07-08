@@ -1,8 +1,6 @@
 package com.app.galnoriel.footbook.fragments;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -13,21 +11,18 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
-import com.app.galnoriel.footbook.adapters.GroupListAdapter;
 import com.app.galnoriel.footbook.adapters.MembersListAdapter;
 import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.classes.Game;
@@ -39,7 +34,6 @@ import com.app.galnoriel.footbook.interfaces.MainToGroupFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
 
 import java.io.IOException;
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +58,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     private static final int IMAGE_CAPTURE_REQUEST = 1;
     private static final int IMAGE_PICK_REQUEST = 2;
 
-    public MoveToTab grfShowTab;
+
     public AccessGroupDB grfGroupDB;
     public AccessPlayerDB grfPlayerDB;
 
@@ -72,6 +66,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     public void onResume() {
         super.onResume();
 //        grfGroupDB.requestGroupFromServer(spref.getDisplayGroupId(),MainActivity.TAB_GROUP);
+
     }
 
     @Override
@@ -100,14 +95,14 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         groupRV.setLayoutManager(new GridLayoutManager(getActivity(),2)); //getcontext?
         addMemberLin = view.findViewById(R.id.members_title_lin_grf);
         thumbnailIV = view.findViewById(R.id.thumbnail_grf);
-        ngPitchIV = view.findViewById(R.id.pitch_ic_grf);
+        ngPitchIV = view.findViewById(R.id.next_pitch_ic_grf);
         ngDateIV = view.findViewById(R.id.next_date_ic_grf);
         ngPriceIV = view.findViewById(R.id.price_ic_grf);
         ngLocationIV = view.findViewById(R.id.next_loc_ic_grf);
         nameTV = view.findViewById(R.id.name_tv_grf);
         wherePlayTV = view.findViewById(R.id.region_tv_grf);
         whenPlayTV = view.findViewById(R.id.pref_time_tv_grf);
-        ngPitchTV = view.findViewById(R.id.pitch_tv_prf);
+        ngPitchTV = view.findViewById(R.id.next_pitch_tv_grf);
         ngDateTV = view.findViewById(R.id.next_game_date_grf);
         ngPriceTV = view.findViewById(R.id.price_tv_grf);
         ngLocationTV = view.findViewById(R.id.next_game_location_grf);
@@ -118,7 +113,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                 //addmember function!!
             }
         });
-        if (isAdmin) {
+//region clicklisteners
 //        thumbnailIV.setOnClickListener(this);
 //        ngPitchIV.setOnClickListener(this);
 //        ngDateIV.setOnClickListener(this);
@@ -131,8 +126,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             ngDateTV.setOnClickListener(this);
             ngPriceTV.setOnClickListener(this);
             ngLocationTV.setOnClickListener(this);
-        }
-        //region clicklisteners
+
+
 
         //endregion
 
@@ -175,39 +170,40 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         thumbnailIV.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-                View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
+                if (isAdmin) {
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                    View dialogView = getLayoutInflater().inflate(R.layout.dialog_choices, null);
 
-                TextView titleTV = dialogView.findViewById(R.id.title_tv);
-                TextView messageTV = dialogView.findViewById(R.id.message_tv);
-                ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
-                ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
+                    TextView titleTV = dialogView.findViewById(R.id.title_tv);
+                    TextView messageTV = dialogView.findViewById(R.id.message_tv);
+                    ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
+                    ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
 
-                builder.setView(dialogView);
-                alertDialog = builder.create();
-                alertDialog.show();
+                    builder.setView(dialogView);
+                    alertDialog = builder.create();
+                    alertDialog.show();
 
-                titleTV.setText("Image change");
-                messageTV.setText("Select image change option");
-                confirmIV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(intent,IMAGE_CAPTURE_REQUEST);
-                        alertDialog.dismiss();
-                    }
-                });
-                unConfirmIV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent();
-                        intent.setType("image/*");
-                        intent.setAction(Intent.ACTION_GET_CONTENT);
-                        startActivityForResult(intent,IMAGE_PICK_REQUEST);
-                        alertDialog.dismiss();
-                    }
-                });
-
+                    titleTV.setText("Image change");
+                    messageTV.setText("Select image change option");
+                    confirmIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent, IMAGE_CAPTURE_REQUEST);
+                            alertDialog.dismiss();
+                        }
+                    });
+                    unConfirmIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(intent, IMAGE_PICK_REQUEST);
+                            alertDialog.dismiss();
+                        }
+                    });
+                }
                 return true;
             }
         });
@@ -345,6 +341,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
 
     private void displayGroup(GroupPlay g) {
+
+        playersList = new ArrayList<>();
         String name, whenPlay,wherePlay,picture;
         Game nextGame;
         try{nextGame = g.getNextGame();}
@@ -372,6 +370,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         //list of player is member in group - make sure it's scroll
         //will show name, avatar and position_ic
         for (String admin: g.getAdmins_id()){
+            Log.d("displayGroup","found admin: "+admin);
             if (spref.getUserId().equals(admin))
                 isAdmin = true;
         }
@@ -381,6 +380,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                 grfPlayerDB.requestPlayerFromServer(id,MainActivity.TAB_GROUP);
             }
         }catch (Exception e ) {e.printStackTrace();}
+
         refreshList();
     }
 
@@ -418,22 +418,30 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
     @Override
     public void onClick(View v) {
-        TextView tv = (TextView) v;
-        switch (v.getId()){
-            case R.id.region_tv_grf:
+        if (isAdmin) {
+            Log.d("onClick override", "can edit: "+isAdmin);
+            TextView tv = (TextView) v;
+            switch (v.getId()) {
+                case R.id.region_tv_grf:
 
-                break;
-            case R.id.pref_time_tv_grf:
-                break;
-            case R.id.pitch_tv_prf:
-                break;
-            case R.id.next_game_date_grf:
-                break;
-            case R.id.price_tv_grf:
-                break;
-            case R.id.next_game_location_grf:
-                break;
+                    break;
+                case R.id.pref_time_tv_grf:
 
+                    break;
+                case R.id.pitch_tv_prf:
+
+                    break;
+                case R.id.next_game_date_grf:
+
+                    break;
+                case R.id.price_tv_grf:
+
+                    break;
+                case R.id.next_game_location_grf:
+
+                    break;
+
+            }
         }
     }
 }
