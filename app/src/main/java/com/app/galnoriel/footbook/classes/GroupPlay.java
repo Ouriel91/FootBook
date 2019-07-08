@@ -25,13 +25,14 @@ public class GroupPlay {
         HashMap<String, Object> group = new HashMap<>();
         group.put(GlobConst.DB_GROUP_NAME, getName());
         group.put(GlobConst.DB_GROUP_WHENPLAY, getWhenPlay());
-        group.put(GlobConst.DB_GROUP_NEXT_GAME,null);
+        group.put(GlobConst.DB_GROUP_NEXT_GAME,nextGame.toHashMap());
         group.put(GlobConst.DB_GROUP_WHEREPLAY, getWherePlay());
         group.put(GlobConst.DB_GROUP_PICTURE, getPicture());
         group.put(GlobConst.DB_GROUP_MEMBERS, getMembers_id());
         group.put(GlobConst.DB_GROUP_ADMINS, getAdmins_id());
 
         Log.d("Group.toHash","hashed this: "+group.toString());
+        Log.d("Group.toHash","next game hashes: "+nextGame.stringify());
         return group;
     }
 
@@ -48,9 +49,14 @@ public class GroupPlay {
     }
 
     public String toString(){
-        return getId()+"\n"+getName()+"\n"+getPicture()+"\n"+getWhenPlay()+
+        String result = getId()+"\n"+getName()+"\n"+getPicture()+"\n"+getWhenPlay()+
                 "\n"+getWherePlay()+"\n"+getAdmins_id().toString()+"\n"
-                +getMembers_id().toString()+"\n"+getNextGame();
+                +getMembers_id().toString()+"\n";
+        if (nextGame != null)
+            result.concat(nextGame.stringify());
+        else
+            result.concat("null");
+        return result;
     }
     //endregion
 
@@ -66,8 +72,6 @@ public class GroupPlay {
         this.members_id = member_id;
         this.admins_id = admins_id;
         this.nextGame = nextGame;
-
-
     }
 
     public GroupPlay(DocumentSnapshot group) { //construct player from server
@@ -75,9 +79,10 @@ public class GroupPlay {
         name = group.getString(GlobConst.DB_GROUP_NAME);
         try{whenPlay= group.get(GlobConst.DB_USER_WHEREFROM).toString();}
         catch (Exception e){whenPlay = "City";e.printStackTrace();}
-//        try {nextGame = group.get(GlobConst.DB_GROUP_NEXT_GAME).toString();}
-//        catch (Exception e){nextGame = "Free Role";}
-        nextGame= null;
+
+        try {nextGame = new Game((HashMap) group.get(GlobConst.DB_GROUP_NEXT_GAME));}
+        catch (Exception e){e.printStackTrace();nextGame = null;}
+
         try{whenPlay = group.get(GlobConst.DB_GROUP_WHENPLAY).toString();}
         catch (Exception e){whenPlay = "Asphalt";e.printStackTrace();}
         try{wherePlay = group.get(GlobConst.DB_USER_WHEREPLAY).toString();}

@@ -67,14 +67,14 @@ public class Game {
         }
 
     public Game(HashMap hash) {
-            pitch = hash.get(PITCH_TYPE).toString();
-            price = hash.get(GAME_PRICE).toString();
-            date = hash.get(GAME_DATE).toString();
-//        if (hash.get(GAME_LAT).toString() != null)
-//            location = new LatLng(Double.valueOf(hash.get(GAME_LAT).toString())
-//                    ,Double.valueOf(hash.get(GAME_LON).toString()));
-//        else location = null;
-            location = hash.get(GAME_LOCATION).toString();
+        try {pitch = hash.get(PITCH_TYPE).toString();}
+        catch (Exception e){pitch = "Grass";}
+        try {price = hash.get(GAME_PRICE).toString();}
+        catch (Exception e){price = "";e.printStackTrace();}
+        try {date = hash.get(GAME_DATE).toString();}
+        catch (Exception e){date = "";e.printStackTrace();}
+        try{location = hash.get(GAME_LOCATION).toString();}
+        catch (Exception e){location = "";e.printStackTrace();}
         }
 
     public Game(String date) {

@@ -590,10 +590,14 @@ public class MainActivity extends AppCompatActivity
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Snackbar.make(coordinatorLayout, "Updated group :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
+                        if (task.isSuccessful()){
+                            Log.d("updateGroupInServer", "success! "+group.toString());
+                        }else Log.d("updateGroupInServer", "FAIL! "+group.toString());
+                        //                        Snackbar.make(coordinatorLayout, "Updated group :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
 //                        sharedPref.setDisplayGroup(group);
                     }
                 });
+//        Log.d("updateGroupInServer", group.toString());
         return group.getName();
     }
 

@@ -358,13 +358,15 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         try{nextGame = g.getNextGame();}
         catch (Exception e){e.printStackTrace();nextGame = null;}
         if (nextGame!=null){
+            showNextGameView();
             ngPitchTV.setText(nextGame.getPitch());
             ngDateTV.setText(nextGame.getDate());
-//            ngLocationTV.setText(nextGame.getLocation().toString());
+            ngLocationTV.setText(nextGame.getLocation().toString());
             ngPriceTV.setText(nextGame.getPrice());
             if (nextGame.getPrice().equals("Free"))
                 ngPriceIV.setImageDrawable(getResources().getDrawable(R.drawable.price_free));
-        }
+        }else
+            hideNextGameView();
         //set thumbnail
         try{picture = g.getPicture();}
         catch (Exception e){e.printStackTrace();picture = "default";}
@@ -398,6 +400,14 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         refreshList();
     }
 
+    private void hideNextGameView() {
+        //hide next game frame
+    }
+
+    private void showNextGameView() {
+        //hide next game frame
+    }
+
     private GroupPlay createGroupFromView() {
         GroupPlay defaultGroup = spref.getDisplayGroup();
         String name,wherePlay,whenPlay,ngpitch,ngprice,ngdate,ngLocation,picture;
@@ -424,9 +434,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         catch (Exception e){e.printStackTrace(); }
         try {picture = thumbnailIV.getTag().toString();}
         catch (Exception e){e.printStackTrace();}
-        if (nextGameExist)
+//        if (nextGameExist)
             nextGame = new Game(ngpitch,ngdate,ngprice,ngLocation);
-        else nextGame = null;
+//        else nextGame = null;
         Log.d("createGroupFromView", "group admin -> "+admins_id.toString()+"\tmembers -> "+member_id.toString());
         return new GroupPlay(spref.getDisplayGroupId(),name,wherePlay,whenPlay,picture,member_id,admins_id,nextGame);
     }
