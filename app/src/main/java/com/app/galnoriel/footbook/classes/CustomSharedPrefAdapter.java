@@ -90,7 +90,7 @@ public class CustomSharedPrefAdapter {
                 .putString(DISPLAY_USER_POSITION,player.getPosition())
                 .putString(DISPLAY_USER_PITCH,player.getPitch())
                 .putString(DISPLAY_USER_WHERE_PLAY,player.getWherePlay())
-//                .putString(DISPLAY_USER_PICTURE,player.getPicture())
+                .putString(DISPLAY_USER_PICTURE,player.getPicture())
                 .putString(DISPLAY_USER_GROUPS,player.getGroups_ids().toString())
                 .apply();
         Log.d("CURRENT display user:\n",player.get_id());
@@ -201,7 +201,7 @@ public class CustomSharedPrefAdapter {
     }
 
     public void setUserPathImage(String currentPath){
-        putString(DISPLAY_GROUP_PICTURE, currentPath);
+        putString(DISPLAY_USER_PICTURE, currentPath);
     }
 
     public String getGroupPathImage(){

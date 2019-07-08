@@ -1,5 +1,6 @@
 package com.app.galnoriel.footbook.fragments;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -7,11 +8,13 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,12 +23,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
@@ -34,14 +39,32 @@ import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.classes.Game;
 import com.app.galnoriel.footbook.classes.GroupPlay;
 import com.app.galnoriel.footbook.classes.Player;
+import com.app.galnoriel.footbook.classes.Upload;
 import com.app.galnoriel.footbook.interfaces.AccessGroupDB;
 import com.app.galnoriel.footbook.interfaces.AccessPlayerDB;
 import com.app.galnoriel.footbook.interfaces.MainToGroupFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnClickListener {
     //all layout ids end with ' grf ' (for Group Fragment)
@@ -60,10 +83,16 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     private ImageView thumbnailIV,ngPitchIV,ngDateIV,ngPriceIV,ngLocationIV;
     private TextView nameTV,wherePlayTV,whenPlayTV,ngPitchTV,ngDateTV,ngPriceTV,ngLocationTV;
     private LinearLayout addMemberLin;
-    private Bitmap bitmap = null;
-    private Uri uri;
+    File pictureFile;
+    private String pictureFilePath ="";
     private static final int IMAGE_CAPTURE_REQUEST = 1;
     private static final int IMAGE_PICK_REQUEST = 2;
+    private StorageReference mStorageRef;
+    private DatabaseReference mDatabaseRef;
+    private StorageTask mUploadTask;
+    Uri photoURI;
+    private Uri imageUri;
+    private CustomSharedPrefAdapter sPref;
 
 
 
@@ -113,6 +142,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         ngDateTV = view.findViewById(R.id.next_game_date_grf);
         ngPriceTV = view.findViewById(R.id.next_price_tv_grf);
         ngLocationTV = view.findViewById(R.id.next_game_location_grf);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference("g_uploads");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("g_uploads");
         //endregion
         addMemberLin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,8 +228,22 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                     confirmIV.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            pictureFile = null;
+                            try {
+                                pictureFile = getPictureFile();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                return;
+                            }
+
+                            photoURI = FileProvider.getUriForFile(getActivity(),
+                                    getActivity().getPackageName()+".provider",
+                                    pictureFile);
                             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                             startActivityForResult(intent, IMAGE_CAPTURE_REQUEST);
+
+
                             alertDialog.dismiss();
                         }
                     });
@@ -208,6 +254,13 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                             intent.setType("image/*");
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             startActivityForResult(intent, IMAGE_PICK_REQUEST);
+
+                            if (mUploadTask != null && mUploadTask.isInProgress()) {
+                                Snackbar.make(getView(), "Upload in progress", Snackbar.LENGTH_LONG).show();
+                            } else {
+                                uploadFile();
+                            }
+
                             alertDialog.dismiss();
                         }
                     });
@@ -219,6 +272,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
         return view;
     }
+
+
 
     private ItemTouchHelper.SimpleCallback createMemberListCallBack() {
         return new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
@@ -287,20 +342,107 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
         if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
 
-            bitmap = (Bitmap) data.getExtras().get("data");
-            thumbnailIV.setImageBitmap(bitmap);
-        }
-        else if (requestCode == IMAGE_PICK_REQUEST && resultCode == getActivity().RESULT_OK){
+            StorageReference reference = mStorageRef.child("photos").child(photoURI.getLastPathSegment());
 
-            uri = data.getData();
+            reference.putFile(photoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),uri);
-                thumbnailIV.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                    Task<Uri> result = taskSnapshot.getMetadata().getReference().getDownloadUrl();
+                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            String photoStringLink = uri.toString();
+                            sPref.setGroupPathImage(photoStringLink);
+
+                            Glide.with(getActivity()).load(sPref.getGroupPathImage())
+                                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.team_avatar))
+                                    .into(thumbnailIV);
+                        }
+                    });
+
+
+                }
+            });
+
         }
+        else if (requestCode == IMAGE_PICK_REQUEST && resultCode == getActivity().RESULT_OK)
+        {
+            imageUri = data.getData();
+
+        }
+    }
+
+    private void uploadFile() {
+
+        if (imageUri != null){
+
+            final StorageReference reference = mStorageRef.child(System.currentTimeMillis()
+                    +"."+getFileExtension(imageUri));
+
+            mUploadTask = reference.putFile(imageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            Upload upload = new Upload("blabla",taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                            String uploadId = mDatabaseRef.push().getKey();
+                            mDatabaseRef.child(uploadId).setValue(upload);
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+
+
+            mUploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    // Continue with the task to get the download URL
+                    return reference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = task.getResult();
+                        String url = downloadUri.toString();
+
+                        sPref.setGroupPathImage(url);
+
+                        Glide.with(getActivity()).load(sPref.getGroupPathImage())
+                                .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.team_avatar))
+                                .into(thumbnailIV);
+                    }
+                }
+            });
+        }
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getActivity().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+    private File getPictureFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "FOOTBOOK_" + timeStamp+"_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName,  ".jpg", storageDir);
+
+        pictureFilePath = image.getAbsolutePath();
+        return image;
     }
 
     private void refreshList() {
