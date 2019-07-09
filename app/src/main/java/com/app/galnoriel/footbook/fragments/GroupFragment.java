@@ -1,8 +1,10 @@
 package com.app.galnoriel.footbook.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -14,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,12 +28,20 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.app.galnoriel.footbook.GlobConst;
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
@@ -64,12 +75,17 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -156,6 +172,107 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("g_uploads");
         db = FirebaseFirestore.getInstance();
 
+
+            groupMessengerIV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                    View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
+
+                    final EditText messageET = dialogView.findViewById(R.id.message_et);
+                    ImageButton sendIV = dialogView.findViewById(R.id.send_iv);
+                    builder.setView(dialogView);
+                    alertDialog = builder.create();
+                    alertDialog.show();
+
+                    sendIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+
+                            for (String id: member_id){
+                                messaging.subscribeToTopic("FOOTBOOK");
+                            }
+
+                            //message format to read
+
+                            /*
+                            https://fcm.googleapis.com/fcm/send
+                            Content-Type:application/json
+                            Authorization:key=AIzaSyZ-1u...0GBYzPu7Udno5aA
+                            {
+                                 "to": "/topics/foo-bar", (OR:   "condition": "'dogs' in topics || 'cats' in topics",)
+                                "data": {
+                                    "message": "This is a Firebase Cloud Messaging Topic Message!",
+                                }
+                            }
+                            */
+
+                            String message = messageET.getText().toString();
+                            final JSONObject jsonObject = new JSONObject();
+                            try {
+
+                                jsonObject.put("to","/topics/FOOTBOOK");
+                                jsonObject.put("data",new JSONObject().put("message",message));
+                                String url = "https://fcm.googleapis.com/fcm/send";
+                                RequestQueue queue = Volley.newRequestQueue(getActivity());
+
+                                StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+
+                                    }
+                                }, new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+
+                                    }
+                                }){
+
+                                    //for post request, we did override on this functions
+
+
+                                    @Override
+                                    public Map<String, String> getHeaders() throws AuthFailureError {
+
+                                        Map<String, String> headers = new HashMap<>();
+                                        headers.put("Content-Type","application/json");
+                                        //copy from cloud your server key
+                                        headers.put("Authorization","key="+API_TOKEN_KEY);
+                                        return headers;
+                                    }
+
+                                    @Override
+                                    public byte[] getBody() throws AuthFailureError {
+                                        return jsonObject.toString().getBytes();
+                                    }
+                                };
+                                queue.add(request);
+                                queue.start();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+
+                            alertDialog.dismiss();
+                        }
+                    });
+                }
+            });
+
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                nameTV.setText(intent.getStringExtra("message"));
+            }
+        };
+
+        IntentFilter filter = new IntentFilter("message_received");
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
+
         //endregion
         addMemberLin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,7 +295,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         ngDateTV.setOnClickListener(this);
         ngPriceTV.setOnClickListener(this);
         ngLocationTV.setOnClickListener(this);
-        groupMessengerIV.setOnClickListener(this);
+
 
 
         Glide.with(getActivity()).load(spref.getGroupPathImage())
@@ -661,42 +778,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                     arrayId = R.array.pitch_spinner;
                     break;
 
-                case R.id.group_messenger_ic_grf:
-                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-                    View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
-
-                    final EditText messageET = dialogView.findViewById(R.id.message_et);
-                    ImageButton sendIV = dialogView.findViewById(R.id.send_iv);
-                    builder.setView(dialogView);
-                    alertDialog = builder.create();
-                    alertDialog.show();
-
-                    sendIV.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            String message = messageET.getText().toString();
-                            DocumentReference reference = db.collection(GlobConst.DB_GROUP_TABLE)
-                                    .document("KahmKVY4wwiYbKDHFb12");
-                            reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    DocumentSnapshot documentSnapshot = task.getResult();
-
-                                    if (documentSnapshot.exists()){
-                                        Map<String, Object> map = documentSnapshot.getData();
-                                        for (Map.Entry<String, Object> entry : map.entrySet()) {
-                                            if (entry.getKey().equals("MEMBERS ID")) {
-
-                                                String member = entry.getValue().toString();
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                            alertDialog.dismiss();
-                        }
-                    });
-                    break;
 
             }
             //make alert dialog pop dynamically
