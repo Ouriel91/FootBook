@@ -770,7 +770,6 @@ public class MainActivity extends AppCompatActivity
 
     //endregion
 
-
     @Override
     public void onPageScrolled(int i, float v, int i1) {
 

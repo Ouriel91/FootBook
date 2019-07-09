@@ -102,7 +102,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     public void onResume() {
         super.onResume();
         grfGroupDB.requestGroupFromServer(spref.getDisplayGroupId(),MainActivity.TAB_GROUP);
-
     }
 
     @Override
