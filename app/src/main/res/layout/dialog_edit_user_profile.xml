@@ -16,12 +16,12 @@
     <LinearLayout
         style="@style/Dialog_Inner_Frame"
         android:background="@color/lists_background">
-    <ImageView
-    android:layout_width="50dp"
-    android:layout_height="50dp"
-    android:layout_gravity="center"
-    android:src="@drawable/profile_ic_tab"
-        android:id="@+id/image_edit_dialog"/>
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:src="@drawable/profile_ic_tab"
+            android:id="@+id/image_edit_dialog"/>
 
         <EditText
             android:id="@+id/text_edit_dialog"
