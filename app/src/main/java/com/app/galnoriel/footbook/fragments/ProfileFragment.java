@@ -50,6 +50,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
@@ -92,7 +94,8 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     private StorageTask mUploadTask;
     Uri photoURI;
     private Uri imageUri;
-
+    private FirebaseAuth firebaseAuth;
+    FirebaseAuth.AuthStateListener mAuthListener;
 
 //endregion
 
@@ -165,6 +168,12 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 //        wherePlayIV.setOnClickListener(this);
 //        positionIV.setOnClickListener(this);
 //        pitchIV.setOnClickListener(this);
+
+
+        Glide.with(getActivity()).load(sPref.getUserPathImage())
+                .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
+                .into(thumbnailIV);
+
 
         profileRV.setHasFixedSize(true);
         profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
