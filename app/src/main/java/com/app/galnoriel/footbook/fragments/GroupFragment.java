@@ -50,6 +50,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -165,6 +167,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         ngLocationTV.setOnClickListener(this);
 
 
+        Glide.with(getActivity()).load(spref.getGroupPathImage())
+                .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.team_avatar))
+                .into(thumbnailIV);
 
         //endregion
 
@@ -563,6 +568,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
     private GroupPlay createGroupFromView() {
         GroupPlay defaultGroup = spref.getDisplayGroup();
+
+        //defaultGroup.getMembers_id();
         String name,wherePlay,whenPlay,ngpitch,ngprice,ngdate,ngLocation,picture;
         Game nextGame;
         ngprice = "Free";
