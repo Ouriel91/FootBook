@@ -560,6 +560,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
     private GroupPlay createGroupFromView() {
         GroupPlay defaultGroup = spref.getDisplayGroup();
+
+        //defaultGroup.getMembers_id();
         String name,wherePlay,whenPlay,ngpitch,ngprice,ngdate,ngLocation,picture;
         Game nextGame;
         ngprice = "Free";
