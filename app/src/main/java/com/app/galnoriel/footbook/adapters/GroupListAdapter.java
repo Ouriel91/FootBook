@@ -57,7 +57,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
         groupViewHolder.teamAvatarGroupCardIV.setImageResource(R.drawable.team_avatar);}
         groupViewHolder.nameGroupCardTV.setText(nameGroup);
         groupViewHolder.idGRoupCardTV.setText(idGroup);
-        groupViewHolder.dateGroupCardTV.setText(dateGroup);
+//        groupViewHolder.dateGroupCardTV.setText(dateGroup);
 
         //need to replace to url from firebase and load the image with Glide
         //that images is for checking only
@@ -73,15 +73,15 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
     public class GroupViewHolder extends RecyclerView.ViewHolder{
 
         //view holder to cardView items
-        TextView nameGroupCardTV,dateGroupCardTV,idGRoupCardTV;
-        ImageView teamAvatarGroupCardIV;
+        public TextView nameGroupCardTV,dateGroupCardTV,idGRoupCardTV;
+        public ImageView teamAvatarGroupCardIV;
 
         public GroupViewHolder(@NonNull View itemView) {
             super(itemView);
             idGRoupCardTV = itemView.findViewById(R.id.id_group_card);
             nameGroupCardTV = itemView.findViewById(R.id.name_group_card);
             teamAvatarGroupCardIV = itemView.findViewById(R.id.team_avatar_group_card);
-            dateGroupCardTV = itemView.findViewById(R.id.date_group_card);
+//            dateGroupCardTV = itemView.findViewById(R.id.date_group_card);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

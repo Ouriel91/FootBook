@@ -170,30 +170,31 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         mStorageRef = FirebaseStorage.getInstance().getReference("g_uploads");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("g_uploads");
         db = FirebaseFirestore.getInstance();
+//endregion
+
+        //region chat massanger
+        groupMessengerIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
+
+                final EditText messageET = dialogView.findViewById(R.id.message_et);
+                ImageButton sendIV = dialogView.findViewById(R.id.send_iv);
+                builder.setView(dialogView);
+                alertDialog = builder.create();
+                alertDialog.show();
+
+                sendIV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
 
-            groupMessengerIV.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-                    View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
+                        for (String id: member_id){
+                            messaging.subscribeToTopic("FOOTBOOK");
+                        }
 
-                    final EditText messageET = dialogView.findViewById(R.id.message_et);
-                    ImageButton sendIV = dialogView.findViewById(R.id.send_iv);
-                    builder.setView(dialogView);
-                    alertDialog = builder.create();
-                    alertDialog.show();
-
-                    sendIV.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-
-                            for (String id: member_id){
-                                messaging.subscribeToTopic("FOOTBOOK");
-                            }
-
-                            //message format to read
+                        //message format to read
 
                             /*
                             https://fcm.googleapis.com/fcm/send
@@ -207,60 +208,61 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                             }
                             */
 
-                            String message = messageET.getText().toString();
-                            final JSONObject jsonObject = new JSONObject();
-                            try {
+                        String message = messageET.getText().toString();
+                        final JSONObject jsonObject = new JSONObject();
+                        try {
 
-                                jsonObject.put("to","/topics/FOOTBOOK");
-                                jsonObject.put("data",new JSONObject().put("message",message));
-                                String url = "https://fcm.googleapis.com/fcm/send";
-                                RequestQueue queue = Volley.newRequestQueue(getActivity());
+                            jsonObject.put("to","/topics/FOOTBOOK");
+                            jsonObject.put("data",new JSONObject().put("message",message));
+                            String url = "https://fcm.googleapis.com/fcm/send";
+                            RequestQueue queue = Volley.newRequestQueue(getActivity());
 
-                                StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
+                            StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
 
-                                    }
-                                }, new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
 
-                                    }
-                                }){
+                                }
+                            }){
 
-                                    //for post request, we did override on this functions
-
-
-                                    @Override
-                                    public Map<String, String> getHeaders() throws AuthFailureError {
-
-                                        Map<String, String> headers = new HashMap<>();
-                                        headers.put("Content-Type","application/json");
-                                        //copy from cloud your server key
-                                        headers.put("Authorization","key="+API_TOKEN_KEY);
-                                        return headers;
-                                    }
-
-                                    @Override
-                                    public byte[] getBody() throws AuthFailureError {
-                                        return jsonObject.toString().getBytes();
-                                    }
-                                };
-                                queue.add(request);
-                                queue.start();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                                //for post request, we did override on this functions
 
 
+                                @Override
+                                public Map<String, String> getHeaders() throws AuthFailureError {
 
-                            alertDialog.dismiss();
+                                    Map<String, String> headers = new HashMap<>();
+                                    headers.put("Content-Type","application/json");
+                                    //copy from cloud your server key
+                                    headers.put("Authorization","key="+API_TOKEN_KEY);
+                                    return headers;
+                                }
+
+                                @Override
+                                public byte[] getBody() throws AuthFailureError {
+                                    return jsonObject.toString().getBytes();
+                                }
+                            };
+                            queue.add(request);
+                            queue.start();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    });
-                }
-            });
 
 
+
+                        alertDialog.dismiss();
+                    }
+                });
+            }
+        });
+        //endregion
+
+        //region reciever for chat
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -268,11 +270,12 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                 nameTV.setText(intent.getStringExtra("message"));
             }
         };
+        //endregion
 
         IntentFilter filter = new IntentFilter("message_received");
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
 
-        //endregion
+
         addMemberLin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -320,7 +323,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             @Override
             public void onClick(View v) {
                 if (isAdmin)
-                addGroupMembersDialog();
+                    addGroupMembersDialog();
             }
         });
         //endregion
@@ -428,10 +431,10 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             @Override
             public void onClick(View v) {
                 //change the original adapter because we remove item from
-                adapter.playerList.remove(viewHolder.getAdapterPosition());
-                updateToServer();
                 String id_remove = playersList.get(viewHolder.getAdapterPosition()).get_id();
                 member_id.remove(id_remove);
+                adapter.playerList.remove(viewHolder.getAdapterPosition());
+                updateToServer();
                 adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
                 alertDialog.dismiss();
             }

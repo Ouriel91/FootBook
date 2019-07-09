@@ -1,6 +1,7 @@
 package com.app.galnoriel.footbook.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,12 +26,10 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
     }
     public void setOnPlayerCardClickListener(OnPlayerCardClickListener listener){this.clickListener = listener;}
 
-
     public MembersListAdapter(Context mContext, List<Player> playerList) {
         this.playerList = playerList;
         this.mContext = mContext; //context to inflate in MembersViewHolder
     }
-
 
     @NonNull
     @Override
@@ -47,11 +46,33 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
 
         Player player = playerList.get(i);
         String memberName = player.getName();
+        String position = player.getPosition();
         membersViewHolder.nameMemberCardTV.setText(memberName);
         membersViewHolder.idMemberCardTV.setText(player.get_id());
         //need to replace with url to firebase and load the image with glide or picasso
         membersViewHolder.playerAvatarMemberCardIV.setImageResource(R.drawable.player_avatar);
-        membersViewHolder.positionMemberCardIV.setImageResource(R.drawable.goalkeeper);
+
+        membersViewHolder.positionMemberCardIV.setImageResource(setPositionIcon(position));
+    }
+
+    private int setPositionIcon(String position) {
+//        <item>Free Role</item>
+//        <item>Defender</item>
+//        <item>Midfielder</item>
+//        <item>Striker</item>
+//        <item>Goalkeeper</item>
+            int icon = R.drawable.general_player;
+            if (position.equals("Free Role"))
+                return R.drawable.general_player;
+            else if (position.equals("Defender"))
+                return R.drawable.defender;
+            else if (position.equals("Midfielder"))
+                return R.drawable.midfielder;
+            else if (position.equals("Striker"))
+                return R.drawable.striker;
+            else if (position.equals("Goalkeeper"))
+                return R.drawable.goalkeeper;
+            return icon;
     }
 
     @Override
@@ -75,7 +96,6 @@ public class MembersListAdapter extends RecyclerView.Adapter <MembersListAdapter
                 @Override
                 public void onClick(View v) {
                     if (clickListener!=null)
-//                        clickListener.onPlayerCardClick(getAdapterPosition(),idMemberCardTV.getText().toString());
                         clickListener.onPlayerCardClick(getAdapterPosition(),idMemberCardTV.getText().toString());
                 }
             });

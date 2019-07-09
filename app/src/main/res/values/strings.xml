@@ -67,6 +67,8 @@
     <string name="find_group">Join Group</string>
     <string name="create_or_search_group">Create new group \nor find your friends</string>
     <string name="date_not_set">When?</string>
+    <string name="remove_group">Group remove</string>
+    <string name="sure_remove_group">Are you sure you want to remove this group?</string>
 
 
     <string-array name="pitch_spinner">

@@ -111,7 +111,6 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     @Override
     public void onPause() {
         super.onPause();
-//        Log.d("Profile frag Paused!", sPref.getUserId()+"   "+sPref.getDisplayProfile().get_id());
         updateProfileToServer(); //will work only if canEdit = true
     }
 
@@ -177,7 +176,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         ItemTouchHelper.SimpleCallback callback = createNewCallback();
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(profileRV);
-        profileRV.setAdapter(adapter);
+//        profileRV.setAdapter(adapter);
         //endregion
 
         //region image
@@ -211,15 +210,15 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                                 return;
                             }
 
-                        photoURI = FileProvider.getUriForFile(getActivity(),
-                                getActivity().getPackageName()+".provider",
-                                pictureFile);
-                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                        startActivityForResult(intent, IMAGE_CAPTURE_REQUEST);
+                            photoURI = FileProvider.getUriForFile(getActivity(),
+                                    getActivity().getPackageName()+".provider",
+                                    pictureFile);
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                            startActivityForResult(intent, IMAGE_CAPTURE_REQUEST);
 
 
-                        alertDialog.dismiss();
+                            alertDialog.dismiss();
                         }
                     });
 
@@ -346,7 +345,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         if (imageUri != null){
 
             final StorageReference reference = mStorageRef.child(System.currentTimeMillis()
-                +"."+getFileExtension(imageUri));
+                    +"."+getFileExtension(imageUri));
 
             mUploadTask = reference.putFile(imageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -360,11 +359,11 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
 
 
@@ -440,14 +439,15 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                 alertDialog = builder.create();
                 alertDialog.show();
 
-                titleTV.setText("Remove Group ?");
-                messageTV.setText("Are you sure that you want to remove this group?");
+                titleTV.setText(res.getString(R.string.remove_group));
+                messageTV.setText(res.getString(R.string.sure_remove_group));
                 confirmIV.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //change the original adapter because we remove item from
                         adapter.groupPlayList.remove(viewHolder.getAdapterPosition());
                         adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                        updateToServer();
                         alertDialog.dismiss();
                     }
                 });
@@ -461,6 +461,12 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
             }
         };
         return callback;
+    }
+
+    private void updateToServer() {
+        if (canEdit)
+            prfPlayerDB.updatePlayerInServer(createPlayerFromView());
+
     }
     //endregion
 
