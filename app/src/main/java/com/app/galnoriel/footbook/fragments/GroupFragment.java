@@ -177,7 +177,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                 @Override
                 public void onClick(View v) {
 
-
+                    if (!member_id.contains(spref.getUserId())) {
+                        return;
+                    }
                     android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
                     View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
 
