@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="550dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingBottom="30dp"
+    android:layout_margin="30dp"
+    >
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:src="@drawable/grass_background"
+        android:background="@color/sandy_brown"
+        android:scaleType="centerCrop"/>
+    <android.support.constraint.ConstraintLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+        <EditText
+            android:id="@+id/search_ed_sea_dia"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:hint="@string/search_query"
+            android:textSize="20sp"
+            android:inputType="textEmailAddress"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/search_ic_sea_dia"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+        <ImageView
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/search_ed_sea_dia"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/search_ic_sea_dia"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/search_user"
+            android:layout_gravity="center"/>
+
+
+    </android.support.constraint.ConstraintLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/result_lv_sea_dia"/>
+
+    <!--<ImageButton-->
+    <!--style="@style/Dialog_Buttons"-->
+    <!--android:id="@+id/create_btn_cr_gr_dia"-->
+    <!--android:background="@color/colorAccent"-->
+
+    <!--/>-->
+    <!--<ImageButton-->
+    <!--style="@style/Dialog_Buttons"-->
+    <!--android:id="@+id/cancel_btn_cr_gr_dia"-->
+    <!--android:background="@color/colorPrimary"-->
+    <!--/>-->
+
+</LinearLayout>

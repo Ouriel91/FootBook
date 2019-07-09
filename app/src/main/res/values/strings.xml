@@ -60,6 +60,8 @@
 
     <string name="next_game_when">Game time</string>
     <string name="free">Free</string>
+    <string name="search_query">Looking for something?</string>
+    <string name="position">Position</string>
 
 
     <string-array name="pitch_spinner">

@@ -1,6 +1,7 @@
 package com.app.galnoriel.footbook;
 
 public class GlobConst {
+    public static String DB_USER_ID = "DB_USER_ID";
     public static String DB_USER_TABLE = "USERS_PROFILE" ;
     public static String DB_USER_NAME = "NAME" ;
     public static String DB_USER_PICTURE = "PICTURE" ;

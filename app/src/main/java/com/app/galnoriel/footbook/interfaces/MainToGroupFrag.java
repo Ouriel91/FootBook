@@ -7,4 +7,5 @@ public interface MainToGroupFrag {
     void onGetPlayerComplete(Player player);
     void onGetGroupComplete(GroupPlay group);
     void callUpdateGroupFromMain();
+    void addMemberToGroup(String id);
 }
