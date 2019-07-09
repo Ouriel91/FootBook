@@ -87,23 +87,41 @@
             style="@style/ProfileFrag_TextView"/>
 
         <!--next game section-->
-        <TextView
-            android:gravity="center"
-            android:layout_marginTop="15dp"
+        <LinearLayout
+            style="@style/GroupFragmentTitlesLinear"
+            android:id="@+id/next_game_linear_title_grf"
             app:layout_constraintStart_toStartOf="@id/thumbnail_grf"
             app:layout_constraintTop_toBottomOf="@id/thumbnail_grf"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:layout_marginStart="10dp"
+                style="@style/GroupFrag_MemberTitleImage"
+                android:id="@+id/ng_broadcast_ic_grf"
+                android:src="@drawable/ng_croadcast"
+                />
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_margin="0dp"
             android:id="@+id/next_game_tv_grf"
-            android:text="Next game "
-            style="@style/Title_TextView"
+            android:text="@string/next_game_title"
+            style="@style/ProfileFrag_TextView"
             android:tag="@string/next_game_tag"
             />
+            <ImageView
+                style="@style/GroupFrag_MemberTitleImage"
+                android:id="@+id/ng_goto_ic_grf"
+                android:src="@drawable/forward"
+                android:layout_marginEnd="5dp"
+                />
+        </LinearLayout>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="125dp"
             app:layout_constraintStart_toStartOf="@id/thumbnail_grf"
-            app:layout_constraintTop_toBottomOf="@id/next_game_tv_grf"
+            app:layout_constraintTop_toBottomOf="@id/next_game_linear_title_grf"
             android:id="@+id/next_game_frame_grf">
 
             <android.support.constraint.ConstraintLayout
@@ -201,31 +219,30 @@
         </FrameLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            style="@style/GroupFragmentTitlesLinear"
             app:layout_constraintTop_toBottomOf="@id/next_game_frame_grf"
             android:id="@+id/members_title_lin_grf"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/shape_linear"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             >
 
             <ImageView
+                android:layout_marginStart="10dp"
                 style="@style/GroupFrag_MemberTitleImage"
                 android:id="@+id/add_member_ic_grf"
                 android:src="@drawable/add_member"
                 />
 
             <TextView
+
                 android:id="@+id/groups_title_grf"
                 style="@style/ProfileFrag_TextView"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/group_members"
                 android:layout_margin="0dp"
+                android:text="@string/group_members"
                 />
             <Space
                 style="@style/GroupFrag_MemberTitleImage" />

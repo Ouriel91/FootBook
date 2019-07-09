@@ -89,6 +89,8 @@
         <item name="android:layout_margin">20dp</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:gravity">center</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="Login_Dialog_EditText">
@@ -174,6 +176,14 @@
         <item name="android:shadowDy">0</item>
         <item name="android:shadowRadius">5</item>
         <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="GroupFragmentTitlesLinear">
+        <item name="android:background">@drawable/shape_linear</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:orientation">horizontal</item>
     </style>
 
 

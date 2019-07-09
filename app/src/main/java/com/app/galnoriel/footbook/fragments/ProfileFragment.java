@@ -297,6 +297,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                 .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
                 .into(thumbnailIV);
         thumbnailIV.setTag(imageUri);
+        thumbnailIV.setBackgroundColor(res.getColor(android.R.color.transparent));
 
     }
 

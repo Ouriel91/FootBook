@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -94,6 +95,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     //all layout ids end with ' grf ' (for Group Fragment)
 
     //region declaration
+    private static final int MSG_NEXT_GAME = 1;
+    private static final int MSG_ANNOUNCMENT = 0;
     Resources res;
     RecyclerView groupRV;
     List<Player> playersList = new ArrayList<>();
@@ -148,6 +151,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         final View view = inflater.inflate(R.layout.fragment_group, container, false);
         ((MainActivity)getActivity()).sendToGroupFrag = this;
         //region view assignments
+        ImageView msgNextGameBTN = view.findViewById(R.id.ng_broadcast_ic_grf);
+        ImageView goToNextGameBTN = view.findViewById(R.id.ng_goto_ic_grf);
         thumbnailIV = view.findViewById(R.id.thumbnail_grf);
         groupRV = view.findViewById(R.id.group_rv);
         groupRV.setHasFixedSize(true);
@@ -172,94 +177,26 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         db = FirebaseFirestore.getInstance();
 //endregion
 
-
-
-            groupMessengerIV.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if (!member_id.contains(spref.getUserId())) {
-                        return;
-                    }
-                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-                    View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
-
+        //region open broadcast dialog
+        groupMessengerIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!member_id.contains(spref.getUserId())) {
+                    return;
+                }
+                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
                 final EditText messageET = dialogView.findViewById(R.id.message_et);
                 ImageButton sendIV = dialogView.findViewById(R.id.send_iv);
                 builder.setView(dialogView);
                 alertDialog = builder.create();
                 alertDialog.show();
-
                 sendIV.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-
-                        for (String id: member_id){
-                            messaging.subscribeToTopic("FOOTBOOK");
-                        }
-
-                        //message format to read
-
-                            /*
-                            https://fcm.googleapis.com/fcm/send
-                            Content-Type:application/json
-                            Authorization:key=AIzaSyZ-1u...0GBYzPu7Udno5aA
-                            {
-                                 "to": "/topics/foo-bar", (OR:   "condition": "'dogs' in topics || 'cats' in topics",)
-                                "data": {
-                                    "message": "This is a Firebase Cloud Messaging Topic Message!",
-                                }
-                            }
-                            */
-
                         String message = messageET.getText().toString();
-                        final JSONObject jsonObject = new JSONObject();
-                        try {
-
-                            jsonObject.put("to","/topics/FOOTBOOK");
-                            jsonObject.put("data",new JSONObject().put("message",message));
-                            String url = "https://fcm.googleapis.com/fcm/send";
-                            RequestQueue queue = Volley.newRequestQueue(getActivity());
-
-                            StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String response) {
-
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-
-                                }
-                            }){
-
-                                //for post request, we did override on this functions
-
-
-                                @Override
-                                public Map<String, String> getHeaders() throws AuthFailureError {
-
-                                    Map<String, String> headers = new HashMap<>();
-                                    headers.put("Content-Type","application/json");
-                                    //copy from cloud your server key
-                                    headers.put("Authorization","key="+API_TOKEN_KEY);
-                                    return headers;
-                                }
-
-                                @Override
-                                public byte[] getBody() throws AuthFailureError {
-                                    return jsonObject.toString().getBytes();
-                                }
-                            };
-                            queue.add(request);
-                            queue.start();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-
-
+                        int reason = 0;
+                        broadcastAllMember(message,nameTV.getText().toString());
                         alertDialog.dismiss();
                     }
                 });
@@ -297,6 +234,35 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         ngDateTV.setOnClickListener(this);
         ngPriceTV.setOnClickListener(this);
         ngLocationTV.setOnClickListener(this);
+        msgNextGameBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isAdmin) {
+                    Snackbar.make(getView(), res.getString(R.string.error_not_admin), Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                String price = ngPriceTV.getText().toString();
+                String title = nameTV.getText().toString();
+                String date = ngDateTV.getText().toString();
+                if (date.isEmpty()){
+                    Snackbar.make(getView(), res.getString(R.string.set_ng_date_error), Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                try{Integer.valueOf(price); price+=" ₪";}
+                catch (Exception e){e.printStackTrace();}
+                String msg = res.getString(R.string.next_game_announcment_pt1)+
+                        date+"\n"+res.getString(R.string.next_game_announcment_pt2)+
+                        price;
+                broadcastAllMember(msg,title);
+            }
+        });
+        goToNextGameBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                spref.setDisplayGroup(createGroupFromView());
+                showTab.goToFrag(MainActivity.TAB_GAME);
+            }
+        });
 
 
 
@@ -392,6 +358,59 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         return view;
     }
 
+    private void broadcastAllMember(String message, String title) {
+        for (String id: member_id){
+            messaging.subscribeToTopic("FOOTBOOK");
+        }
+        //message format to read
+                            /*
+                            https://fcm.googleapis.com/fcm/send
+                            Content-Type:application/json
+                            Authorization:key=AIzaSyZ-1u...0GBYzPu7Udno5aA
+                            {
+                                 "to": "/topics/foo-bar", (OR:   "condition": "'dogs' in topics || 'cats' in topics",)
+                                "data": {
+                                    "message": "This is a Firebase Cloud Messaging Topic Message!",
+                                }
+                            }
+                            */
+        final JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("to","/topics/FOOTBOOK");
+            jsonObject.put("data",new JSONObject().put("message",title+" :\n"+message));
+            String url = "https://fcm.googleapis.com/fcm/send";
+            RequestQueue queue = Volley.newRequestQueue(getActivity());
+            StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }){
+                //for post request, we did override on this functions
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Content-Type","application/json");
+                    //copy from cloud your server key
+                    headers.put("Authorization","key="+API_TOKEN_KEY);
+                    return headers;
+                }
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    return jsonObject.toString().getBytes();
+                }
+            };
+            queue.add(request);
+            queue.start();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     private ItemTouchHelper.SimpleCallback createMemberListCallBack() {
         return new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
@@ -505,6 +524,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                 .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.team_avatar))
                 .into(thumbnailIV);
         thumbnailIV.setTag(imageUri);
+        thumbnailIV.setBackgroundColor(res.getColor(android.R.color.transparent));
     }
 
     private void uploadFile() {
@@ -550,10 +570,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                         String url = downloadUri.toString();
 
                         spref.setGroupPathImage(url);
+                        showThumbnailImage(url);
 
-                        Glide.with(getActivity()).load(spref.getGroupPathImage())
-                                .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.team_avatar))
-                                .into(thumbnailIV);
                     }
                 }
             });
