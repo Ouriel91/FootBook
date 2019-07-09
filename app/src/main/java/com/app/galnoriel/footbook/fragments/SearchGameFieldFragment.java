@@ -147,7 +147,7 @@ public class SearchGameFieldFragment extends Fragment implements OnMapReadyCallb
         final LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        markerOptions.title("Current location");
+        markerOptions.title(getResources().getString(R.string.curr_location));
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 
         marker = map.addMarker(markerOptions);
@@ -223,8 +223,9 @@ public class SearchGameFieldFragment extends Fragment implements OnMapReadyCallb
                     }
                 }
                 else {
-                    Toast.makeText(getActivity(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
                 }
+
         }
     }
 }

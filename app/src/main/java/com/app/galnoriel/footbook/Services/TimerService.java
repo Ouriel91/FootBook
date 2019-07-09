@@ -50,8 +50,8 @@ public class TimerService extends Service {
         }
 
         builder.setSmallIcon(R.drawable.ic_timer_black_24dp)
-                .setContentTitle("Time is up!!! ")
-                .setContentText("Go to game page and start new game") //check how to do - count up
+                .setContentTitle(getResources().getString(R.string.time_is_up))
+                .setContentText(getResources().getString(R.string.restart_game)) //check how to do - count up
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[] {2000})
