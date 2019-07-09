@@ -1,5 +1,6 @@
 package com.app.galnoriel.footbook.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +27,7 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -487,16 +490,14 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         }
 //new player on list
         playersList.add(player);
-        Log.d("done fetch ", "from groupfr, plyers list is: "+playersList.toString());
+        Log.d("done fetch ", "from groupfragment");
         //refresh list
         refreshList();
     }
 
     @Override
     public void onGetGroupComplete(GroupPlay group) {
-
         displayGroup(group);
-
     }
 
     private void displayGroup(GroupPlay g) {
@@ -568,7 +569,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             ngPitchIV.setImageDrawable(res.getDrawable(R.drawable.synthetic));
         else
             ngPitchIV.setImageDrawable(res.getDrawable(R.drawable.football_field_ic));
-
     }
 
     private void hideNextGameView() {
@@ -581,8 +581,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
     private GroupPlay createGroupFromView() {
         GroupPlay defaultGroup = spref.getDisplayGroup();
-
-
         String name,wherePlay,whenPlay,ngpitch,ngprice,ngdate,ngLocation,picture;
         Game nextGame;
         ngprice = "Free";
@@ -607,9 +605,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         catch (Exception e){e.printStackTrace(); }
         try {picture = thumbnailIV.getTag().toString();}
         catch (Exception e){e.printStackTrace();}
-//        if (nextGameExist)
-            nextGame = new Game(ngpitch,ngdate,ngprice,ngLocation);
-//        else nextGame = null;
+        nextGame = new Game(ngpitch,ngdate,ngprice,ngLocation);
         Log.d("createGroupFromView", "group admin -> "+admins_id.toString()+"\tmembers -> "+member_id.toString());
         return new GroupPlay(spref.getDisplayGroupId(),name,wherePlay,whenPlay,picture,member_id,admins_id,nextGame);
     }
@@ -685,7 +681,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                                         Map<String, Object> map = documentSnapshot.getData();
                                         for (Map.Entry<String, Object> entry : map.entrySet()) {
                                             if (entry.getKey().equals("MEMBERS ID")) {
-
                                                 String member = entry.getValue().toString();
                                             }
                                         }
@@ -755,19 +750,24 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
     @Override
     public void callUpdateGroupFromMain() {
+        //main activity called for an update from view
         updateToServer();
     }
 
     @Override
     public void addMemberToGroup(String id) {
+//        called from main activity after showing add member dialog and query
         member_id.add(id);
         updateToServer();
         grfGroupDB.requestGroupFromServer(spref.getDisplayGroup().getId(),MainActivity.TAB_GROUP);
     }
 
     public void updateToServer() {
+        //store current view of group in mainactivity
+        //update groupo using interface to main
         if (isAdmin){
-            ((MainActivity)getActivity()).displayingGroup = createGroupFromView();
+//            ((MainActivity)getActivity()).displayingGroup = ;
+            grfGroupDB.setDisplayGroupInMain(createGroupFromView());
             grfGroupDB.updateGroupInServer(createGroupFromView());
 
         }

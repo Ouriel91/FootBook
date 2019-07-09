@@ -6,5 +6,4 @@ public interface AccessPlayerDB {
     String updatePlayerInServer(Player player);
     String requestPlayerFromServer(String playerId, int frag);
     void openPlayerQueryDialog();
-
 }

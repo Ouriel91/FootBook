@@ -27,7 +27,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,10 +50,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Logger;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -159,13 +156,6 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         wherePlayTV.setOnClickListener(this);
         positionTV.setOnClickListener(this);
         pitchTV.setOnClickListener(this);
-        //create listener from thumbnail//
-//        whereFromIV.setOnClickListener(this);
-//        wherePlayIV.setOnClickListener(this);
-//        positionIV.setOnClickListener(this);
-//        pitchIV.setOnClickListener(this);
-
-
         Glide.with(getActivity()).load(sPref.getUserPathImage())
                 .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
                 .into(thumbnailIV);
@@ -262,8 +252,32 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
             @Override
             public void onClick(View v) {
                 if (canEdit) {
-                    createNewGroup();
-                    joinGroup();
+                    //TODO: create dialog for join or create group
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                    View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
+                    ImageView createBtn = dialogView.findViewById(R.id.confirm_iv);
+                    createBtn.setImageDrawable(res.getDrawable(R.drawable.orange_btn));
+                    ImageView joinBtn = dialogView.findViewById(R.id.unconfirm_iv);
+                    joinBtn.setImageDrawable(res.getDrawable(R.drawable.white_btn));
+                    builder.setView(dialogView);
+                    alertDialog = builder.create();
+                    alertDialog.show();
+                    createBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            createNewGroup();
+                            alertDialog.dismiss();
+                        }
+                    });
+                    joinBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            displayGroup();
+                            alertDialog.dismiss();
+                        }
+                    });
+
+
                 }
             }
         });
@@ -451,8 +465,6 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         adapter.notifyItemMoved(fromPos, toPos);
     }
 
-    //endregion
-
     private void createNewGroup() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         final View dialogSignView = getLayoutInflater().inflate(R.layout.dialog_create_group,null);
@@ -550,9 +562,12 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     }
 
     //endregion
-    private void joinGroup() {
-        Snackbar.make(getView(),"Create add groups from server",Snackbar.LENGTH_LONG).show();
+    private void displayGroup() {
+//        Snackbar.make(getView(),"Create add groups from server",Snackbar.LENGTH_LONG).show();
+        prfGroupDB.openGroupQueryDialog();
+
     }
+
 
     @Override
     public void onGetPlayerComplete(Player player) {

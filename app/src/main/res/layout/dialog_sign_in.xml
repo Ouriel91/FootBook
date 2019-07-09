@@ -104,12 +104,16 @@
     <ImageButton
         style="@style/Dialog_Buttons"
         android:id="@+id/sign_in_btn_logdia"
-        android:background="@color/colorAccent"
+        android:background="@android:color/transparent"
+        android:src="@drawable/signin_color"
+        android:scaleType="fitCenter"
         />
     <ImageButton
         style="@style/Dialog_Buttons"
         android:id="@+id/sign_up_btn_logdia"
-        android:background="@color/colorPrimary"
+        android:background="@android:color/transparent"
+        android:src="@drawable/signup_color"
+        android:scaleType="fitCenter"
         />
 
 </LinearLayout>
