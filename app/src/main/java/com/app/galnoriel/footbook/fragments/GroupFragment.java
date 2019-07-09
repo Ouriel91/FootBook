@@ -68,6 +68,8 @@ import java.util.Locale;
 
 public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnClickListener {
     //all layout ids end with ' grf ' (for Group Fragment)
+
+    //region declaration
     Resources res;
     RecyclerView groupRV;
     List<Player> playersList = new ArrayList<>();
@@ -78,11 +80,10 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     public MoveToTab showTab;
     public AccessGroupDB grfGroupDB;
     public AccessPlayerDB grfPlayerDB;
-
     CustomSharedPrefAdapter spref;
     private ImageView thumbnailIV,ngPitchIV,ngDateIV,ngPriceIV,ngLocationIV;
     private TextView nameTV,wherePlayTV,whenPlayTV,ngPitchTV,ngDateTV,ngPriceTV,ngLocationTV;
-    private LinearLayout addMemberLin;
+    private LinearLayout addMemberLin,nextGame;
     File pictureFile;
     private String pictureFilePath ="";
     private static final int IMAGE_CAPTURE_REQUEST = 1;
@@ -92,7 +93,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     private StorageTask mUploadTask;
     Uri photoURI;
     private Uri imageUri;
-
+//endregion
 
 
 
@@ -106,9 +107,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     @Override
     public void onPause() {
         super.onPause();
-        if (isAdmin){
-            grfGroupDB.updateGroupInServer(createGroupFromView());
-        }
+        updateToServer(); //will work only if isadmin = true
     }
 
 
@@ -171,19 +170,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
         //endregion
 
-
-        //region list
-//        playersList.add(new Player(1+"","Ouriel","Modii'n"));
-//        playersList.add(new Player(2+"","Gal","Givatiim"));
-//        playersList.add(new Player(1+"","Ouriel","Modii'n"));
-//        playersList.add(new Player(2+"","Gal","Givatiim"));
-//        playersList.add(new Player(1+"","Ouriel","Modii'n"));
-//        playersList.add(new Player(2+"","Gal","Givatiim"));
-//        playersList.add(new Player(1+"","Ouriel","Modii'n"));
-//        playersList.add(new Player(2+"","Gal","Givatiim"));
-
-
-//endregion
 
         //region touchHelper
         ItemTouchHelper.SimpleCallback callback = createMemberListCallBack();
@@ -274,7 +260,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     }
 
 
-
     private ItemTouchHelper.SimpleCallback createMemberListCallBack() {
         return new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN|
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -339,9 +324,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
-
             StorageReference reference = mStorageRef.child("g_photos").child(photoURI.getLastPathSegment());
 
             reference.putFile(photoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -484,9 +467,10 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
     @Override
     public void onGetGroupComplete(GroupPlay group) {
-        displayGroup(group);
-    }
 
+        displayGroup(group);
+
+    }
 
     private void displayGroup(GroupPlay g) {
         spref.setDisplayGroupId(g.getId());
@@ -507,6 +491,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             ngLocationTV.setText(nextGame.getLocation());
         }else
             hideNextGameView();
+
         //set thumbnail
         try{picture = g.getPicture();}
         catch (Exception e){e.printStackTrace();picture = "default";}
@@ -694,11 +679,24 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                     newValue = editText.getText().toString();
                 if (tvFromFragment.getId() == R.id.next_price_tv_grf)
                     changeNextGamePriceIcon(newValue);
-                else if (!newValue.isEmpty())
+                if (!newValue.isEmpty())
                     tvFromFragment.setText(newValue);
                 dialog.dismiss();
+                updateToServer();
             }
         });
         dialog.show();
+    }
+
+    @Override
+    public void callUpdateGroupFromMain() {
+        updateToServer();
+    }
+    public void updateToServer() {
+        if (isAdmin){
+            ((MainActivity)getActivity()).displayingGroup = createGroupFromView();
+            grfGroupDB.updateGroupInServer(createGroupFromView());
+
+        }
     }
 }

@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.app.galnoriel.footbook.adapters.SectionsAdapter;
 import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
+import com.app.galnoriel.footbook.classes.Game;
 import com.app.galnoriel.footbook.classes.GroupPlay;
 import com.app.galnoriel.footbook.classes.Player;
 import com.app.galnoriel.footbook.fragments.ProfileFragment;
@@ -34,6 +35,8 @@ import com.app.galnoriel.footbook.fragments.GameFragment;
 import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
 
 import com.app.galnoriel.footbook.interfaces.AccessGroupDB;
+import com.app.galnoriel.footbook.interfaces.GetGameFromMain;
+import com.app.galnoriel.footbook.interfaces.MainToGameFrag;
 import com.app.galnoriel.footbook.interfaces.MainToGroupFrag;
 import com.app.galnoriel.footbook.interfaces.MainToPlayerFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
@@ -51,11 +54,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MoveToTab, AccessGroupDB, AccessPlayerDB {
+        implements NavigationView.OnNavigationItemSelectedListener, MoveToTab, AccessGroupDB, AccessPlayerDB, GetGameFromMain, ViewPager.OnPageChangeListener {
     //region interfaces
 
     public MainToPlayerFrag sendToPlayerFrag;
     public MainToGroupFrag sendToGroupFrag;
+    public GetGameFromMain sendToGameFrag;
     public static final int TAB_PROFILE = 0;
     public static final int TAB_GROUP = 1;
     public static final int TAB_GAME = 2;
@@ -64,6 +68,8 @@ public class MainActivity extends AppCompatActivity
     //endregion
 
     //region global declarations
+    private Game nextGame;
+    public GroupPlay displayingGroup;
     private SectionsAdapter sectionsAdapter;
     private ViewPager viewPager;
     private TextInputLayout emailLayout;
@@ -78,6 +84,7 @@ public class MainActivity extends AppCompatActivity
     private ImageButton signUpBtn;
     private ImageButton signInBtn;
     private FirebaseFirestore db;
+//    public MainToGameFrag sendGametoFrag;
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
@@ -111,6 +118,8 @@ public class MainActivity extends AppCompatActivity
             ((GroupFragment) fragment).grfPlayerDB = this;
 
         }else if (fragment instanceof GameFragment){
+            ((GameFragment)fragment). nextGameFromMain = this;
+
 
         }else if (fragment instanceof SearchGameFieldFragment){
             //set listerenrerasdfgk
@@ -188,6 +197,7 @@ public class MainActivity extends AppCompatActivity
 
         viewPager = findViewById(R.id.view_pager);
         setupViewPager(viewPager);
+        viewPager.addOnPageChangeListener(this);
 
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
@@ -585,13 +595,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public String updateGroupInServer(final GroupPlay group) {
-
+        displayingGroup = group;
         db.collection(GlobConst.DB_GROUP_TABLE).document(group.getId())//add group
                 .update(group.toHashMap())
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
+
                             Log.d("updateGroupInServer", "success! "+group.toString());
                         }else Log.d("updateGroupInServer", "FAIL! "+group.toString());
                         //                        Snackbar.make(coordinatorLayout, "Updated group :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
@@ -627,10 +638,17 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if (task.isSuccessful() && task.getResult().exists()) {
+                                GroupPlay group = new GroupPlay(task.getResult());
                                 if (frag == TAB_PROFILE)
-                                    sendToPlayerFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
-                                if (frag == TAB_GROUP)
-                                    sendToGroupFrag.onGetGroupComplete(new GroupPlay(task.getResult()));
+                                    sendToPlayerFrag.onGetGroupComplete(group);
+                                if (frag == TAB_GROUP) {
+                                    sendToGroupFrag.onGetGroupComplete(group);
+                                    if (group.getNextGame() == null)
+                                        group.setNextGame(new Game());
+                                    nextGame = group.getNextGame();
+
+                                    displayingGroup = group;
+                                }
                             }
                         }
                     });
@@ -674,6 +692,41 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public Game onNextGameRequset() {
+        return nextGame;
+    }
+
+
 
     //endregion
+
+
+    @Override
+    public void onPageScrolled(int i, float v, int i1) {
+
+        switch (i){
+            case TAB_GROUP: //save group to main from view
+                sendToGroupFrag.callUpdateGroupFromMain();
+                if (displayingGroup != null)
+                    nextGame = displayingGroup.getNextGame();
+                break;
+            case TAB_PROFILE: //save profile from view
+                sendToPlayerFrag.callUpdatePlayerFromMain();
+                break;
+            case TAB_GAME: break;
+
+        }
+    }
+
+    @Override
+    public void onPageSelected(int i) {
+        if (displayingGroup != null)
+            nextGame = displayingGroup.getNextGame();
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
+
+    }
 }

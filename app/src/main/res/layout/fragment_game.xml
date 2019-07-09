@@ -60,6 +60,7 @@
                 app:layout_constraintTop_toBottomOf="@id/next_game_tv_gamf" />
 
             <TextView
+                android:id="@+id/date_tv_gamf"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:tag="@string/next_game_tag"
@@ -102,6 +103,7 @@
                 app:layout_constraintTop_toBottomOf="@id/next_date_ic_gamf" />
 
             <TextView
+                android:id="@+id/location_tv_gamf"
                 android:tag="@string/next_game_tag"
                 android:layout_width="0dp"
                 android:layout_height="0dp"

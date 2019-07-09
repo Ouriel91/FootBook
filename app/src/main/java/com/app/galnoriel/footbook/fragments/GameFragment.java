@@ -1,25 +1,25 @@
 package com.app.galnoriel.footbook.fragments;
 
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -27,28 +27,70 @@ import android.widget.ToggleButton;
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
 import com.app.galnoriel.footbook.Services.TimerService;
+import com.app.galnoriel.footbook.classes.Game;
+import com.app.galnoriel.footbook.interfaces.GetGameFromMain;
+import com.app.galnoriel.footbook.interfaces.MainToGameFrag;
 
 import java.util.Locale;
 
-public class GameFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
-
+public class GameFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MainToGameFrag {
+//region global declaration
     private View view;
-
+    private Game nextGame;
     private ToggleButton start_timer;
     private CountDownTimer mCountDownTimer;
-
+    private TextView dateTV,locationTV,pitchTV,priceTV;
+    private ImageView pitchIV,priceIV;
     private long startTimeInMillis;
     private long leftTimeInMillis = 0;
     private long endTime;
     private boolean isTimerRunning;
-
+    private Resources res;
+    public GetGameFromMain nextGameFromMain;
+//    public MainToGameFrag nextGAmeReciever;
     private TextView timer_tv;
     private int time = 0;
+//endregion
+    @Override
+    public void onResume() {
+        super.onResume();
+        nextGame =  nextGameFromMain.onNextGameRequset();
+        displayGame();
+    }
+
+    private void displayGame() {
+        String price = nextGame.getPrice();
+        String pitch = nextGame.getPitch();
+        priceTV.setText(price);
+        pitchTV.setText(pitch);
+        dateTV.setText(nextGame.getDate());
+        locationTV.setText(nextGame.getLocation());
+        //handle price icon
+        Log.d("changeNextGamePriceIcon", "cahngin to: "+price);
+        if (price.toLowerCase().equals("free") || price.equals("0") || price.isEmpty()) {
+            priceIV.setImageDrawable(res.getDrawable(R.drawable.price_free));
+            priceTV.setText(res.getString(R.string.free));
+        }else
+            priceIV.setImageDrawable(res.getDrawable(R.drawable.price));
+        //handle pitch icon
+        String[] type = getResources().getStringArray(R.array.pitch_spinner);
+        if (pitch.equals(type[0]))
+            pitchIV.setImageDrawable(res.getDrawable(R.drawable.asphalt));
+        else if (pitch.equals(type[1]))
+            pitchIV.setImageDrawable(res.getDrawable(R.drawable.synthetic));
+        else
+            pitchIV.setImageDrawable(res.getDrawable(R.drawable.football_field_ic));
+
+
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
          view = inflater.inflate(R.layout.fragment_game, container, false);
+
+        res = getResources();
+//        nextGAmeReciever = this ;
 
          //region score layout and listeners
         Button left_score = view.findViewById(R.id.left_score_btn_gamf);
@@ -60,14 +102,12 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         right_score.setOnLongClickListener(this);
 //endregion
 
-//region timer layout and listeners
+        //region timer layout and listeners
         start_timer = view.findViewById(R.id.start_timer_gamf);
         ImageButton reset_timer = view.findViewById(R.id.reset_timer_gamf);
 
 
         timer_tv = view.findViewById(R.id.timer_tv);
-//endregion
-
         timer_tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,6 +183,18 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
                 leftTimeInMillis=0;
             }
         });
+//endregion
+
+        //region next game view assignment
+        priceIV = view.findViewById(R.id.price_ic_gamf);
+        pitchIV = view.findViewById(R.id.pitch_ic_gamf);
+        priceTV = view.findViewById(R.id.price_tv_gamf);
+        pitchTV = view.findViewById(R.id.pitch_tv_gamf);
+        locationTV = view.findViewById(R.id.location_tv_gamf);
+        dateTV = view.findViewById(R.id.date_tv_gamf);
+        //endregion
+
+
 
         return view;
     }
@@ -235,4 +287,12 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         changeScore(v.getId(),false);
         return true;
     }
+
+    @Override
+    public void sendNextGameToFrag(Game nextGame) {
+        this.nextGame = nextGame;
+    }
+
+    //store next game info when finish fetching group from server
+
 }

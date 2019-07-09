@@ -111,14 +111,10 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     public void onPause() {
         super.onPause();
 //        Log.d("Profile frag Paused!", sPref.getUserId()+"   "+sPref.getDisplayProfile().get_id());
-
-        if (canEdit) {
-            sPref.setDisplayProfile(createPlayerFromView());
-            if (!(sPref.getDisplayProfile().getName().equals("Guest") || sPref.getDisplayProfile().getName().contains("Please Sign")))
-                prfPlayerDB.updatePlayerInServer(createPlayerFromView());
-            //will create player from view only if currently editing own profile
-        }
+        updateProfileToServer(); //will work only if canEdit = true
     }
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -580,6 +576,11 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         refreshGroupList();
     }
 
+    @Override
+    public void callUpdatePlayerFromMain() {
+        updateProfileToServer();
+    }
+
     private void refreshGroupList() {
         GroupListAdapter adapter = new GroupListAdapter(getActivity(), groupPlayList);
         adapter.setOnGroupCardClickListener(new GroupListAdapter.OnGroupCardClickListener() {
@@ -693,6 +694,16 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
             idArray.add(g.getId());
         }
         return idArray;
+    }
+
+    private Player updateProfileToServer() {
+        if (canEdit) {
+            sPref.setDisplayProfile(createPlayerFromView());
+            if (!(sPref.getDisplayProfile().getName().equals("Guest") || sPref.getDisplayProfile().getName().contains("Please Sign")))
+                prfPlayerDB.updatePlayerInServer(createPlayerFromView());
+            //will create player from view only if currently editing own profile
+        }
+        return createPlayerFromView();
     }
 
 
