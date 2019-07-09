@@ -172,12 +172,17 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         db = FirebaseFirestore.getInstance();
 //endregion
 
-        //region chat massanger
-        groupMessengerIV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-                View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
+
+
+            groupMessengerIV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (!member_id.contains(spref.getUserId())) {
+                        return;
+                    }
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                    View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
 
                 final EditText messageET = dialogView.findViewById(R.id.message_et);
                 ImageButton sendIV = dialogView.findViewById(R.id.send_iv);
@@ -267,7 +272,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                nameTV.setText(intent.getStringExtra("message"));
+                intent.getStringExtra("message");
             }
         };
         //endregion
