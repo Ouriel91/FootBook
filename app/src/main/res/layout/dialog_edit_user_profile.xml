@@ -35,8 +35,11 @@
 
     </LinearLayout>
     <ImageButton
+        android:layout_marginTop="5dp"
         style="@style/Dialog_Buttons"
-        android:background="@color/colorAccent"
+        android:src="@drawable/confirm"
+        android:scaleType="fitCenter"
+        android:background="@android:color/transparent"
         android:id="@+id/confirm_btn_edit_dialog"
         />
 

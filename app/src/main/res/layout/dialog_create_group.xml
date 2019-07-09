@@ -91,13 +91,13 @@
     <ImageButton
         style="@style/Dialog_Buttons"
         android:id="@+id/create_btn_cr_gr_dia"
-        android:background="@color/colorAccent"
+        android:background="@android:color/transparent"
+        android:src="@drawable/confirm"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="0dp"
+        android:layout_gravity="center"
 
         />
-    <!--<ImageButton-->
-        <!--style="@style/Dialog_Buttons"-->
-        <!--android:id="@+id/cancel_btn_cr_gr_dia"-->
-        <!--android:background="@color/colorPrimary"-->
-        <!--/>-->
+
 
 </LinearLayout>

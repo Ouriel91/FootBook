@@ -150,7 +150,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/next_date_ic_grf"
                     app:layout_constraintStart_toEndOf="@id/next_date_ic_grf"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:text="19:30, Mon, Jul 1"
+                    android:text="@string/date_not_set"
                     style="@style/ProfileFrag_TextView"/>
 
                 <ImageView

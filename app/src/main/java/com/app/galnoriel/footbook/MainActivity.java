@@ -42,24 +42,19 @@ import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
 
 import com.app.galnoriel.footbook.interfaces.AccessGroupDB;
 import com.app.galnoriel.footbook.interfaces.GetGameFromMain;
-import com.app.galnoriel.footbook.interfaces.MainToGameFrag;
 import com.app.galnoriel.footbook.interfaces.MainToGroupFrag;
 import com.app.galnoriel.footbook.interfaces.MainToPlayerFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
 import com.app.galnoriel.footbook.interfaces.AccessPlayerDB;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -68,8 +63,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import javax.annotation.Nullable;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MoveToTab, AccessGroupDB, AccessPlayerDB, GetGameFromMain, ViewPager.OnPageChangeListener {
@@ -238,9 +231,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void updateUserDataBase(){
-
-    }
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsAdapter adapter = new SectionsAdapter(getSupportFragmentManager());
@@ -678,11 +668,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void setDisplayGroupInMain(GroupPlay groupFromView) {
+        this.displayingGroup = groupFromView;
+    }
+
+    @Override
     public String requestPlayerFromServer(String playerId,int frag) {
         getPlayerFromServer(playerId , frag);
 
         return playerId;
     }
+
+
 
     private void getPlayerFromServer(final String uid, final int frag){
         if (sharedPref.getLoginStatus()) { //enable only if user looged in
@@ -719,15 +716,76 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void openPlayerQueryDialog() {
+    public void openGroupQueryDialog() {
         Log.d("openPlayerQueryDialog", "started querrying");
+        //region prepare dialog
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_search, null);
         final List<Map<String, String>> resultList = new ArrayList<>();
         final EditText searchED = dialogView.findViewById(R.id.search_ed_sea_dia);
         ImageView searchBTN = dialogView.findViewById(R.id.search_ic_sea_dia);
         final ListView resultLV = dialogView.findViewById(R.id.result_lv_sea_dia);
+        final String[] from = {GlobConst.DB_GROUP_ID,GlobConst.DB_GROUP_NAME,GlobConst.DB_GROUP_WHEREPLAY};
+        final int[] to = {R.id.id_result_list,R.id.name_result_list,R.id.sub_title_result_list};
+        //endregion
+        //region watch on click from result list
+        resultLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            //clicking on item from result will display group
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String groupId = ((TextView)view.findViewById(R.id.id_result_list)).getText().toString();
+//                requestGroupFromServer(groupId,TAB_GROUP);
+                goToFrag(TAB_GROUP,groupId);
+                alertDialog.dismiss();
+            }
+        });
+        //endregion
 
+// Create a query against the collection.
+// search button start query
+        searchBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                resultList.clear();
+                Query query = db.collection(GlobConst.DB_USER_TABLE).whereEqualTo(GlobConst.DB_USER_NAME, searchED.getText()+"");
+                query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful())
+                            for (DocumentSnapshot p:task.getResult().getDocuments()) {
+                                HashMap<String,String> result = new HashMap<>();
+                                result.put(GlobConst.DB_USER_NAME,p.getString(GlobConst.DB_USER_NAME));
+                                result.put(GlobConst.DB_USER_ID,p.getId());
+                                result.put(GlobConst.DB_USER_POSITION,p.getString(GlobConst.DB_USER_POSITION));
+                                Log.d("QUERRY COMPLETED!",p.getData()+"  "+p.getId());
+                                resultList.add(result);
+                            }
+                        SimpleAdapter adapter = new SimpleAdapter(context,resultList,R.layout.list_item_query,from,to);
+                        resultLV.setAdapter(adapter);
+                    }
+                });
+            }
+        });
+        builder.setView(dialogView);
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void openPlayerQueryDialog() {
+        Log.d("openPlayerQueryDialog", "started querrying");
+        //region prepare dialog
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_search, null);
+        final List<Map<String, String>> resultList = new ArrayList<>();
+        final EditText searchED = dialogView.findViewById(R.id.search_ed_sea_dia);
+        ImageView searchBTN = dialogView.findViewById(R.id.search_ic_sea_dia);
+        final ListView resultLV = dialogView.findViewById(R.id.result_lv_sea_dia);
+        final String[] from = {GlobConst.DB_USER_ID,GlobConst.DB_USER_NAME,GlobConst.DB_USER_POSITION};
+        final int[] to = {R.id.id_result_list,R.id.name_result_list,R.id.sub_title_result_list};
+        //endregion
+        //region add member on click from result list
         resultLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             //clicking on item from result will add to group
             @Override
@@ -736,13 +794,14 @@ public class MainActivity extends AppCompatActivity
                 alertDialog.dismiss();
             }
         });
-        final String[] from = {GlobConst.DB_USER_ID,GlobConst.DB_USER_NAME,GlobConst.DB_USER_POSITION};
-        final int[] to = {R.id.id_result_list,R.id.name_result_list,R.id.position_result_list};
+        //endregion
 
 // Create a query against the collection.
-        searchBTN.setOnClickListener(new View.OnClickListener() { ///search button start query
+// search button start query
+        searchBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 resultList.clear();
                 Query query = db.collection(GlobConst.DB_USER_TABLE).whereEqualTo(GlobConst.DB_USER_NAME, searchED.getText()+"");
                 query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
