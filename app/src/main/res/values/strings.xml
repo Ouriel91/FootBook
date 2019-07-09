@@ -122,5 +122,21 @@
     <item>Haifa</item>
 
 </string-array>
+    <string name="login_please">please log in</string>
+    <string name="wait_for_you">We are waiting for you</string>
+    <string name="enter_message">Enter message</string>
+    <string name="search_fields">Search football fields</string>
+    <string name="please_log_in">Please log in</string>
+    <string name="preferd_pitch">Prefered pitch:</string>
+    <string name="prefered_region">Prefered Region:</string>
+    <string name="where_play">Where play?</string>
+    <string name="prefered_play_when">Prefered when play</string>
+    <string name="next_game">Next game</string>
+    <string name="asphalt">Asphalt</string>
+    <string name="general_details">General details</string>
+    <string name="curr_match">Current Match</string>
+    <string name="score">Score</string>
+    <string name="home">Home</string>
+    <string name="away">Away</string>
 
 </resources>

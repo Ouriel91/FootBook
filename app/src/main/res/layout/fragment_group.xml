@@ -38,7 +38,7 @@
             android:layout_toEndOf="@id/thumbnail_grf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Group Name"
+            android:text="@string/group_name"
             android:textColor="@color/primaryTextView"
             android:textStyle="bold"
             style="@style/ProfileFrag_TextView"/>
@@ -60,7 +60,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Where play?"
+            android:text="@string/where_play"
             android:lines="1"
             style="@style/ProfileFrag_TextView"/>
 
@@ -83,7 +83,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:gravity="center_vertical"
-            android:text="preffered whenPlay"
+            android:text="@string/prefered_play_when"
             style="@style/ProfileFrag_TextView"/>
 
         <!--next game section-->
@@ -95,7 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/next_game_tv_grf"
-            android:text="Next game "
+            android:text="@string/next_game"
             style="@style/Title_TextView"
             android:tag="@string/next_game_tag"
             />
@@ -129,7 +129,7 @@
                     android:layout_width="80dp"
                     android:layout_height="0dp"
                     android:id="@+id/next_pitch_tv_grf"
-                    android:text="Asphalt"
+                    android:text="@string/asphalt"
                     style="@style/ProfileFrag_TextView"
                     />
 
@@ -172,7 +172,7 @@
                     app:layout_constraintEnd_toEndOf="@id/next_pitch_tv_grf"
                     app:layout_constraintTop_toTopOf="@id/price_ic_grf"
                     app:layout_constraintBottom_toBottomOf="@id/price_ic_grf"
-                    android:text="Free"
+                    android:text="@string/free"
                     style="@style/ProfileFrag_TextView"
                     />
 

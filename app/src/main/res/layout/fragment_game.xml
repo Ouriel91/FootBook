@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/next_game_tv_gamf"
-                android:text="General details"
+                android:text="@string/general_details"
                 style="@style/Title_TextView"
                 android:tag="@string/next_game_tag"
                 />
@@ -47,7 +47,7 @@
                 android:layout_width="80dp"
                 android:layout_height="0dp"
                 android:id="@+id/pitch_tv_gamf"
-                android:text="Asphalt"
+                android:text="@string/asphalt"
                 style="@style/ProfileFrag_TextView"
                 />
 
@@ -131,7 +131,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/current_game_tv_gamf"
-            android:text="Current Match"
+            android:text="@string/curr_match"
             style="@style/Title_TextView"
             android:tag="@string/next_game_tag"
             />
@@ -183,7 +183,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/score_tv_gamf"
-            android:text="Score"
+            android:text="@string/score"
             style="@style/Title_TextView"
             android:tag="@string/next_game_tag" />
 
@@ -200,7 +200,7 @@
                 android:id="@+id/right_team_name_gamf"
                 style="@style/Score_TeamName_TextView"
                 android:textColor="@color/colorAccent"
-                android:text="Away"
+                android:text="@string/away"
                 android:layout_column="2"
                 android:layout_row="0"
                 />
@@ -208,7 +208,7 @@
                 android:id="@+id/left_team_name_gamf"
                 style="@style/Score_TeamName_TextView"
                 android:textColor="@color/colorPrimary"
-                android:text="Home"
+                android:text="@string/home"
                 android:layout_column="0"
                 android:layout_row="0"
                 />

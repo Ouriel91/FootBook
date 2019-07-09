@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Please Log in"
+        android:text="@string/login_please"
         android:id="@+id/login_tv"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
@@ -32,6 +32,6 @@
         android:id="@+id/user_login_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="We are waiting for you" />
+        android:text="@string/wait_for_you" />
 
 </LinearLayout>

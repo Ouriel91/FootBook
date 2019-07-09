@@ -40,7 +40,7 @@
             android:layout_toEndOf="@id/thumbnail_prf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Please Sign In"
+            android:text="@string/please_log_in"
             android:textColor="@color/primaryTextView"
             android:textStyle="bold"
             style="@style/ProfileFrag_TextView"/>
@@ -63,7 +63,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Where from?"
+            android:text="@string/where_from"
             android:lines="1"
             style="@style/ProfileFrag_TextView"/>
 
@@ -86,7 +86,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:gravity="center_vertical"
-            android:text="Position"
+            android:text="@string/position"
             style="@style/ProfileFrag_TextView"/>
 
         <ImageView
@@ -108,7 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:id="@+id/const_p_tv_prf"
-            android:text="Preferred Pitch :"
+            android:text="@string/preferd_pitch"
             style="@style/ProfileFrag_TextView"
             />
         <TextView
@@ -141,7 +141,7 @@
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:id="@+id/const_r_tv_prf"
-            android:text="Preferred Region :"
+            android:text="@string/prefered_region"
             style="@style/ProfileFrag_TextView"
             />
         <TextView
