@@ -7,5 +7,6 @@ public interface AccessGroupDB {
     String createNewGroupInServer(GroupPlay group);
     String updateGroupInServer(GroupPlay group);
     String requestGroupFromServer(String group_id, int frag);
+//    void searchGroupInServer
 
 }

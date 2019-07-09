@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -110,8 +109,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         updateToServer(); //will work only if isadmin = true
     }
 
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -148,11 +145,12 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         addMemberLin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //addmember function!!
+                grfPlayerDB.openPlayerQueryDialog();
             }
         });
         res = getResources();
-//region clicklisteners
+
+        //region clicklisteners
 //        thumbnailIV.setOnClickListener(this);
 //        ngPitchIV.setOnClickListener(this);
 //        ngDateIV.setOnClickListener(this);
@@ -170,7 +168,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
         //endregion
 
-
         //region touchHelper
         ItemTouchHelper.SimpleCallback callback = createMemberListCallBack();
         ItemTouchHelper helper = new ItemTouchHelper(callback);
@@ -187,7 +184,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         view.findViewById(R.id.groups_title_grf).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addGroupMembers();
+                if (isAdmin)
+                addGroupMembersDialog();
             }
         });
         //endregion
@@ -274,51 +272,62 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             }
             @Override
             public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int i) {
-
-                android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
-                View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
-
-                TextView titleTV = dialogView.findViewById(R.id.title_tv);
-                TextView messageTV = dialogView.findViewById(R.id.message_tv);
-                ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
-                ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
-
-                builder.setView(dialogView);
-                alertDialog = builder.create();
-                alertDialog.show();
-
-                titleTV.setText("Remove player ?");
-                messageTV.setText("Are you sure that you want to remove this player?");
-                confirmIV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //change the original adapter because we remove item from
-                        adapter.playerList.remove(viewHolder.getAdapterPosition());
-                        adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                        alertDialog.dismiss();
-                    }
-                });
-                unConfirmIV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        adapter.notifyItemChanged(viewHolder.getAdapterPosition());
-                        alertDialog.dismiss();
-                    }
-                });
+                removePlayerFromAdapter(viewHolder,  i);
             }
         };
+    }
+
+    private void removePlayerFromAdapter(final RecyclerView.ViewHolder viewHolder, int i) {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
+        TextView titleTV = dialogView.findViewById(R.id.title_tv);
+        TextView messageTV = dialogView.findViewById(R.id.message_tv);
+        ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
+        ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
+        builder.setView(dialogView);
+        alertDialog = builder.create();
+        alertDialog.show();
+        titleTV.setText("Remove player ?");
+        messageTV.setText("Are you sure that you want to remove this player?");
+        confirmIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //change the original adapter because we remove item from
+                adapter.playerList.remove(viewHolder.getAdapterPosition());
+                updateToServer();
+                String id_remove = playersList.get(viewHolder.getAdapterPosition()).get_id();
+                member_id.remove(id_remove);
+                adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                alertDialog.dismiss();
+            }
+        });
+        unConfirmIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                adapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    private void refreshDisplay() {
+        grfGroupDB.requestGroupFromServer(spref.getDisplayGroupId(),MainActivity.TAB_GROUP);
     }
 
     private void moveItem(int fromPos, int toPos) {
         Player player = playersList.get(fromPos);
         playersList.remove(fromPos);
         playersList.add(toPos, player);
+        member_id.clear();
+        for (Player p:playersList) {
+            member_id.add(p.get_id());
+        }
         adapter.notifyItemMoved(fromPos, toPos);
 
     }
 
-    private void addGroupMembers() {
-        Snackbar.make(getView(),"Create add members to group from server",Snackbar.LENGTH_LONG).show();
+    private void addGroupMembersDialog() {
+        grfPlayerDB.openPlayerQueryDialog();
     }
 
     @Override
@@ -552,7 +561,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         //hide next game frame
     }
 
-
     private GroupPlay createGroupFromView() {
         GroupPlay defaultGroup = spref.getDisplayGroup();
         String name,wherePlay,whenPlay,ngpitch,ngprice,ngdate,ngLocation,picture;
@@ -692,6 +700,14 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     public void callUpdateGroupFromMain() {
         updateToServer();
     }
+
+    @Override
+    public void addMemberToGroup(String id) {
+        member_id.add(id);
+        updateToServer();
+        grfGroupDB.requestGroupFromServer(spref.getDisplayGroup().getId(),MainActivity.TAB_GROUP);
+    }
+
     public void updateToServer() {
         if (isAdmin){
             ((MainActivity)getActivity()).displayingGroup = createGroupFromView();
