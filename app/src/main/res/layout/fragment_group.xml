@@ -23,12 +23,12 @@
             android:background="@color/team_avatar_background"/>
 
         <ImageView
-            style="@style/GroupFrag_SmallImageView"
             android:id="@+id/group_messenger_ic_grf"
+            style="@style/GroupFrag_SmallImageView"
+            android:layout_marginTop="8dp"
             android:src="@drawable/announcment"
             app:layout_constraintStart_toEndOf="@id/thumbnail_grf"
-            app:layout_constraintTop_toTopOf="@id/name_tv_grf"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
             android:layout_marginTop="10dp"
             app:layout_constraintTop_toTopOf="parent"
