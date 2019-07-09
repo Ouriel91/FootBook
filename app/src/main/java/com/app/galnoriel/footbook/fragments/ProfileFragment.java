@@ -729,7 +729,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         if (canEdit) {
             Log.d("updatePrfToServer",createPlayerFromView().toLogString());
             sPref.setDisplayProfile(createPlayerFromView());
-            if (!(sPref.getDisplayProfile().getName().equals("Guest") || sPref.getDisplayProfile().getName().contains("Please")))
+            if (!(sPref.getDisplayProfile().getName().equals("Guest") || sPref.getDisplayProfile().getName().contains("Please")) || sPref.getDisplayProfile().getName().equals(res.getString(R.string.login_please)))
                 prfPlayerDB.updatePlayerInServer(createPlayerFromView());
             //will create player from view only if currently editing own profile
         }

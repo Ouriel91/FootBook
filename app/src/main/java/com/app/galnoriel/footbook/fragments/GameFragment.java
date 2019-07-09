@@ -179,9 +179,9 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
     }
 
     private void displayGame() {
-        try{//may fail if no group in pref
-        if (!sPref.getDisplayGroup().getMembers_id().contains(sPref.getUserId()))
-            return;}catch (Exception e){e.printStackTrace();}
+//        try{//may fail if no group in pref
+//        if (!sPref.getDisplayGroup().getMembers_id().contains(sPref.getUserId()))
+//            return;}catch (Exception e){e.printStackTrace();}
         nextGame =  sPref.getDisplayGroup().getNextGame();
         try {nextGame.getDate();}
         catch (Exception e){e.printStackTrace();nextGame = new Game();}
