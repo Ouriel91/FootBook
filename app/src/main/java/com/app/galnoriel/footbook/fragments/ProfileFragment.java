@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -255,10 +256,15 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                     //TODO: create dialog for join or create group
                     android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
                     View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
-                    ImageView createBtn = dialogView.findViewById(R.id.confirm_iv);
-                    createBtn.setImageDrawable(res.getDrawable(R.drawable.orange_btn));
-                    ImageView joinBtn = dialogView.findViewById(R.id.unconfirm_iv);
-                    joinBtn.setImageDrawable(res.getDrawable(R.drawable.white_btn));
+                    dialogView.findViewById(R.id.create_btns_linear).setVisibility(View.VISIBLE);
+                    dialogView.findViewById(R.id.confirm_btns_linear).setVisibility(View.GONE);
+                    Button createBtn = dialogView.findViewById(R.id.create_group_btn);
+                    Button joinBtn = dialogView.findViewById(R.id.join_group_btn);
+                    TextView massageTV = dialogView.findViewById(R.id.message_tv);
+                    TextView titleTV = dialogView.findViewById(R.id.title_tv);
+                    titleTV.setText(res.getString(R.string.find_group));
+                    massageTV.setText(res.getString(R.string.create_or_search_group));
+
                     builder.setView(dialogView);
                     alertDialog = builder.create();
                     alertDialog.show();

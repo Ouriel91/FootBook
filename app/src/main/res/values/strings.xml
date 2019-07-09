@@ -62,6 +62,11 @@
     <string name="free">Free</string>
     <string name="search_query">Looking for something?</string>
     <string name="position">Position</string>
+    <string name="create">Create</string>
+    <string name="search">Search</string>
+    <string name="find_group">Join Group</string>
+    <string name="create_or_search_group">Create new group \nor find your friends</string>
+    <string name="date_not_set">When?</string>
 
 
     <string-array name="pitch_spinner">

@@ -231,9 +231,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void updateUserDataBase(){
-
-    }
 
     private void setupViewPager(ViewPager viewPager) {
         SectionsAdapter adapter = new SectionsAdapter(getSupportFragmentManager());
@@ -774,7 +771,6 @@ public class MainActivity extends AppCompatActivity
         alertDialog = builder.create();
         alertDialog.show();
     }
-
 
     @Override
     public void openPlayerQueryDialog() {

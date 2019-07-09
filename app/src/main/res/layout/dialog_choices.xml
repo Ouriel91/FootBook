@@ -16,13 +16,20 @@
     <LinearLayout
         style="@style/Dialog_Inner_Frame"
         android:background="@color/lists_background"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="5dp">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/title_tv" />
+            android:id="@+id/title_tv"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="10dp"/>
         <TextView
-            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/message_tv" />
 
@@ -34,6 +41,7 @@
         android:gravity="center"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:id="@+id/confirm_btns_linear"
         >
 
         <ImageButton
@@ -51,6 +59,37 @@
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
             android:src="@drawable/cancel" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:id="@+id/create_btns_linear"
+        android:visibility="gone"
+
+        >
+
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/create_group_btn"
+            android:background="@drawable/shape_create_group_btn"
+            android:layout_margin="10dp"
+            android:text="@string/create"
+            style="@style/Create_Group_dialog_BTN"
+             />
+
+        <Button
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:id="@+id/join_group_btn"
+            android:background="@drawable/shape_join_group_btn"
+            android:text="@string/search"
+            style="@style/Create_Group_dialog_BTN"
+
+            />
+
     </LinearLayout>
 
 </LinearLayout>
