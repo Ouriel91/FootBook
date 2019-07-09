@@ -92,7 +92,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     private StorageTask mUploadTask;
     Uri photoURI;
     private Uri imageUri;
-    private CustomSharedPrefAdapter sPref;
+
 
 
 
@@ -342,7 +342,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
         if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
 
-            StorageReference reference = mStorageRef.child("photos").child(photoURI.getLastPathSegment());
+            StorageReference reference = mStorageRef.child("g_photos").child(photoURI.getLastPathSegment());
 
             reference.putFile(photoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -354,9 +354,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                         public void onSuccess(Uri uri) {
 
                             String photoStringLink = uri.toString();
-                            sPref.setGroupPathImage(photoStringLink);
+                            spref.setGroupPathImage(photoStringLink);
 
-                            Glide.with(getActivity()).load(sPref.getGroupPathImage())
+                            Glide.with(getActivity()).load(spref.getGroupPathImage())
                                     .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.team_avatar))
                                     .into(thumbnailIV);
                         }
@@ -416,9 +416,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                         Uri downloadUri = task.getResult();
                         String url = downloadUri.toString();
 
-                        sPref.setGroupPathImage(url);
+                        spref.setGroupPathImage(url);
 
-                        Glide.with(getActivity()).load(sPref.getGroupPathImage())
+                        Glide.with(getActivity()).load(spref.getGroupPathImage())
                                 .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.team_avatar))
                                 .into(thumbnailIV);
                     }
