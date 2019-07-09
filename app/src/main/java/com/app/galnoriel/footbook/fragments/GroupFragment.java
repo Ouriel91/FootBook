@@ -290,11 +290,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         res = getResources();
 
         //region clicklisteners
-//        thumbnailIV.setOnClickListener(this);
-//        ngPitchIV.setOnClickListener(this);
-//        ngDateIV.setOnClickListener(this);
-//        ngPriceIV.setOnClickListener(this);
-//        ngLocationIV.setOnClickListener(this);
         nameTV.setOnClickListener(this);
         wherePlayTV.setOnClickListener(this);
         whenPlayTV.setOnClickListener(this);
@@ -305,9 +300,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
 
 
-        Glide.with(getActivity()).load(spref.getGroupPathImage())
-                .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.team_avatar))
-                .into(thumbnailIV);
 
         //endregion
 
@@ -334,9 +326,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         //endregion
 
         //region image
-        thumbnailIV.setOnLongClickListener(new View.OnLongClickListener() {
+        thumbnailIV.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 if (isAdmin) {
                     android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
                     View dialogView = getLayoutInflater().inflate(R.layout.dialog_choices, null);
@@ -392,7 +384,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                         }
                     });
                 }
-                return true;
+                return ;
             }
         });
         //endregion
@@ -490,10 +482,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
                             String photoStringLink = uri.toString();
                             spref.setGroupPathImage(photoStringLink);
+                            showThumbnailImage(spref.getGroupPathImage());
 
-                            Glide.with(getActivity()).load(spref.getGroupPathImage())
-                                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.team_avatar))
-                                    .into(thumbnailIV);
+
                         }
                     });
 
@@ -507,6 +498,13 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             imageUri = data.getData();
 
         }
+    }
+
+    private void showThumbnailImage(String imageUri) {
+        Glide.with(getActivity()).load(imageUri)
+                .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.team_avatar))
+                .into(thumbnailIV);
+        thumbnailIV.setTag(imageUri);
     }
 
     private void uploadFile() {
@@ -624,6 +622,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
     private void displayGroup(GroupPlay g) {
         spref.setDisplayGroupId(g.getId());
+        spref.setDisplayGroup(g);
         playersList = new ArrayList<>();
         admins_id = new ArrayList<>();
         member_id = new ArrayList<>();
@@ -641,15 +640,12 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             ngLocationTV.setText(nextGame.getLocation());
         }else
             hideNextGameView();
-
         //set thumbnail
-        try{picture = g.getPicture();}
-        catch (Exception e){e.printStackTrace();picture = "default";}
-
+        try{showThumbnailImage(g.getPicture());}
+        catch (Exception e){e.printStackTrace();}
         whenPlayTV.setText(g.getWhenPlay());
         wherePlayTV.setText(g.getWherePlay());
         nameTV.setText(g.getName());
-
         //region recycler adapter
         //setting gridLayout
         groupRV.setHasFixedSize(true);
@@ -670,7 +666,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                     member_id.add(id);
             }
         }catch (Exception e ) {e.printStackTrace();}
-
         refreshList();
     }
 
@@ -708,8 +703,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         ngprice = "Free";
         ngpitch = "Asphalt";
         ngLocation = "Not Set";
-        picture = "";
-        ngdate = "";
+        picture = "No Picture";
+        ngdate = "When?";
         boolean nextGameExist = true;
         try{name = nameTV.getText().toString();}
         catch (Exception e){e.printStackTrace();name = defaultGroup.getName();}

@@ -70,6 +70,34 @@ public class CustomSharedPrefAdapter {
 
     }
 
+    public void setDisplayGroup(GroupPlay g){
+        clearDisplayGroupInfo();
+        sharedPreferences.edit()
+                .putString(DISPLAY_GROUP_ID,g.getId())
+                .putString(DISPLAY_GROUP_NAME,g.getName())
+                .putString(DISPLAY_GROUP_TIME,g.getWhenPlay())
+                .putString(DISPLAY_GROUP_WHERE_PLAY,g.getWherePlay())
+                .putString(DISPLAY_GROUP_PICTURE,g.getPicture())
+                .putString(DISPLAY_GROUP_MEMBERS,g.getMembers_id().toString())
+                .apply();
+        //also set default group id on server
+    }
+
+    public void clearDisplayGroupInfo(){
+        sharedPreferences.edit()
+                .remove(DISPLAY_GROUP_ID).remove(DISPLAY_GROUP_MEMBERS).remove(DISPLAY_GROUP_NAME)
+                .remove(DISPLAY_GROUP_PICTURE).remove(DISPLAY_GROUP_TIME).remove(DISPLAY_GROUP_WHERE_PLAY)
+                .apply();
+    }
+
+    public void setDisplayGroupId(String groupId){
+        putString(DISPLAY_GROUP_ID,groupId);
+    }
+
+    public String getDisplayGroupId(){
+        return getString(DISPLAY_GROUP_ID,null);
+    }
+
     public boolean getLoginStatus(){
         return sharedPreferences.getBoolean(IS_SIGNED_IN,false);
     }
@@ -82,7 +110,9 @@ public class CustomSharedPrefAdapter {
         return getString(MY_USER_ID,"Not Found");
     }
 
+    //region profile displaying
     public void setDisplayProfile(Player player) {
+        clearDisplayProfileInfo();
         sharedPreferences.edit()
                 .putString(DISPLAY_USER_ID,player.get_id())
                 .putString(DISPLAY_USER_NAME,player.getName())
@@ -116,20 +146,7 @@ public class CustomSharedPrefAdapter {
                 .remove(DISPLAY_USER_POSITION).remove(DISPLAY_USER_PITCH).remove(DISPLAY_USER_WHERE_PLAY)
                 .remove(DISPLAY_USER_PICTURE).remove(DISPLAY_USER_GROUPS).apply();
     }
-
-    public void setCurrentUser(Player player) {
-        sharedPreferences.edit()
-                .putString(MY_USER_ID,player.get_id())
-                .putString(USER_NAME,player.getName())
-                .putString(USER_WHERE_FROM,player.getWhereFrom())
-                .putString(USER_POSITION,player.getPosition())
-                .putString(USER_PITCH,player.getPitch())
-                .putString(USER_WHERE_PLAY,player.getWherePlay())
-//                .putString(USER_PICTURE,player.getPicture())
-//                .putString(USER_GROUPS,player.getGroups_ids().toString())
-                .apply();
-        Log.d("CURRENT display user:\n",player.toLogString());
-    }
+//endregion
 
     public void removeCurrentUserInfo(){
         sharedPreferences.edit()
@@ -140,14 +157,6 @@ public class CustomSharedPrefAdapter {
 
     public void setUserId(String currentUserId){
         putString(MY_USER_ID,currentUserId);
-    }
-
-    public void setDisplayGroupId(String groupId){
-        putString(DISPLAY_GROUP_ID,groupId);
-    }
-
-    public String getDisplayGroupId(){
-        return getString(DISPLAY_GROUP_ID,null);
     }
 
     public void setDisplayProfileId(String groupId){
@@ -208,8 +217,6 @@ public class CustomSharedPrefAdapter {
         return getString(DISPLAY_GROUP_PICTURE,"Not Found");
     }
 
-
-
     public void setDefaultGroup(GroupPlay g){
         sharedPreferences.edit()
                 .putString(DEFAULT_GROUP_ID,g.getId())
@@ -218,18 +225,6 @@ public class CustomSharedPrefAdapter {
                 .putString(DEFAULT_GROUP_WHERE_PLAY,g.getWherePlay())
                 .putString(DEFAULT_GROUP_PICTURE,g.getPicture())
                 .putString(DEFAULT_GROUP_MEMBERS,g.getMembers_id().toString())
-                .apply();
-        //also set default group id on server
-    }
-
-    public void setDisplayGroup(GroupPlay g){
-        sharedPreferences.edit()
-                .putString(DISPLAY_GROUP_ID,g.getId())
-                .putString(DISPLAY_GROUP_NAME,g.getName())
-                .putString(DISPLAY_GROUP_TIME,g.getWhenPlay())
-                .putString(DISPLAY_GROUP_WHERE_PLAY,g.getWherePlay())
-                .putString(DISPLAY_GROUP_PICTURE,g.getPicture())
-                .putString(DISPLAY_GROUP_MEMBERS,g.getMembers_id().toString())
                 .apply();
         //also set default group id on server
     }
