@@ -33,8 +33,8 @@
     </LinearLayout>
 
     <ImageButton
-        style="@style/Dialog_Buttons"
-        android:background="@color/colorPrimary"
+        style="@style/Yes_or_No_Dialog_Buttons"
+        android:src="@drawable/confirm"
         android:id="@+id/send_iv"
         />
 

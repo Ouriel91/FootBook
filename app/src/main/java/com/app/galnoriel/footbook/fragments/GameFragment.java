@@ -27,6 +27,7 @@ import android.widget.ToggleButton;
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
 import com.app.galnoriel.footbook.Services.TimerService;
+import com.app.galnoriel.footbook.classes.CustomSharedPrefAdapter;
 import com.app.galnoriel.footbook.classes.Game;
 import com.app.galnoriel.footbook.interfaces.GetGameFromMain;
 import com.app.galnoriel.footbook.interfaces.MainToGameFrag;
@@ -34,7 +35,7 @@ import com.app.galnoriel.footbook.interfaces.MainToGameFrag;
 import java.util.Locale;
 
 public class GameFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener, MainToGameFrag {
-//region global declaration
+    //region global declaration
     private View view;
     private Game nextGame;
     private ToggleButton start_timer;
@@ -47,10 +48,18 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
     private boolean isTimerRunning;
     private Resources res;
     public GetGameFromMain nextGameFromMain;
-//    public MainToGameFrag nextGAmeReciever;
+    private CustomSharedPrefAdapter sPref;
     private TextView timer_tv;
     private int time = 0;
 //endregion
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        sPref = new CustomSharedPrefAdapter(context);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -58,41 +67,15 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         displayGame();
     }
 
-    private void displayGame() {
-        String price = nextGame.getPrice();
-        String pitch = nextGame.getPitch();
-        priceTV.setText(price);
-        pitchTV.setText(pitch);
-        dateTV.setText(nextGame.getDate());
-        locationTV.setText(nextGame.getLocation());
-        //handle price icon
-        Log.d("changeNextGamePriceIcon", "cahngin to: "+price);
-        if (price.toLowerCase().equals("free") || price.equals("0") || price.isEmpty()) {
-            priceIV.setImageDrawable(res.getDrawable(R.drawable.price_free));
-            priceTV.setText(res.getString(R.string.free));
-        }else
-            priceIV.setImageDrawable(res.getDrawable(R.drawable.price));
-        //handle pitch icon
-        String[] type = getResources().getStringArray(R.array.pitch_spinner);
-        if (pitch.equals(type[0]))
-            pitchIV.setImageDrawable(res.getDrawable(R.drawable.asphalt));
-        else if (pitch.equals(type[1]))
-            pitchIV.setImageDrawable(res.getDrawable(R.drawable.synthetic));
-        else
-            pitchIV.setImageDrawable(res.getDrawable(R.drawable.football_field_ic));
-
-
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-         view = inflater.inflate(R.layout.fragment_game, container, false);
+        view = inflater.inflate(R.layout.fragment_game, container, false);
 
         res = getResources();
 //        nextGAmeReciever = this ;
 
-         //region score layout and listeners
+        //region score layout and listeners
         Button left_score = view.findViewById(R.id.left_score_btn_gamf);
         Button right_score = view.findViewById(R.id.right_score_btn_gamf);
         //click to increase score, long click to cancel goal (decrease)
@@ -100,13 +83,11 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         left_score.setOnLongClickListener(this);
         right_score.setOnClickListener(this);
         right_score.setOnLongClickListener(this);
-//endregion
+        //endregion
 
         //region timer layout and listeners
         start_timer = view.findViewById(R.id.start_timer_gamf);
         ImageButton reset_timer = view.findViewById(R.id.reset_timer_gamf);
-
-
         timer_tv = view.findViewById(R.id.timer_tv);
         timer_tv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,9 +175,42 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         dateTV = view.findViewById(R.id.date_tv_gamf);
         //endregion
 
-
-
         return view;
+    }
+
+    private void displayGame() {
+        try{//may fail if no group in pref
+        if (!sPref.getDisplayGroup().getMembers_id().contains(sPref.getUserId()))
+            return;}catch (Exception e){e.printStackTrace();}
+        nextGame =  sPref.getDisplayGroup().getNextGame();
+        try {nextGame.getDate();}
+        catch (Exception e){e.printStackTrace();nextGame = new Game();}
+        String price = "0";
+        String pitch = "Grass";
+        try {price = nextGame.getPrice();}
+        catch (Exception e){e.printStackTrace();}
+        try{ pitch = nextGame.getPitch();}
+        catch (Exception e){e.printStackTrace();}
+        priceTV.setText(price);
+        pitchTV.setText(pitch);
+        dateTV.setText(nextGame.getDate());
+        locationTV.setText(nextGame.getLocation());
+        //handle price icon
+        Log.d("changeNextGamePriceIcon", "cahngin to: "+price);
+        if (price.toLowerCase().equals("free") || price.equals("0") || price.isEmpty()) {
+            priceIV.setImageDrawable(res.getDrawable(R.drawable.price_free));
+            priceTV.setText(res.getString(R.string.free));
+        }else
+            priceIV.setImageDrawable(res.getDrawable(R.drawable.price));
+        //handle pitch icon
+        String[] type = getResources().getStringArray(R.array.pitch_spinner);
+        if (pitch.equals(type[0]))
+            pitchIV.setImageDrawable(res.getDrawable(R.drawable.asphalt));
+        else if (pitch.equals(type[1]))
+            pitchIV.setImageDrawable(res.getDrawable(R.drawable.synthetic));
+        else
+            pitchIV.setImageDrawable(res.getDrawable(R.drawable.football_field_ic));
+
     }
 
     private void startTimer() {

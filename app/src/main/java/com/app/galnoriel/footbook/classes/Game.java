@@ -43,8 +43,6 @@ public class Game {
         hash.put(PITCH_TYPE,pitch);
         hash.put(GAME_PRICE,price);
         hash.put(GAME_DATE,date);
-//        hash.put(GAME_LAT,String.valueOf(location.latitude));
-//        hash.put(GAME_LON,String.valueOf(location.longitude));
         hash.put(GAME_LOCATION,location);
         return hash.toString();
     }

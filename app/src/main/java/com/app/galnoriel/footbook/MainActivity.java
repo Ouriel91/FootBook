@@ -573,6 +573,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case TAB_GAME:
 
+                viewPager.setCurrentItem(TAB_GAME,true);
                 break;
             case TAB_MAP:
 
