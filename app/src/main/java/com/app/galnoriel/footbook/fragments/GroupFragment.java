@@ -31,6 +31,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.galnoriel.footbook.GlobConst;
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
 import com.app.galnoriel.footbook.adapters.MembersListAdapter;
@@ -54,6 +55,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -66,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnClickListener {
     //all layout ids end with ' grf ' (for Group Fragment)
@@ -82,7 +89,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     public AccessGroupDB grfGroupDB;
     public AccessPlayerDB grfPlayerDB;
     CustomSharedPrefAdapter spref;
-    private ImageView thumbnailIV,ngPitchIV,ngDateIV,ngPriceIV,ngLocationIV;
+    private ImageView thumbnailIV,ngPitchIV,ngDateIV,ngPriceIV,ngLocationIV, groupMessengerIV;
     private TextView nameTV,wherePlayTV,whenPlayTV,ngPitchTV,ngDateTV,ngPriceTV,ngLocationTV;
     private LinearLayout addMemberLin,nextGame;
     File pictureFile;
@@ -94,9 +101,12 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     private StorageTask mUploadTask;
     Uri photoURI;
     private Uri imageUri;
+    FirebaseMessaging messaging = FirebaseMessaging.getInstance();
+    final String API_TOKEN_KEY = "AAAA5DH5UWc:APA91bGUSMXuHx9waChZZCC01IHcChrSgzcpztdi2mkacxa-LwkBRdAgHD_ECL9AkryT37Db-AuCJsuKMBxqgTEMEME6OmUEYjpMZuL1XtpsTPwhfsIhGGu15N3OM-pBiN0dESGN-L_1";
+    BroadcastReceiver receiver;
+    FirebaseFirestore db;
+
 //endregion
-
-
 
     @Override
     public void onResume() {
@@ -139,9 +149,12 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         ngDateTV = view.findViewById(R.id.next_game_date_grf);
         ngPriceTV = view.findViewById(R.id.next_price_tv_grf);
         ngLocationTV = view.findViewById(R.id.next_game_location_grf);
+        groupMessengerIV = view.findViewById(R.id.group_messenger_ic_grf);
 
         mStorageRef = FirebaseStorage.getInstance().getReference("g_uploads");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("g_uploads");
+        db = FirebaseFirestore.getInstance();
+
         //endregion
         addMemberLin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,6 +177,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         ngDateTV.setOnClickListener(this);
         ngPriceTV.setOnClickListener(this);
         ngLocationTV.setOnClickListener(this);
+        groupMessengerIV.setOnClickListener(this);
 
 
         Glide.with(getActivity()).load(spref.getGroupPathImage())
@@ -568,7 +582,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     private GroupPlay createGroupFromView() {
         GroupPlay defaultGroup = spref.getDisplayGroup();
 
-        //defaultGroup.getMembers_id();
+
         String name,wherePlay,whenPlay,ngpitch,ngprice,ngdate,ngLocation,picture;
         Game nextGame;
         ngprice = "Free";
@@ -646,6 +660,43 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                     arrayId = R.array.pitch_spinner;
                     break;
 
+                case R.id.group_messenger_ic_grf:
+                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+                    View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
+
+                    final EditText messageET = dialogView.findViewById(R.id.message_et);
+                    ImageButton sendIV = dialogView.findViewById(R.id.send_iv);
+                    builder.setView(dialogView);
+                    alertDialog = builder.create();
+                    alertDialog.show();
+
+                    sendIV.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String message = messageET.getText().toString();
+                            DocumentReference reference = db.collection(GlobConst.DB_GROUP_TABLE)
+                                    .document("KahmKVY4wwiYbKDHFb12");
+                            reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                                    if (documentSnapshot.exists()){
+                                        Map<String, Object> map = documentSnapshot.getData();
+                                        for (Map.Entry<String, Object> entry : map.entrySet()) {
+                                            if (entry.getKey().equals("MEMBERS ID")) {
+
+                                                String member = entry.getValue().toString();
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                            alertDialog.dismiss();
+                        }
+                    });
+                    break;
+
             }
             //make alert dialog pop dynamically
             ArrayAdapter<CharSequence> spAdapter = ArrayAdapter.createFromResource(getContext(), arrayId,
@@ -720,5 +771,11 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             grfGroupDB.updateGroupInServer(createGroupFromView());
 
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
     }
 }
