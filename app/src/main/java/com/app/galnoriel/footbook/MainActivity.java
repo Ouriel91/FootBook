@@ -749,16 +749,16 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
 
                 resultList.clear();
-                Query query = db.collection(GlobConst.DB_USER_TABLE).whereEqualTo(GlobConst.DB_USER_NAME, searchED.getText()+"");
+                Query query = db.collection(GlobConst.DB_GROUP_TABLE).whereEqualTo(GlobConst.DB_GROUP_NAME, searchED.getText()+"");
                 query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful())
                             for (DocumentSnapshot p:task.getResult().getDocuments()) {
                                 HashMap<String,String> result = new HashMap<>();
-                                result.put(GlobConst.DB_USER_NAME,p.getString(GlobConst.DB_USER_NAME));
-                                result.put(GlobConst.DB_USER_ID,p.getId());
-                                result.put(GlobConst.DB_USER_POSITION,p.getString(GlobConst.DB_USER_POSITION));
+                                result.put(GlobConst.DB_GROUP_NAME,p.getString(GlobConst.DB_USER_NAME));
+                                result.put(GlobConst.DB_GROUP_ID,p.getId());
+                                result.put(GlobConst.DB_GROUP_WHEREPLAY,p.getString(GlobConst.DB_GROUP_WHEREPLAY));
                                 Log.d("QUERRY COMPLETED!",p.getData()+"  "+p.getId());
                                 resultList.add(result);
                             }
@@ -856,5 +856,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onPageScrollStateChanged(int i) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sharedPref.clearDisplayProfileInfo();
+        sharedPref.clearDisplayProfileInfo();
     }
 }

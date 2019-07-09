@@ -267,7 +267,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                     joinBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            displayGroup();
+                            displayGroupSearchDialog();
                             alertDialog.dismiss();
                         }
                     });
@@ -522,7 +522,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
             Log.d("displayProfile","Trying to fetch group: "+id);
             prfGroupDB.requestGroupFromServer(id,MainActivity.TAB_PROFILE);
         }
-        Log.d("displayProfile: ", p.get_id());
+        Log.d("displayProfile: ", p.get_id() +"\n"+ p.toLogString());
 
         refreshGroupList();
     }
@@ -567,7 +567,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     }
 
     //endregion
-    private void displayGroup() {
+    private void displayGroupSearchDialog() {
 //        Snackbar.make(getView(),"Create add groups from server",Snackbar.LENGTH_LONG).show();
         prfGroupDB.openGroupQueryDialog();
 
@@ -727,8 +727,9 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
     private Player updateProfileToServer() {
         if (canEdit) {
+            Log.d("updatePrfToServer",createPlayerFromView().toLogString());
             sPref.setDisplayProfile(createPlayerFromView());
-            if (!(sPref.getDisplayProfile().getName().equals("Guest") || sPref.getDisplayProfile().getName().contains("Please Sign")))
+            if (!(sPref.getDisplayProfile().getName().equals("Guest") || sPref.getDisplayProfile().getName().contains("Please")))
                 prfPlayerDB.updatePlayerInServer(createPlayerFromView());
             //will create player from view only if currently editing own profile
         }
