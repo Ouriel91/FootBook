@@ -17,6 +17,13 @@ public class Game {
     public static String GAME_LON = "GAME_LON";
     public static String GAME_LOCATION = "GAME_LOCATION";
 
+    public Game() {
+        date = "";
+        pitch = "Grass";
+        price = "Free";
+        location = "Not Set";
+    }
+
     //region functions
 
     public HashMap<String,Object> toHashMap(){
