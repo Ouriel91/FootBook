@@ -51,6 +51,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
     private CustomSharedPrefAdapter sPref;
     private TextView timer_tv;
     private int time = 0;
+
 //endregion
 
 

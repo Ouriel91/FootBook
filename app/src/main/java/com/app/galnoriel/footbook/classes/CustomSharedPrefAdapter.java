@@ -238,4 +238,11 @@ public class CustomSharedPrefAdapter {
     }
 
 
+    public String getUserName() {
+        return getString(USER_NAME,"");
+    }
+
+    public void setUserName(String userName){
+        putString(USER_NAME,userName);
+    }
 }

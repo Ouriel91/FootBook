@@ -183,8 +183,9 @@ public class MainActivity extends AppCompatActivity
                     sharedPref.setUserId(currentUser.getUid());  //save user id
                     sharedPref.setLoginStatus(true);
                     getPlayerFromServer(currentUser.getUid(),TAB_PROFILE);
-                    loginTV.setText(getResources().getString(R.string.wellcom));
-                    userLoginTV.setText(currentUser.getDisplayName());
+                    loginTV.setText(currentUser.getDisplayName());
+                    sharedPref.setUserName(currentUser.getDisplayName());
+                    userLoginTV.setText(getResources().getString(R.string.wellcom));
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(false);
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(false);
                     navigationView.getMenu().findItem(R.id.reset_password).setVisible(false);

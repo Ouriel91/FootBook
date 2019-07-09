@@ -143,7 +143,7 @@
     <string name="score">Score</string>
     <string name="home">Home</string>
     <string name="away">Away</string>
-    <string name="wellcom">Wellcom!!!</string>
+    <string name="wellcom">Welcome</string>
     <string name="check_your_email">Check your email account to restore your user and sign in again</string>
     <string name="bye_bye">Bye Bye</string>
     <string name="sign_in_succ">Sign in succsessfull</string>
@@ -174,5 +174,6 @@
     <string name="create_new_chat">Create new chat</string>
     <string name="free_role">Free role</string>
     <string name="anywhere">Anywhere</string>
+    <string name="error_chat_with_self">If you need to chat with yourself just get a MIRROR :)</string>
 
 </resources>

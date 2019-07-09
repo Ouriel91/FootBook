@@ -1,5 +1,6 @@
 package com.app.galnoriel.footbook.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,12 +27,20 @@ import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
 import com.app.galnoriel.footbook.classes.Upload;
@@ -54,18 +63,24 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.OnClickListener {
@@ -94,6 +109,9 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     private Uri imageUri;
     private FirebaseAuth firebaseAuth;
     FirebaseAuth.AuthStateListener mAuthListener;
+    FirebaseMessaging messaging = FirebaseMessaging.getInstance();
+    final String API_TOKEN_KEY = "AAAA5DH5UWc:APA91bGUSMXuHx9waChZZCC01IHcChrSgzcpztdi2mkacxa-LwkBRdAgHD_ECL9AkryT37Db-AuCJsuKMBxqgTEMEME6OmUEYjpMZuL1XtpsTPwhfsIhGGu15N3OM-pBiN0dESGN-L_1";
+    BroadcastReceiver receiver;
 
 //endregion
 
@@ -113,8 +131,6 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         super.onPause();
         updateProfileToServer(); //will work only if canEdit = true
     }
-
-
 
     @Override
     public void onAttach(Context context) {
@@ -150,13 +166,12 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 //check for edit profile permissions:
 
         //only if has edit permission all listeners of edit will be set:
-
+        messaging.subscribeToTopic("PRVCHAT");
         nameTV.setOnClickListener(this);
         whereFromTV.setOnClickListener(this);
         wherePlayTV.setOnClickListener(this);
         positionTV.setOnClickListener(this);
         pitchTV.setOnClickListener(this);
-//        showThumbnailImage(sPref.getUserPathImage());
         profileRV.setHasFixedSize(true);
         profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -278,11 +293,17 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         });
 
         //open chat with player:
+        messaging.subscribeToTopic(sPref.getUserId());
+
         chatIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(getView(),getResources().getString(R.string.create_new_chat),Snackbar.LENGTH_LONG).show();
-//                openChat(sPref.getUserId(),sPref.getDisplayingUid);
+//                if (sPref.getUserId().equals(sPref.getDisplayUserId())) {
+//                    Snackbar.make(getView(), getResources().getString(R.string.error_chat_with_self), Snackbar.LENGTH_LONG).show();
+//                    return;
+//                }
+                createMassageDialog();
+
             }
         });
 
@@ -291,6 +312,68 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
         return view;
     }
+
+    private void createMassageDialog(){
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        View dialogView = getLayoutInflater().inflate(R.layout.message_dialog, null);
+        final EditText messageET = dialogView.findViewById(R.id.message_et);
+        ImageButton sendIV = dialogView.findViewById(R.id.send_iv);
+        builder.setView(dialogView);
+        alertDialog = builder.create();
+        sendIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = messageET.getText().toString();
+                openChat(message,sPref.getDisplayUserId());
+                alertDialog.dismiss();
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void openChat(String msg, String to_id) {
+
+        String name_from = sPref.getUserName();
+        final JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("to","/topics/"+to_id);
+            jsonObject.put("data",new JSONObject().put("message",msg));
+            String url = "https://fcm.googleapis.com/fcm/send";
+            RequestQueue queue = Volley.newRequestQueue(getActivity());
+            StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }){
+                //for post request, we did override on this functions
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Content-Type","application/json");
+                    //copy from cloud your server key
+                    headers.put("Authorization","key="+API_TOKEN_KEY);
+                    return headers;
+                }
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    return jsonObject.toString().getBytes();
+                }
+            };
+            queue.add(request);
+            queue.start();
+        } catch (
+                JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     private void showThumbnailImage(String imageUri) {
         Glide.with(getActivity()).load(imageUri)

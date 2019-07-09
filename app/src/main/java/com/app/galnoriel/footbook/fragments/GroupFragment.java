@@ -354,7 +354,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             }
         });
         //endregion
-
+        messaging.subscribeToTopic("FOOTBOOK");
         return view;
     }
 
