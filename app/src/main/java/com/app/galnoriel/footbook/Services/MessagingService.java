@@ -51,7 +51,7 @@ public class MessagingService extends FirebaseMessagingService {
 
             auth = FirebaseAuth.getInstance();
             FirebaseUser user = auth.getCurrentUser();
-            builder.setContentTitle("new message from " + user.getDisplayName()).setContentText(remoteMessage.getData().get("message"))
+            builder.setContentTitle(getResources().getString(R.string.new_message_from) + user.getDisplayName()).setContentText(remoteMessage.getData().get("message"))
                     .setSmallIcon(R.drawable.announcment)
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent)

@@ -342,8 +342,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                     alertDialog = builder.create();
                     alertDialog.show();
 
-                    titleTV.setText("Image change");
-                    messageTV.setText("Select image change option");
+                    titleTV.setText(getResources().getString(R.string.image_change));
+                    messageTV.setText(getResources().getString(R.string.image_change_option));
                     confirmIV.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -375,7 +375,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                             startActivityForResult(intent, IMAGE_PICK_REQUEST);
 
                             if (mUploadTask != null && mUploadTask.isInProgress()) {
-                                Snackbar.make(getView(), "Upload in progress", Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(getView(), getResources().getString(R.string.upload_in_progress), Snackbar.LENGTH_LONG).show();
                             } else {
                                 uploadFile();
                             }
@@ -422,8 +422,8 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         builder.setView(dialogView);
         alertDialog = builder.create();
         alertDialog.show();
-        titleTV.setText("Remove player ?");
-        messageTV.setText("Are you sure that you want to remove this player?");
+        titleTV.setText(getResources().getString(R.string.remove_player));
+        messageTV.setText(getResources().getString(R.string.sure_remove_player));
         confirmIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

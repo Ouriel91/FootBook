@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity
                     sharedPref.setUserId(currentUser.getUid());  //save user id
                     sharedPref.setLoginStatus(true);
                     getPlayerFromServer(currentUser.getUid(),TAB_PROFILE);
-                    loginTV.setText("Welcome!!!");
+                    loginTV.setText(getResources().getString(R.string.wellcom));
                     userLoginTV.setText(currentUser.getDisplayName());
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(false);
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(false);
@@ -194,8 +194,8 @@ public class MainActivity extends AppCompatActivity
                 else { //signed out
                     sharedPref.setLoginStatus(false);
                     sharedPref.removeCurrentUserInfo();
-                    loginTV.setText("Please Log in");
-                    userLoginTV.setText("We are waiting for you");
+                    loginTV.setText(getResources().getString(R.string.login_please));
+                    userLoginTV.setText(getResources().getString(R.string.wait_for_you));
                     navigationView.getMenu().findItem(R.id.sign_in).setVisible(true);
                     navigationView.getMenu().findItem(R.id.sign_up).setVisible(true);
                     navigationView.getMenu().findItem(R.id.reset_password).setVisible(true);
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
-                                Snackbar.make(coordinatorLayout, "Check your email account to restore your user and sign in again",
+                                Snackbar.make(coordinatorLayout, getResources().getString(R.string.check_your_email),
                                         Snackbar.LENGTH_SHORT).show();
                             }
                             else {
@@ -372,7 +372,7 @@ public class MainActivity extends AppCompatActivity
 
     private void signOutUser() {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        Snackbar.make(coordinatorLayout, "Bye bye " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(coordinatorLayout, getResources().getString(R.string.bye_bye) +" " + currentUser.getDisplayName(), Snackbar.LENGTH_SHORT).show();
         currentUser = null;
         firebaseAuth.signOut();
         sendToPlayerFrag.onGetPlayerComplete(new Player());
@@ -399,10 +399,10 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()){
-                                    Snackbar.make(coordinatorLayout, "Sign in succesfull", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(coordinatorLayout, getResources().getString(R.string.sign_in_succ), Snackbar.LENGTH_SHORT).show();
                                 }
                                 else {
-                                    Snackbar.make(coordinatorLayout, "Sign in failed", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(coordinatorLayout, getResources().getString(R.string.sign_in_fail), Snackbar.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -435,10 +435,10 @@ public class MainActivity extends AppCompatActivity
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()){
                                     createNewProfileInServer();
-                                    Snackbar.make(coordinatorLayout, "Sign up successful", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(coordinatorLayout, getResources().getString(R.string.sign_up_succ), Snackbar.LENGTH_SHORT).show();
                                 }
                                 else {
-                                    Snackbar.make(coordinatorLayout, "Sign up failed", Snackbar.LENGTH_SHORT).show();
+                                    Snackbar.make(coordinatorLayout, getResources().getString(R.string.sign_up_fail), Snackbar.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -455,7 +455,8 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            Snackbar.make(coordinatorLayout, firebaseAuth.getCurrentUser().getDisplayName() + " Welcome",Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(coordinatorLayout, firebaseAuth.getCurrentUser().getDisplayName() + " "
+                                    +getResources().getString(R.string.wellcom),Snackbar.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -471,11 +472,11 @@ public class MainActivity extends AppCompatActivity
 
         String emailInput = emailLayout.getEditText().getText().toString().trim();
         if (emailInput.isEmpty()){
-            emailLayout.setError("Field cannot be empty");
+            emailLayout.setError(getResources().getString(R.string.field_not_empty));
             return false;
         }
         else if (!Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()){
-            emailLayout.setError("Please enter a valid email address");
+            emailLayout.setError(getResources().getString(R.string.valid_email));
             return false;
         }
         else {
@@ -500,11 +501,11 @@ public class MainActivity extends AppCompatActivity
 
         String usernameInput = userNameLayout.getEditText().getText().toString().trim();
         if (usernameInput.isEmpty()){
-            userNameLayout.setError("Field cannot be empty");
+            userNameLayout.setError(getResources().getString(R.string.field_not_empty));
             return false;
         }
         else if (usernameInput.length() > 20){
-            userNameLayout.setError("User name is too long");
+            userNameLayout.setError(getResources().getString(R.string.name_too_long));
             return false;
         }
         else {
@@ -518,15 +519,15 @@ public class MainActivity extends AppCompatActivity
         String confirmPassword = passwordConfirmLayout.getEditText().getText().toString().trim();
 
         if (password.isEmpty()){
-            passwordLayout.setError("Field cannot be empty");
+            passwordLayout.setError(getResources().getString(R.string.field_not_empty));
             return false;
         }else if(!PASSWORD_PATTERN.matcher(password).matches()){
-            passwordLayout.setError("Password must be at least 6 six characters with one capital letter");
+            passwordLayout.setError(getResources().getString(R.string.password_must_be));
             return false;
         }
         else if (PASSWORD_PATTERN.matcher(password).matches() && !password.equals(confirmPassword)){
             passwordLayout.setError(null);
-            passwordConfirmLayout.setError("Mismatch between two passwords");
+            passwordConfirmLayout.setError(getResources().getString(R.string.missmatch_passwords));
             return false;
         }
         else {
@@ -541,10 +542,10 @@ public class MainActivity extends AppCompatActivity
 
         String password = passwordLayout.getEditText().getText().toString().trim();
         if (password.isEmpty()){
-            passwordLayout.setError("Field cannot be empty");
+            passwordLayout.setError(getResources().getString(R.string.field_not_empty));
             return false;
         }else if(!PASSWORD_PATTERN.matcher(password).matches()){
-            passwordLayout.setError("Give password at least 6 six characters with one special character");
+            passwordLayout.setError(getResources().getString(R.string.password_must_be));
             return false;
         }
         else {
@@ -592,7 +593,7 @@ public class MainActivity extends AppCompatActivity
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Snackbar.make(coordinatorLayout, "New group create :  " + group.getName(), Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(coordinatorLayout, getResources().getString(R.string.group_created) + group.getName(), Snackbar.LENGTH_SHORT).show();
                         sharedPref.setDisplayGroup(group);
                         sendToPlayerFrag.onGetGroupComplete(group); //add to member in group view
                         sendToGroupFrag.onGetGroupComplete(group); //display in fragment

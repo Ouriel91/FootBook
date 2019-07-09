@@ -188,8 +188,8 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                     alertDialog = builder.create();
                     alertDialog.show();
 
-                    titleTV.setText("Image change");
-                    messageTV.setText("Select image change option");
+                    titleTV.setText(getResources().getString(R.string.image_change));
+                    messageTV.setText(getResources().getString(R.string.image_change_option));
                     confirmIV.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -222,7 +222,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                             startActivityForResult(intent, IMAGE_PICK_REQUEST);
 
                             if (mUploadTask != null && mUploadTask.isInProgress()) {
-                                Snackbar.make(getView(), "Upload in progress", Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(getView(), getResources().getString(R.string.upload_in_progress), Snackbar.LENGTH_LONG).show();
                             } else {
                                 uploadFile();
                             }
@@ -281,7 +281,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         chatIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(getView(),"Create new chat",Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getView(),getResources().getString(R.string.create_new_chat),Snackbar.LENGTH_LONG).show();
 //                openChat(sPref.getUserId(),sPref.getDisplayingUid);
             }
         });
@@ -497,13 +497,13 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         Log.d("displayProfile", "can edit? "+canEdit);
         String pitch,position,wherePlay,picture;
         try{pitch = p.getPitch();}
-        catch (Exception e){e.printStackTrace();pitch = "Asphalt";}
+        catch (Exception e){e.printStackTrace();pitch = res.getString(R.string.asphalt);}
         changePitchIcon(pitch);
         try{position = p.getPosition();}
-        catch (Exception e){e.printStackTrace();position = "Free Role";}
+        catch (Exception e){e.printStackTrace();position = res.getString(R.string.free_role);}
         changePositionIcon(position);
         try{wherePlay = p.getWherePlay();}
-        catch (Exception e){e.printStackTrace();wherePlay = "Anywhere";}
+        catch (Exception e){e.printStackTrace();wherePlay = res.getString(R.string.anywhere);}
         //handle profile picture:
         try{showThumbnailImage(p.getPicture());}
         catch (Exception e){e.printStackTrace();}

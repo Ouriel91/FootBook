@@ -138,5 +138,36 @@
     <string name="score">Score</string>
     <string name="home">Home</string>
     <string name="away">Away</string>
+    <string name="wellcom">Wellcom!!!</string>
+    <string name="check_your_email">Check your email account to restore your user and sign in again</string>
+    <string name="bye_bye">Bye Bye</string>
+    <string name="sign_in_succ">Sign in succsessfull</string>
+    <string name="sign_in_fail">Sign in failed</string>
+    <string name="sign_up_succ">Sign up succsessfull</string>
+    <string name="sign_up_fail">Sign up failed</string>
+    <string name="field_not_empty">Field cannot be empty</string>
+    <string name="valid_email">Please enter valid email</string>
+    <string name="name_too_long">Username is too long</string>
+    <string name="password_must_be">Password must be at least 6 six characters with one capital letter</string>
+    <string name="missmatch_passwords">Missmatch between two passwords</string>
+    <string name="group_created">New group created :</string>
+    <string name="time_is_up">Time is up!!!</string>
+    <string name="restart_game">Go to game page and start new game</string>
+    <string name="new_message_from">"New message from: "</string>
+    <string name="change_game_time">Change game time</string>
+    <string name="scroll_game_time_change">Scroll the time to change game length</string>
+    <string name="confirm">confirm</string>
+    <string name="cancel">cancel</string>
+    <string name="enter_valid_time">Enter valid time by click the text</string>
+    <string name="image_change">Image change</string>
+    <string name="image_change_option">Select image change option</string>
+    <string name="upload_in_progress">Upload image in progress</string>
+    <string name="remove_player">Remove player?</string>
+    <string name="sure_remove_player">Are you sure that you want remove this player?</string>
+    <string name="curr_location">Current location</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="create_new_chat">Create new chat</string>
+    <string name="free_role">Free role</string>
+    <string name="anywhere">Anywhere</string>
 
 </resources>

@@ -113,8 +113,8 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
             public void onClick(View v) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Update game time")
-                        .setMessage("Scroll the time to change game length");
+                builder.setTitle(getResources().getString(R.string.change_game_time))
+                        .setMessage(getResources().getString(R.string.scroll_game_time_change));
                 final View dialogView = getLayoutInflater().inflate(R.layout.edit_time_picker,null);
 
                 final NumberPicker timerNumberPicker = dialogView.findViewById(R.id.timer_num_picker);
@@ -124,7 +124,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
 
                 if (!start_timer.isChecked()){
                     builder.setView(dialogView)
-                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                            .setPositiveButton(getResources().getString(R.string.confirm), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
@@ -132,7 +132,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
                                     timer_tv.setText(time+":00");
                                 }
                             })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            .setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
@@ -151,7 +151,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
                 if (leftTimeInMillis == 0){
                     Long millisInput = 0L;
                     if (time == 0){
-                        Snackbar.make(MainActivity.coordinatorLayout,"Enter valid time by click the text",Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(MainActivity.coordinatorLayout,getResources().getString(R.string.enter_valid_time),Snackbar.LENGTH_SHORT).show();
                         start_timer.setChecked(false);
                         return;
                     }
