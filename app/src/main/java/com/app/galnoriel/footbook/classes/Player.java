@@ -19,8 +19,7 @@ public class Player {
 
     //region functions
     public void removeGroup(GroupPlay group){
-        groups_ids.remove(group);
-
+        groups_ids.remove(group.getId());
     }
 
     public void addGroup(String group){
@@ -39,11 +38,21 @@ public class Player {
         return user;
     }
 
-    public  String toLogString(){
-        return get_id()+"\n"+getName()+"\n"+getWhereFrom()+"\n"+getPosition()+"\n"+getPitch()+"\n"+getWherePlay()
-     //                +"\n"+getGroups_ids().toString()
-                ;
+    public  String toLogString() {
+        String toLog = get_id() + "\n" + getName() + "\n" + getWhereFrom() + "\n" + getPosition() + "\n" + getPitch() + "\n" + getWherePlay();
+        try {
+            toLog.concat("\n" + getGroups_ids().toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            toLog.concat("\n" + picture);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return toLog;
     }
+
 
     //endregion
 
@@ -72,16 +81,16 @@ public class Player {
     public Player(DocumentSnapshot playerProfile) { //construct player from server
         _id = playerProfile.getId(); //document name is the user id
         name = playerProfile.getString(GlobConst.DB_USER_NAME);
-        try{whereFrom = playerProfile.get(GlobConst.DB_USER_WHEREFROM).toString();}
+        try{whereFrom = playerProfile.getString(GlobConst.DB_USER_WHEREFROM);}
         catch (Exception e){whereFrom = "City";}
-        try {position = playerProfile.get(GlobConst.DB_USER_POSITION).toString();}
+        try {position = playerProfile.getString(GlobConst.DB_USER_POSITION);}
         catch (Exception e){position = "Free Role";}
-        try{pitch = playerProfile.get(GlobConst.DB_USER_PITCH).toString();}
+        try{pitch = playerProfile.getString(GlobConst.DB_USER_PITCH);}
         catch (Exception e){pitch = "Asphalt";}
-        try{wherePlay = playerProfile.get(GlobConst.DB_USER_WHEREPLAY).toString();}
+        try{wherePlay = playerProfile.getString(GlobConst.DB_USER_WHEREPLAY);}
         catch (Exception e){wherePlay = "Anywhere";}
-        try{picture = playerProfile.getString(GlobConst.DB_USER_PICTURE).toString();}
-        catch (Exception e){picture = null;Log.d("player construct GROUPS","    picture in null");}
+        try{picture = playerProfile.getString(GlobConst.DB_USER_PICTURE);}
+        catch (Exception e){picture = null;Log.d("player construct GROUPS","    picture is null");}
         try {groups_ids = (ArrayList<String>) playerProfile.get(GlobConst.DB_USER_GROUPS);
         Log.d("player construct GROUPS","  "+groups_ids.toString());}
         catch (Exception e){groups_ids = new ArrayList<String>();Log.d("player construct GROUPS","FAILED!! groups under "+_id);}

@@ -156,20 +156,11 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         wherePlayTV.setOnClickListener(this);
         positionTV.setOnClickListener(this);
         pitchTV.setOnClickListener(this);
-        Glide.with(getActivity()).load(sPref.getUserPathImage())
-                .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
-                .into(thumbnailIV);
-
-
+//        showThumbnailImage(sPref.getUserPathImage());
         profileRV.setHasFixedSize(true);
         profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         groupPlayList = new ArrayList<>();
-
-        //just fot trying
-        //region try
-
-        //endregion
 
         //region movement listeners from list adapter
         adapter = new GroupListAdapter(getActivity(), groupPlayList);
@@ -179,11 +170,11 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 //        profileRV.setAdapter(adapter);
         //endregion
 
-        //region image
+        //region thumbnail listener
 
-        thumbnailIV.setOnLongClickListener(new View.OnLongClickListener() {
+        thumbnailIV.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 if (canEdit) {
                     android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
                     View dialogView = getLayoutInflater().inflate(R.layout.dialog_choices, null);
@@ -240,7 +231,6 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                         }
                     });
                 }
-                return true;
             }
 
         });
@@ -302,29 +292,30 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         return view;
     }
 
+    private void showThumbnailImage(String imageUri) {
+        Glide.with(getActivity()).load(imageUri)
+                .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
+                .into(thumbnailIV);
+        thumbnailIV.setTag(imageUri);
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == IMAGE_CAPTURE_REQUEST && resultCode == getActivity().RESULT_OK){
-
             StorageReference reference = mStorageRef.child("photos").child(photoURI.getLastPathSegment());
-
             reference.putFile(photoURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
                     Task<Uri> result = taskSnapshot.getMetadata().getReference().getDownloadUrl();
                     result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-
                             String photoStringLink = uri.toString();
                             sPref.setUserPathImage(photoStringLink);
-
-                            Glide.with(getActivity()).load(sPref.getUserPathImage())
-                                    .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
-                                    .into(thumbnailIV);
+                            showThumbnailImage(sPref.getUserPathImage());
                         }
                     });
 
@@ -386,9 +377,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
                         sPref.setUserPathImage(url);
 
-                        Glide.with(getActivity()).load(sPref.getUserPathImage())
-                                .apply(new RequestOptions().centerCrop().circleCrop().placeholder(R.drawable.player_avatar))
-                                .into(thumbnailIV);
+                        showThumbnailImage(sPref.getUserPathImage());
                     }
                 }
             });
@@ -506,7 +495,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
             canEdit = true;
         else canEdit = false;
         Log.d("displayProfile", "can edit? "+canEdit);
-        String pitch,position,wherePlay;
+        String pitch,position,wherePlay,picture;
         try{pitch = p.getPitch();}
         catch (Exception e){e.printStackTrace();pitch = "Asphalt";}
         changePitchIcon(pitch);
@@ -515,6 +504,9 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         changePositionIcon(position);
         try{wherePlay = p.getWherePlay();}
         catch (Exception e){e.printStackTrace();wherePlay = "Anywhere";}
+        //handle profile picture:
+        try{showThumbnailImage(p.getPicture());}
+        catch (Exception e){e.printStackTrace();}
         pitchTV.setText(pitch);
         wherePlayTV.setText(wherePlay);
         nameTV.setText(p.getName());
@@ -525,12 +517,12 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         profileRV.setLayoutManager(new LinearLayoutManager(getActivity()));
         //list of groups player is member in - make sure it's scroll
         //will show name, avatar and when usualy play
-
         for (String id:p.getGroups_ids()) {
             Log.d("displayProfile","Trying to fetch group: "+id);
             prfGroupDB.requestGroupFromServer(id,MainActivity.TAB_PROFILE);
         }
         Log.d("displayProfile: ", p.get_id());
+
         refreshGroupList();
     }
 
