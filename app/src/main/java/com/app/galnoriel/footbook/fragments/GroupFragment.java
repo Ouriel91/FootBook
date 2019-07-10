@@ -260,6 +260,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             @Override
             public void onClick(View v) {
                 spref.setDisplayGroup(createGroupFromView());
+                spref.setNextGame(createGroupFromView().getNextGame());
                 showTab.goToFrag(MainActivity.TAB_GAME);
             }
         });
@@ -656,6 +657,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
             changeNextGamePriceIcon(nextGame.getPrice());
             ngDateTV.setText(nextGame.getDate());
             ngLocationTV.setText(nextGame.getLocation());
+            spref.setNextGame(nextGame);
         }else
             hideNextGameView();
         //set thumbnail
@@ -684,6 +686,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                     member_id.add(id);
             }
         }catch (Exception e ) {e.printStackTrace();}
+
         refreshList();
     }
 
@@ -731,9 +734,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         try{whenPlay = whenPlayTV.getText().toString();}
         catch (Exception e){e.printStackTrace();whenPlay = defaultGroup.getWhenPlay();}
         try{ngpitch = ngPitchTV.getText().toString();}
-        catch (Exception e){e.printStackTrace();nextGameExist = false;}
+        catch (Exception e){e.printStackTrace();}
         try{ngdate = ngDateTV.getText().toString();}
-        catch (Exception e){e.printStackTrace();nextGameExist = false;}
+        catch (Exception e){e.printStackTrace();}
         try{ngLocation = ngLocationTV.getText().toString();}
         catch (Exception e){e.printStackTrace();}
         try{ngprice = ngPriceTV.getText().toString();}
@@ -741,6 +744,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         try {picture = thumbnailIV.getTag().toString();}
         catch (Exception e){e.printStackTrace();}
         nextGame = new Game(ngpitch,ngdate,ngprice,ngLocation);
+        spref.setNextGame(nextGame);
         Log.d("createGroupFromView", "group admin -> "+admins_id.toString()+"\tmembers -> "+member_id.toString());
         return new GroupPlay(spref.getDisplayGroupId(),name,wherePlay,whenPlay,picture,member_id,admins_id,nextGame);
     }

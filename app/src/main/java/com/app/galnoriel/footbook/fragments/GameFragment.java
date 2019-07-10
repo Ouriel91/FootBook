@@ -51,6 +51,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
     private CustomSharedPrefAdapter sPref;
     private TextView timer_tv;
     private int time = 0;
+    public MainToGameFrag getFromMain;
 
 //endregion
 
@@ -64,7 +65,6 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
     @Override
     public void onResume() {
         super.onResume();
-        nextGame =  nextGameFromMain.onNextGameRequset();
         displayGame();
     }
 
@@ -72,7 +72,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_game, container, false);
-
+        ((MainActivity)getActivity()).sendGametoFrag = this;
         res = getResources();
 //        nextGAmeReciever = this ;
 
@@ -175,27 +175,30 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         locationTV = view.findViewById(R.id.location_tv_gamf);
         dateTV = view.findViewById(R.id.date_tv_gamf);
         //endregion
-
+        displayGame();
         return view;
     }
 
-    private void displayGame() {
+    public void displayGame() {
 //        try{//may fail if no group in pref
 //        if (!sPref.getDisplayGroup().getMembers_id().contains(sPref.getUserId()))
 //            return;}catch (Exception e){e.printStackTrace();}
-        nextGame =  sPref.getDisplayGroup().getNextGame();
+        nextGame =  sPref.getNextGame();
         try {nextGame.getDate();}
         catch (Exception e){e.printStackTrace();nextGame = new Game();}
-        String price = "0";
+        String price = "Free";
         String pitch = "Grass";
+
         try {price = nextGame.getPrice();}
         catch (Exception e){e.printStackTrace();}
         try{ pitch = nextGame.getPitch();}
         catch (Exception e){e.printStackTrace();}
         priceTV.setText(price);
         pitchTV.setText(pitch);
-        dateTV.setText(nextGame.getDate());
-        locationTV.setText(nextGame.getLocation());
+        try{dateTV.setText(nextGame.getDate());}
+        catch (Exception e){e.printStackTrace();dateTV.setText("Not set");}
+            try{locationTV.setText(nextGame.getLocation());}
+            catch (Exception e){locationTV.setText("Not set");}
         //handle price icon
         Log.d("changeNextGamePriceIcon", "cahngin to: "+price);
         if (price.toLowerCase().equals("free") || price.equals("0") || price.isEmpty()) {
@@ -305,7 +308,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
 
     @Override
     public void sendNextGameToFrag(Game nextGame) {
-        this.nextGame = nextGame;
+        displayGame();
     }
 
     //store next game info when finish fetching group from server

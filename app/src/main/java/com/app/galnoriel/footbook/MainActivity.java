@@ -42,6 +42,7 @@ import com.app.galnoriel.footbook.fragments.SearchGameFieldFragment;
 
 import com.app.galnoriel.footbook.interfaces.AccessGroupDB;
 import com.app.galnoriel.footbook.interfaces.GetGameFromMain;
+import com.app.galnoriel.footbook.interfaces.MainToGameFrag;
 import com.app.galnoriel.footbook.interfaces.MainToGroupFrag;
 import com.app.galnoriel.footbook.interfaces.MainToPlayerFrag;
 import com.app.galnoriel.footbook.interfaces.MoveToTab;
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity
     private ImageButton signUpBtn;
     private ImageButton signInBtn;
     private FirebaseFirestore db;
-    //    public MainToGameFrag sendGametoFrag;
+        public MainToGameFrag sendGametoFrag;
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
@@ -573,7 +574,7 @@ public class MainActivity extends AppCompatActivity
                 viewPager.setCurrentItem(TAB_GROUP,true);
                 break;
             case TAB_GAME:
-
+                sendGametoFrag.sendNextGameToFrag(new Game());
                 viewPager.setCurrentItem(TAB_GAME,true);
                 break;
             case TAB_MAP:

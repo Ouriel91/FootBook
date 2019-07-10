@@ -33,7 +33,7 @@ public class CustomSharedPrefAdapter {
     private static String DISPLAY_USER_WHERE_PLAY = "DISPLAY_USER_WHERE_PLAY";
     private static String DISPLAY_USER_PICTURE = "DISPLAY_USER_PICTURE";
     private static String DISPLAY_USER_GROUPS = "DISPLAY_USER_GROUPS";
-    private static String NEXT_GAME_ID = "next_game_id";
+    private static String NEXT_GAME_DATE = "NEXT_GAME_DATE";
     private static String NEXT_GAME_LOCATION = "NEXT_GAME_LOCATION";
     private static String NEXT_GAME_PRICE = "NEXT_GAME_PRICE";
     private static String NEXT_GAME_PITCH = "NEXT_GAME_PITCH";
@@ -229,11 +229,23 @@ public class CustomSharedPrefAdapter {
         //also set default group id on server
     }
 
+    public Game getNextGame(){
+        return new Game(
+                sharedPreferences.getString(NEXT_GAME_PITCH,"Grass"),
+                sharedPreferences.getString(NEXT_GAME_DATE,"Not set"),
+                sharedPreferences.getString(NEXT_GAME_PRICE,"Free"),
+                sharedPreferences.getString(NEXT_GAME_LOCATION,"Not set")
+                );
+
+
+    }
+
     public void setNextGame(Game g){
         sharedPreferences.edit()
-                .putString(NEXT_GAME_LOCATION,g.getLocation().toString())
+                .putString(NEXT_GAME_LOCATION,g.getLocation())
                 .putString(NEXT_GAME_PITCH,g.getPitch())
                 .putString(NEXT_GAME_PRICE,g.getPrice())
+                .putString(NEXT_GAME_DATE,g.getDate())
                 .apply();
     }
 
