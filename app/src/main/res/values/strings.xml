@@ -176,5 +176,24 @@
     <string name="anywhere">Anywhere</string>
     <string name="error_chat_with_self">If you need to chat with yourself just get a MIRROR :)</string>
     <string name="new_player_added_broadcasr">Just got a new player!</string>
+    <string name="about_title">made by: \n Gal Kiraly and Oriel Ohayun\n</string>
+    <string name="about_msg">
+
+        App Designed by:\n\n
+        Gal kiraly\n\n
+        Icons from flaticon authors:\n
+        \n<string name="Pixel_perfect"><a href="http://www.flaticon.com/authors/pixel-perfect">Pixel perfect</a></string>
+        \n<string name="Eucalyp"><a href="http://www.flaticon.com/authors/Eucalyp">Eucalyp</a></string>
+        \n<string name="catkuro"><a href="http://www.flaticon.com/authors/catkuro">Ccatkuro</a></string>
+        \n<string name="Smashicons"><a href="http://www.flaticon.com/authors/Smashicons">Smashicons</a></string>
+        \n<string name="my_link"><a href="http://www.flaticon.com/authors/pongsakornRed">pongsakornRed</a></string>
+        \n<string name="pongsakornRed"><a href="http://www.flaticon.com/authors/smalllikeart">pongsakornRed</a></string>
+        \n<string name="xnimrodx"><a href="http://www.flaticon.com/authors/xnimrodx">xnimrodx</a></string>
+        \n<string name="bqlqn"><a href="http://www.flaticon.com/authors/bqlqn">bqlqn</a></string>
+        \n<string name="mavadee"><a href="http://www.flaticon.com/authors/mavadee">mavadee</a></string>
+        \n<string name="wanicon"><a href="http://www.flaticon.com/authors/wanicon">wanicon</a></string>
+
+
+    </string>
 
 </resources>

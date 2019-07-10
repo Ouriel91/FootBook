@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
     private ImageButton signUpBtn;
     private ImageButton signInBtn;
     private FirebaseFirestore db;
-        public MainToGameFrag sendGametoFrag;
+    public MainToGameFrag sendGametoFrag;
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
                     //"(?=.*[0-9])" +         //at least 1 digit
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            Toast.makeText(context, "To leave - just close the app", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -323,8 +323,15 @@ public class MainActivity extends AppCompatActivity
                 alertDialog.show();
                 break;
 
-            case  R.id.nav_send:
+            case  R.id.nav_profile:
+                goToFrag(TAB_PROFILE,sharedPref.getUserId());
+                break;
 
+            case R.id.nav_about:
+                showAboutDialog();
+                break;
+            case R.id.nav_search:
+                openPlayerQueryDialog(true);
                 break;
 
         }
@@ -334,8 +341,24 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void resetPassword() {
+    private void showAboutDialog() {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_about, null);
+        ((TextView)dialogView.findViewById(R.id.title_tv_about)).setText(getResources().getString(R.string.about_title));
+        ((TextView)dialogView.findViewById(R.id.message_tv_about)).setText(getResources().getString(R.string.about_msg));
+        dialogView.findViewById(R.id.dismiss_iv_about).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+        builder.setView(dialogView);
+        alertDialog = builder.create();
+        alertDialog.show();
 
+    }
+
+    private void resetPassword() {
         signInBtn.setVisibility(View.VISIBLE);
         signUpBtn.setVisibility(View.GONE);
         userNameLayout.setVisibility(View.GONE);
@@ -721,7 +744,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void openGroupQueryDialog() {
-        Log.d("openPlayerQueryDialog", "started querrying");
+        Log.d("openGroupQueryDialog", "started querrying");
         //region prepare dialog
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_search, null);
@@ -776,8 +799,9 @@ public class MainActivity extends AppCompatActivity
         alertDialog.show();
     }
 
+
     @Override
-    public void openPlayerQueryDialog() {
+    public void openPlayerQueryDialog(final boolean fromMain) {
         Log.d("openPlayerQueryDialog", "started querrying");
         //region prepare dialog
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
@@ -790,11 +814,16 @@ public class MainActivity extends AppCompatActivity
         final int[] to = {R.id.id_result_list,R.id.name_result_list,R.id.sub_title_result_list};
         //endregion
         //region add member on click from result list
+
         resultLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             //clicking on item from result will add to group
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                sendToGroupFrag.addMemberToGroup(((TextView)view.findViewById(R.id.id_result_list)).getText().toString());
+                String resultUid = ((TextView)view.findViewById(R.id.id_result_list)).getText().toString();
+                if (!fromMain) //add to group
+                    sendToGroupFrag.addMemberToGroup(resultUid);
+                else //display result in profile tab
+                    goToFrag(TAB_PROFILE,resultUid);
                 alertDialog.dismiss();
             }
         });

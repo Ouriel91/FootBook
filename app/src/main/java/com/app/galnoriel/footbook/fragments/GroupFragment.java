@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -44,7 +42,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.app.galnoriel.footbook.GlobConst;
 import com.app.galnoriel.footbook.MainActivity;
 import com.app.galnoriel.footbook.R;
 import com.app.galnoriel.footbook.adapters.MembersListAdapter;
@@ -64,20 +61,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -221,7 +212,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         addMemberLin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                grfPlayerDB.openPlayerQueryDialog();
+                grfPlayerDB.openPlayerQueryDialog(false);
             }
         });
         res = getResources();
@@ -302,7 +293,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
                     TextView titleTV = dialogView.findViewById(R.id.title_tv);
                     TextView messageTV = dialogView.findViewById(R.id.message_tv);
-                    ImageView camerBtn = dialogView.findViewById(R.id.confirm_iv);
+                    ImageView camerBtn = dialogView.findViewById(R.id.dismiss_iv_about);
                     ImageView galeryBtn = dialogView.findViewById(R.id.unconfirm_iv);
                     camerBtn.setImageDrawable(res.getDrawable(R.drawable.camera));
                     galeryBtn.setImageDrawable(res.getDrawable(R.drawable.gallery));
@@ -439,7 +430,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
         View dialogView  = getLayoutInflater().inflate(R.layout.dialog_choices, null);
         TextView titleTV = dialogView.findViewById(R.id.title_tv);
         TextView messageTV = dialogView.findViewById(R.id.message_tv);
-        ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
+        ImageView confirmIV = dialogView.findViewById(R.id.dismiss_iv_about);
         ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
         builder.setView(dialogView);
         alertDialog = builder.create();
@@ -484,7 +475,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
     }
 
     private void addGroupMembersDialog() {
-        grfPlayerDB.openPlayerQueryDialog();
+        grfPlayerDB.openPlayerQueryDialog(false);
     }
 
     @Override

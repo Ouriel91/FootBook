@@ -196,7 +196,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
                     TextView titleTV = dialogView.findViewById(R.id.title_tv);
                     TextView messageTV = dialogView.findViewById(R.id.message_tv);
-                    ImageView cameraBtn = dialogView.findViewById(R.id.confirm_iv);
+                    ImageView cameraBtn = dialogView.findViewById(R.id.dismiss_iv_about);
                     ImageView galleryBtn = dialogView.findViewById(R.id.unconfirm_iv);
                     cameraBtn.setImageDrawable(res.getDrawable(R.drawable.camera));
                     galleryBtn.setImageDrawable(res.getDrawable(R.drawable.gallery));
@@ -514,7 +514,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
                 TextView titleTV = dialogView.findViewById(R.id.title_tv);
                 TextView messageTV = dialogView.findViewById(R.id.message_tv);
-                ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
+                ImageView confirmIV = dialogView.findViewById(R.id.dismiss_iv_about);
                 ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
 
                 builder.setView(dialogView);

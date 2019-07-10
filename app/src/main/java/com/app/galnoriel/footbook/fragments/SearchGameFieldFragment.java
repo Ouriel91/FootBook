@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.galnoriel.footbook.R;
@@ -81,25 +82,35 @@ public class SearchGameFieldFragment extends Fragment implements OnMapReadyCallb
         //request and get async
         //listener to
 
+        view.findViewById(R.id.serach_fields_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFieldsAroundMe();
+            }
+        });
+
         searchFieldsIB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Object dataTransfer[] = new Object[2];
-                GetNearByPlaces getNearByPlaces = new GetNearByPlaces();
-                map.clear();
-                String footballFields = "מגרש+כדורגל";
-                String url = getUrl(latitude,longtitude,footballFields);
-                dataTransfer[0] = map;
-                dataTransfer[1] = url;
-
-                getNearByPlaces.execute(dataTransfer);
+                showFieldsAroundMe();
             }
         });
 
 
 
         return view;
+    }
+
+    private void showFieldsAroundMe() {
+        Object dataTransfer[] = new Object[2];
+        GetNearByPlaces getNearByPlaces = new GetNearByPlaces();
+        map.clear();
+        String footballFields = "מגרש+כדורגל";
+        String url = getUrl(latitude,longtitude,footballFields);
+        dataTransfer[0] = map;
+        dataTransfer[1] = url;
+
+        getNearByPlaces.execute(dataTransfer);
     }
 
     private String getUrl(double latitude, double longitude, String footballFields) {
