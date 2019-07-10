@@ -859,6 +859,9 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 //        called from main activity after showing add member dialog and query
         member_id.add(id);
         updateToServer();
+        refreshList();
+        try{broadcastAllMember(res.getString(R.string.new_player_added_broadcasr),spref.getDisplayGroup().getName());}
+        catch (Exception e){e.printStackTrace();}
         grfGroupDB.requestGroupFromServer(spref.getDisplayGroup().getId(),MainActivity.TAB_GROUP);
     }
 
