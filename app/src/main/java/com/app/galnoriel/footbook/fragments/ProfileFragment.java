@@ -293,7 +293,13 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         });
 
         //open chat with player:
-        messaging.subscribeToTopic(sPref.getUserId());
+        try {
+            messaging.subscribeToTopic(sPref.getUserId());
+            Log.d("CHAT SUBSCRIBED TO: ", sPref.getUserId());
+        }catch (Exception e){e.printStackTrace();}
+        try{
+            Log.d("CHAT WILL SEND TO : ", sPref.getDisplayUserId());
+        }catch (Exception e){e.printStackTrace();}
 
         chatIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -336,8 +342,9 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
         String name_from = sPref.getUserName();
         final JSONObject jsonObject = new JSONObject();
         try {
+            Log.d("openChat",to_id);
             jsonObject.put("to","/topics/"+to_id);
-            jsonObject.put("data",new JSONObject().put("message",msg));
+            jsonObject.put("data",new JSONObject().put("message",name_from+" -\n"+msg));
             String url = "https://fcm.googleapis.com/fcm/send";
             RequestQueue queue = Volley.newRequestQueue(getActivity());
             StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
