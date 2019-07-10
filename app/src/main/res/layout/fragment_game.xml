@@ -148,29 +148,25 @@
                 style="@style/Timer_Settings_Toggle"
                 />
 
-            <LinearLayout
+
+
+
+            <TextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:orientation="vertical"
-                android:layout_margin="5dp">
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                style="@style/Timer_view"
+                android:id="@+id/timer_tv"
+                android:text="00:00"/>
 
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/Timer_view"
-                    android:id="@+id/timer_tv"
-                    android:text="00:00"/>
-
-            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/reset_timer_gamf"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginEnd="30dp"
-
+                android:layout_gravity="center_vertical"
                 android:background="@android:color/transparent"
                 android:scaleType="fitCenter"
                 android:src="@drawable/repeat" />
