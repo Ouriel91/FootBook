@@ -175,5 +175,6 @@
     <string name="free_role">Free role</string>
     <string name="anywhere">Anywhere</string>
     <string name="error_chat_with_self">If you need to chat with yourself just get a MIRROR :)</string>
+    <string name="new_player_added_broadcasr">Just got a new player!</string>
 
 </resources>

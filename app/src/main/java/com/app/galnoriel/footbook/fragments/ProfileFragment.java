@@ -297,9 +297,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
             messaging.subscribeToTopic(sPref.getUserId());
             Log.d("CHAT SUBSCRIBED TO: ", sPref.getUserId());
         }catch (Exception e){e.printStackTrace();}
-        try{
-            Log.d("CHAT WILL SEND TO : ", sPref.getDisplayUserId());
-        }catch (Exception e){e.printStackTrace();}
+
 
         chatIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -338,7 +336,9 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     }
 
     private void openChat(String msg, String to_id) {
-
+        try{
+            Log.d("CHAT in profile : ", sPref.getDisplayUserId());
+        }catch (Exception e){e.printStackTrace();}
         String name_from = sPref.getUserName();
         final JSONObject jsonObject = new JSONObject();
         try {
