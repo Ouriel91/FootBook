@@ -802,9 +802,20 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
     }
 
     private Player createPlayerFromView(){
-        return new Player(sPref.getUserId(),
-                nameTV.getText().toString(), whereFromTV.getText().toString(),positionTV.getText().toString(),
-                pitchTV.getText().toString(),wherePlayTV.getText().toString(),thumbnailIV.getTag().toString(),getGroupIdFromArray(groupPlayList));
+        String name = "";
+        String whereFrom = "City";
+        String position = "Free Role";
+        String pitch = "Grass";
+        String whrePlay = "AnyWhere";
+        String thumbnail = "";
+        try {name = nameTV.getText().toString();}catch (Exception e){e.printStackTrace();}
+        try {whereFrom = whereFromTV.getText().toString();}catch (Exception e){e.printStackTrace();}
+        try {position = positionTV.getText().toString();}catch (Exception e){e.printStackTrace();}
+        try { pitch = pitchTV.getText().toString() ;}catch (Exception e){e.printStackTrace();}
+        try { whrePlay = wherePlayTV.getText().toString();}catch (Exception e){e.printStackTrace();}
+        try {thumbnail = thumbnailIV.getTag().toString();}catch (Exception e){e.printStackTrace();}
+
+        return new Player(sPref.getUserId(),name,whereFrom ,position,pitch,whrePlay,thumbnail,getGroupIdFromArray(groupPlayList));
     }
 
     private ArrayList<String> getGroupIdFromArray(List<GroupPlay> groupPlayList) {

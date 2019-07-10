@@ -70,8 +70,8 @@
     <string name="remove_group">Group remove</string>
     <string name="sure_remove_group">Are you sure you want to remove this group?</string>
     <string name="next_game_title">Next Game</string>
-    <string name="next_game_announcment_pt1">Next game set to</string>
-    <string name="next_game_announcment_pt2">Entrie fee is</string>
+    <string name="next_game_announcment_pt1">Next game set to </string>
+    <string name="next_game_announcment_pt2">Entrie fee is </string>
     <string name="set_ng_date_error">Please set a DATE for next match</string>
     <string name="error_not_admin">Only group admin can do that</string>
 
