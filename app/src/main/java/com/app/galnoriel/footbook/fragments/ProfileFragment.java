@@ -196,8 +196,10 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
                     TextView titleTV = dialogView.findViewById(R.id.title_tv);
                     TextView messageTV = dialogView.findViewById(R.id.message_tv);
-                    ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
-                    ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
+                    ImageView cameraBtn = dialogView.findViewById(R.id.confirm_iv);
+                    ImageView galleryBtn = dialogView.findViewById(R.id.unconfirm_iv);
+                    cameraBtn.setImageDrawable(res.getDrawable(R.drawable.camera));
+                    galleryBtn.setImageDrawable(res.getDrawable(R.drawable.gallery));
 
                     builder.setView(dialogView);
                     alertDialog = builder.create();
@@ -205,7 +207,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
 
                     titleTV.setText(getResources().getString(R.string.image_change));
                     messageTV.setText(getResources().getString(R.string.image_change_option));
-                    confirmIV.setOnClickListener(new View.OnClickListener() {
+                    cameraBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             pictureFile = null;
@@ -228,7 +230,7 @@ public class ProfileFragment extends Fragment implements MainToPlayerFrag, View.
                         }
                     });
 
-                    unConfirmIV.setOnClickListener(new View.OnClickListener() {
+                    galleryBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent();

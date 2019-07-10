@@ -10,21 +10,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/search_layout">
+        android:id="@+id/search_layout"
+        style="@style/GroupFragmentTitlesLinear"
+        android:padding="2dp">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="30sp"
             android:layout_weight="3"
-            android:text="@string/search_fields"/>
+            android:textColor="@android:color/black"
+            android:text="@string/search_fields"
+            style="@style/ProfileFrag_TextView"/>
 
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:id="@+id/serach_fields_ib"
-            android:src="@drawable/ic_search_black_24dp"/>
+            android:src="@drawable/map_ic_tab"
+            />
 
     </LinearLayout>
 

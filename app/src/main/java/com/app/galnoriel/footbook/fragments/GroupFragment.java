@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -195,7 +196,6 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                     @Override
                     public void onClick(View v) {
                         String message = messageET.getText().toString();
-                        int reason = 0;
                         broadcastAllMember(message,nameTV.getText().toString());
                         alertDialog.dismiss();
                     }
@@ -302,8 +302,10 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
                     TextView titleTV = dialogView.findViewById(R.id.title_tv);
                     TextView messageTV = dialogView.findViewById(R.id.message_tv);
-                    ImageView confirmIV = dialogView.findViewById(R.id.confirm_iv);
-                    ImageView unConfirmIV = dialogView.findViewById(R.id.unconfirm_iv);
+                    ImageView camerBtn = dialogView.findViewById(R.id.confirm_iv);
+                    ImageView galeryBtn = dialogView.findViewById(R.id.unconfirm_iv);
+                    camerBtn.setImageDrawable(res.getDrawable(R.drawable.camera));
+                    galeryBtn.setImageDrawable(res.getDrawable(R.drawable.gallery));
 
                     builder.setView(dialogView);
                     alertDialog = builder.create();
@@ -311,7 +313,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
 
                     titleTV.setText(getResources().getString(R.string.image_change));
                     messageTV.setText(getResources().getString(R.string.image_change_option));
-                    confirmIV.setOnClickListener(new View.OnClickListener() {
+                    camerBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             pictureFile = null;
@@ -333,7 +335,7 @@ public class GroupFragment extends Fragment implements MainToGroupFrag, View.OnC
                             alertDialog.dismiss();
                         }
                     });
-                    unConfirmIV.setOnClickListener(new View.OnClickListener() {
+                    galeryBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent();

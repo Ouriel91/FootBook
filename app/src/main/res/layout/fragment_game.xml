@@ -225,7 +225,7 @@
                 android:layout_row="1"
                 android:text="0"
                 android:textSize="40dp"
-                android:background="@drawable/shape_settings"
+                android:background="@drawable/shape_score"
                 android:id="@+id/left_score_btn_gamf"
                 android:layout_gravity="center"/>
             <Button
@@ -234,7 +234,7 @@
                 android:layout_row="1"
                 android:text="0"
                 android:textSize="40dp"
-                android:background="@drawable/shape_news"
+                android:background="@drawable/shape_score"
                 android:layout_gravity="center"/>
 
 
